@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "457659997751",
+    "firebase_url": "https://panappfirebase.firebaseio.com",
+    "project_id": "panappfirebase",
+    "storage_bucket": "panappfirebase.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:457659997751:android:8839a32423a2923f",
+        "android_client_info": {
+          "package_name": "gregmachado.com.panappfirebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "457659997751-pktd6u9eljeaplj1nsaqmoch81t9qbdh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "gregmachado.com.panappfirebase",
+            "certificate_hash": "29A2B325D6BD8419E92EC008C4F01A2343BB94E3"
+          }
+        },
+        {
+          "client_id": "457659997751-49rg9hs7a7hmqmsqk2c5t05r2dgkscbg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-8sJKp92mk_ThYIjDg133nOvOIBMSJ0A"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "457659997751-49rg9hs7a7hmqmsqk2c5t05r2dgkscbg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

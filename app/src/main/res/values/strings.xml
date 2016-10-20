@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name">PanAppFirebase</string>
     <string name="action_settings">Settings</string>
+    <string name="error_google_sign_in">Erro ao realizar Login com a conta do Google!</string>
+    <string name="google_sign_in_key">948184727868-akvv2gvk808k0som0u68m5c9dmq2qtm6.apps.googleusercontent.com</string>
 </resources>
