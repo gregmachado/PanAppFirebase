@@ -22,15 +22,18 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 import gregmachado.com.panappfirebase.R;
+import gregmachado.com.panappfirebase.domain.User;
 
 
 /**
  * Created by gregmachado on 17/06/16.
  */
 public class SelectLoginActivity extends AppCompatActivity {
+
     private static final int RC_GOOGLE_SIGN_IN = 1;
     private GoogleApiClient mGoogleApiClient;
     private FirebaseAuth mAuth;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,8 +48,8 @@ public class SelectLoginActivity extends AppCompatActivity {
         btnLoginEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Intent intentLoginEmail = new Intent(SelectLoginActivity.this, LoginEmailActivity.class);
-                //startActivity(intentLoginEmail);
+                Intent intentLoginEmail = new Intent(SelectLoginActivity.this, LoginEmailActivity.class);
+                startActivity(intentLoginEmail);
             }
         });
 
