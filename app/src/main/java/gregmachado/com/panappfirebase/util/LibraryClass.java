@@ -3,21 +3,22 @@ package gregmachado.com.panappfirebase.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.firebase.client.Firebase;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 /**
  * Created by gregmachado on 23/10/16.
  */
 public class LibraryClass {
 
-    private static Firebase firebase;
+    private static DatabaseReference firebase;
     public static String PREF = "gregmachado.com.panappfirebase.PREF";
 
     private LibraryClass(){}
 
-    public static Firebase getFirebase(){
+    public static DatabaseReference getFirebase(){
         if( firebase == null ){
-            firebase = new Firebase("https://panappfirebase.firebaseio.com");
+            firebase = FirebaseDatabase.getInstance().getReference();
         }
         return( firebase );
     }

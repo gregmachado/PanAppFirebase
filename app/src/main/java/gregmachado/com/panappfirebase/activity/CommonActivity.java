@@ -3,6 +3,7 @@ package gregmachado.com.panappfirebase.activity;
 /**
  * Created by gregmachado on 24/10/16.
  */
+
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -10,6 +11,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+
+import com.google.android.gms.common.ConnectionResult;
 
 
 abstract public class CommonActivity extends AppCompatActivity {
@@ -43,4 +46,6 @@ abstract public class CommonActivity extends AppCompatActivity {
     abstract protected void initViews();
 
     abstract protected void initUser();
+
+    public abstract void onConnectionFailed(ConnectionResult connectionResult);
 }

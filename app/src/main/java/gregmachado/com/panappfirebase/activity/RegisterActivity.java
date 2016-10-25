@@ -3,6 +3,7 @@ package gregmachado.com.panappfirebase.activity;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -10,22 +11,27 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-
-import java.util.Map;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.domain.User;
 import gregmachado.com.panappfirebase.util.Encryption;
-import gregmachado.com.panappfirebase.util.LibraryClass;
 
 /**
  * Created by gregmachado on 17/06/16.
  */
-public class RegisterActivity extends CommonActivity {
+public class RegisterActivity extends CommonActivity implements DatabaseReference.CompletionListener{
 
     private static final String TAG = RegisterActivity.class.getSimpleName();
     private Button btnRegister;
@@ -34,7 +40,8 @@ public class RegisterActivity extends CommonActivity {
     private String name, email, password;
     private CheckBox cbTerms;
     private User user;
-    private Firebase firebase;
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthStateListener;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,12 +49,26 @@ public class RegisterActivity extends CommonActivity {
         setContentView(R.layout.activity_register);
         resources = getResources();
 
-        firebase = LibraryClass.getFirebase();
+        mAuth = FirebaseAuth.getInstance();
 
         if (android.os.Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
+
+        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+
+                if (firebaseUser == null || user.getId() != null) {
+                    return;
+                }
+
+                user.setId(firebaseUser.getUid());
+                user.saveDB(RegisterActivity.this);
+            }
+        };
 
         initViews();
         initWatchers();
@@ -68,6 +89,20 @@ public class RegisterActivity extends CommonActivity {
                                        }
         );
 
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthStateListener);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mAuthStateListener != null) {
+            mAuth.removeAuthStateListener(mAuthStateListener);
+        }
     }
 
     private void initWatchers() {
@@ -175,29 +210,39 @@ public class RegisterActivity extends CommonActivity {
     }
 
     private void saveUser() {
-        firebase.createUser(
+        mAuth.createUserWithEmailAndPassword(
                 user.getEmail(),
-                user.getPassword(),
-                new Firebase.ValueResultHandler<Map<String, Object>>() {
-                    @Override
-                    public void onSuccess(Map<String, Object> stringObjectMap) {
-                        user.setId(stringObjectMap.get("uid").toString());
-                        user.saveDB();
-                        firebase.unauth();
+                user.getPassword()
+        ).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
 
-                        showToast("Conta criada com sucesso!");
-                        closeProgressBar();
-                        finish();
-                    }
-
-                    @Override
-                    public void onError(FirebaseError firebaseError) {
-                        showSnackbar(firebaseError.getMessage());
-                        closeProgressBar();
-                    }
+                if (!task.isSuccessful()) {
+                    closeProgressBar();
                 }
-        );
+            }
+        }).addOnFailureListener(this, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                showSnackbar(e.getMessage());
+            }
+        });
     }
+
+    @Override
+    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+        mAuth.signOut();
+
+        showToast("Conta criada com sucesso!");
+        closeProgressBar();
+        finish();
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
+    }
+
 
     protected void initViews() {
         inputName = (EditText) findViewById(R.id.et_cadastre_name);
@@ -205,6 +250,7 @@ public class RegisterActivity extends CommonActivity {
         inputPassword = (EditText) findViewById(R.id.et_cadastre_pass);
         btnRegister = (Button) findViewById(R.id.btn_create_account);
         cbTerms = (CheckBox) findViewById(R.id.cb_terms);
+        progressBar = (ProgressBar) findViewById(R.id.simpleProgressBar);
     }
 
     protected void initUser() {

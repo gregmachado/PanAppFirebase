@@ -40,8 +40,8 @@ public class SelectLoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_login);
 
-        mAuth = FirebaseAuth.getInstance();
-        initGoogleSignIn();
+        //mAuth = FirebaseAuth.getInstance();
+        //initGoogleSignIn();
 
         Button btnLoginEmail = (Button) findViewById(R.id.btn_login_email);
         assert btnLoginEmail != null;

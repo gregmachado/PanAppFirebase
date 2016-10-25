@@ -2,7 +2,7 @@ package gregmachado.com.panappfirebase.domain;
 
 import android.content.Context;
 
-import com.firebase.client.Firebase;
+import com.google.firebase.database.DatabaseReference;
 
 import gregmachado.com.panappfirebase.util.LibraryClass;
 
@@ -40,12 +40,24 @@ public class User {
         this.name = name;
     }
 
+    public void setNameIfNull(String name) {
+        if (this.name == null) {
+            this.name = name;
+        }
+    }
+
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public void setEmailIfNull(String email) {
+        if (this.email == null) {
+            this.email = email;
+        }
     }
 
     public String getPassword() {
@@ -88,13 +100,15 @@ public class User {
         this.image = image;
     }
 
-    public void saveDB(){
-        Firebase firebase = LibraryClass.getFirebase();
-        firebase = firebase.child("users").child( getId() );
-
-        setPassword(null);
-        setId(null);
-        firebase.setValue(this);
+    public void saveDB(DatabaseReference.CompletionListener... completionListener) {
+        DatabaseReference firebase = LibraryClass.getFirebase().child("users").child(getId());
+        if (completionListener.length == 0) {
+            setPassword(null);
+            setId(null);
+            firebase.setValue(this);
+        } else {
+            firebase.setValue(this, completionListener[0]);
+        }
     }
 
     public String getTokenSP(Context context ){

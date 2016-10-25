@@ -2,6 +2,7 @@ package gregmachado.com.panappfirebase.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -9,16 +10,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
-import com.firebase.client.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
 
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.util.LibraryClass;
 
 public class MainActivity extends AppCompatActivity {
-    private FirebaseAuth.AuthStateListener mAuthListener;
-    private String TAG = "MainActivity";
-    private FirebaseAuth mAuth;
+    private DatabaseReference databaseReference;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseAuth.AuthStateListener authStateListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,17 +45,40 @@ public class MainActivity extends AppCompatActivity {
             }
         };*/
 
+        authStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+
+                if (firebaseAuth.getCurrentUser() == null) {
+                    Intent intent = new Intent(MainActivity.this, SelectLoginActivity.class);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+        };
+
+        firebaseAuth = FirebaseAuth.getInstance();
+        firebaseAuth.addAuthStateListener(authStateListener);
+        databaseReference = LibraryClass.getFirebase();
+        databaseReference.getRef();
+
         Button btnLogout = (Button) findViewById(R.id.btn_logout);
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Firebase firebase = LibraryClass.getFirebase();
-                firebase.unauth();
-                Intent intent = new Intent(MainActivity.this, SelectLoginActivity.class);
-                startActivity(intent);
+                FirebaseAuth.getInstance().signOut();
                 finish();
             }
         });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (authStateListener != null) {
+            firebaseAuth.removeAuthStateListener(authStateListener);
+        }
     }
 
     @Override

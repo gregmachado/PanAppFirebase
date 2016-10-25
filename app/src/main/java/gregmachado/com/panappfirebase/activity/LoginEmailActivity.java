@@ -3,6 +3,7 @@ package gregmachado.com.panappfirebase.activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -11,15 +12,18 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 
-import com.firebase.client.AuthData;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.domain.User;
 import gregmachado.com.panappfirebase.util.Encryption;
-import gregmachado.com.panappfirebase.util.LibraryClass;
 
 /**
  * Created by gregmachado on 24/10/16.
@@ -33,8 +37,10 @@ public class LoginEmailActivity extends CommonActivity {
     private String password;
     private CheckBox cbRememberMe;
     private Bundle params;
-    private Firebase firebase;
+    private FirebaseAuth firebaseAuth;
+    private FirebaseAuth.AuthStateListener authStateListener;
     private User user;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,10 +49,10 @@ public class LoginEmailActivity extends CommonActivity {
 
         params = new Bundle();
         resources = getResources();
-        firebase = LibraryClass.getFirebase();
+        firebaseAuth = FirebaseAuth.getInstance();
+        authStateListener = getFirebaseAuthResultHandler();
         initViews();
         initWatchers();
-        verifyUserLogged();
 
         Button btnLogin = (Button) findViewById(R.id.btn_sign);
         btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -73,8 +79,47 @@ public class LoginEmailActivity extends CommonActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        verifyUserLogged();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (authStateListener != null) {
+            firebaseAuth.removeAuthStateListener(authStateListener);
+        }
+    }
+
+    private FirebaseAuth.AuthStateListener getFirebaseAuthResultHandler() {
+        FirebaseAuth.AuthStateListener callback = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+
+                FirebaseUser userFirebase = firebaseAuth.getCurrentUser();
+
+                if (userFirebase == null) {
+                    return;
+                }
+
+                if (user.getId() == null && isNameOk(user, userFirebase)) {
+
+                    user.setId(userFirebase.getUid());
+                    user.setNameIfNull(userFirebase.getDisplayName());
+                    user.setEmailIfNull(userFirebase.getEmail());
+                    user.saveDB();
+                }
+
+                callMainActivity();
+            }
+        };
+        return (callback);
+    }
+
 
     /**
      * Chama o método para limpar erros
@@ -146,6 +191,7 @@ public class LoginEmailActivity extends CommonActivity {
         inputEmail = (AutoCompleteTextView) findViewById(R.id.et_login_email);
         inputPassword = (EditText) findViewById(R.id.et_login_senha);
         cbRememberMe = (CheckBox) findViewById(R.id.cb_remember_me);
+        progressBar = (ProgressBar) findViewById(R.id.simpleProgressBar);
     }
 
     private void initWatchers() {
@@ -170,59 +216,48 @@ public class LoginEmailActivity extends CommonActivity {
     @Override
     protected void initUser() {
         user = new User();
-        user.setEmail(email);
-        final Encryption cripto = Encryption.getInstance(password);
+        user.setEmail(inputEmail.getText().toString());
+        final Encryption cripto = Encryption.getInstance(inputPassword.getText().toString());
         user.setPassword(cripto.getEncryptPassword());
     }
 
     private void verifyUserLogged(){
-        if(firebase.getAuth() != null){
+        if (firebaseAuth.getCurrentUser() != null) {
             callMainActivity();
         } else {
-            initUser();
-            if(!user.getTokenSP(this).isEmpty()){
-                firebase.authWithPassword(
-                        "password",
-                        user.getTokenSP(this),
-                        new Firebase.AuthResultHandler() {
-                            @Override
-                            public void onAuthenticated(AuthData authData) {
-                                user.saveTokenSP(LoginEmailActivity.this, authData.getToken());
-                                callMainActivity();
-                            }
-
-                            @Override
-                            public void onAuthenticationError(FirebaseError firebaseError) {}
-                        }
-                );
-            }
+            firebaseAuth.addAuthStateListener(authStateListener);
         }
     }
 
     private void verifyLogin(){
-        firebase.authWithPassword(
+        firebaseAuth.signInWithEmailAndPassword(
                 user.getEmail(),
-                user.getPassword(),
-                new Firebase.AuthResultHandler() {
+                user.getPassword())
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
-                    public void onAuthenticated(AuthData authData) {
-                        user.saveTokenSP(LoginEmailActivity.this, authData.getToken());
-                        closeProgressBar();
-                        callMainActivity();
-                    }
+                    public void onComplete(@NonNull Task<AuthResult> task) {
 
-                    @Override
-                    public void onAuthenticationError(FirebaseError firebaseError) {
-                        showSnackbar(firebaseError.getMessage());
-                        closeProgressBar();
+                        if (!task.isSuccessful()) {
+                            closeProgressBar();
+
+                            return;
+                        }
                     }
-                }
-        );
+                });
     }
 
     private void callMainActivity() {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        showSnackbar(connectionResult.getErrorMessage());
+    }
+
+    private boolean isNameOk(User user, FirebaseUser firebaseUser) {
+        return (user.getName() != null || firebaseUser.getDisplayName() != null);
     }
 }
