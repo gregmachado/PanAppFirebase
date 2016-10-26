@@ -14,4 +14,8 @@
     <string name="register_email_char_invalid">Por favor forneça um email válido</string>
     <string name="forgot_pass"><u>Esqueceu a senha?</u></string>
     <string name="remember_me">Lembrar</string>
+    <string name="register_field_required">Este campo é obrigatório!</string>
+    <string name="register_fone_size_invalid">Tamanho de telefone inválido!</string>
+    <string name="register_cnpj_size_invalid">Tamanho de CNPJ inválido!</string>
+    <string name="price_product_required">Campo preço obrigatório!</string>
 </resources>

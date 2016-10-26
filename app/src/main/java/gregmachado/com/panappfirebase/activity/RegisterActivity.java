@@ -11,8 +11,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -78,12 +76,12 @@ public class RegisterActivity extends CommonActivity implements DatabaseReferenc
                                            public void onClick(View view) {
                                                if (validateFields()) {
                                                    if (cbTerms.isChecked()) {
-                                                       openProgressBar();
+                                                       openProgressDialog("Cadastrando...", "Aguarde um momento!");
                                                        initUser();
                                                        saveUser();
+                                                   } else{
+                                                       showToast("Por favor, leia e aceite os termos de uso!");
                                                    }
-                                               } else {
-                                                   Toast.makeText(RegisterActivity.this, "Por favor, leia e aceite os termos de uso!", Toast.LENGTH_SHORT).show();
                                                }
                                            }
                                        }
@@ -218,7 +216,7 @@ public class RegisterActivity extends CommonActivity implements DatabaseReferenc
             public void onComplete(@NonNull Task<AuthResult> task) {
 
                 if (!task.isSuccessful()) {
-                    closeProgressBar();
+                    closeProgressDialog();
                 }
             }
         }).addOnFailureListener(this, new OnFailureListener() {
@@ -234,7 +232,7 @@ public class RegisterActivity extends CommonActivity implements DatabaseReferenc
         mAuth.signOut();
 
         showToast("Conta criada com sucesso!");
-        closeProgressBar();
+        closeProgressDialog();
         finish();
     }
 
@@ -250,7 +248,6 @@ public class RegisterActivity extends CommonActivity implements DatabaseReferenc
         inputPassword = (EditText) findViewById(R.id.et_cadastre_pass);
         btnRegister = (Button) findViewById(R.id.btn_create_account);
         cbTerms = (CheckBox) findViewById(R.id.cb_terms);
-        progressBar = (ProgressBar) findViewById(R.id.simpleProgressBar);
     }
 
     protected void initUser() {

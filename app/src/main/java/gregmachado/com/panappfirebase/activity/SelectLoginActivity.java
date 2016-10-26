@@ -75,8 +75,8 @@ public class SelectLoginActivity extends AppCompatActivity {
         btnRegisterBakery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Intent intentRegisterBakery = new Intent(SelectLoginActivity.this, RegisterBakeryActivity.class);
-                //startActivity(intentRegisterBakery);
+                Intent intentRegisterBakery = new Intent(SelectLoginActivity.this, RegisterBakeryActivity.class);
+                startActivity(intentRegisterBakery);
             }
         });
     }

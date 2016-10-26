@@ -107,6 +107,8 @@ public class User {
             setId(null);
             firebase.setValue(this);
         } else {
+            setPassword(null);
+            setId(null);
             firebase.setValue(this, completionListener[0]);
         }
     }

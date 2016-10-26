@@ -59,7 +59,7 @@ public class LoginEmailActivity extends CommonActivity {
             @Override
             public void onClick(View v) {
                 if (validateFields()) {
-                    openProgressBar();
+                    openProgressDialog("Autenticando...", "Aguarde um momento!");
                     initUser();
                     verifyLogin();
                 }
@@ -190,8 +190,6 @@ public class LoginEmailActivity extends CommonActivity {
     protected void initViews() {
         inputEmail = (AutoCompleteTextView) findViewById(R.id.et_login_email);
         inputPassword = (EditText) findViewById(R.id.et_login_senha);
-        cbRememberMe = (CheckBox) findViewById(R.id.cb_remember_me);
-        progressBar = (ProgressBar) findViewById(R.id.simpleProgressBar);
     }
 
     private void initWatchers() {
@@ -238,8 +236,8 @@ public class LoginEmailActivity extends CommonActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
                         if (!task.isSuccessful()) {
-                            closeProgressBar();
-
+                            closeProgressDialog();
+                            showToast("Erro ao realizar autenticação. Verifique email e senha!");
                             return;
                         }
                     }
