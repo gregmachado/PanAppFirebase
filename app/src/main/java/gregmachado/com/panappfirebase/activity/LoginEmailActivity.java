@@ -20,6 +20,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.domain.User;
@@ -30,6 +31,7 @@ import gregmachado.com.panappfirebase.util.Encryption;
  */
 public class LoginEmailActivity extends CommonActivity {
 
+    private static final String TAG = LoginEmailActivity.class.getSimpleName();
     private Resources resources;
     private AutoCompleteTextView inputEmail;
     private EditText inputPassword;
@@ -41,6 +43,7 @@ public class LoginEmailActivity extends CommonActivity {
     private FirebaseAuth.AuthStateListener authStateListener;
     private User user;
     private ProgressBar progressBar;
+    private DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -245,9 +248,35 @@ public class LoginEmailActivity extends CommonActivity {
     }
 
     private void callMainActivity() {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-        finish();
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        assert firebaseUser != null;
+        String id = firebaseUser.getUid();
+        showToast(id);
+        /*databaseReference.child("users").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getValue(User.class);
+                String name = user.getName();
+                String email = user.getEmail();
+                params = new Bundle();
+                params.putString("name", name);
+                params.putString("email", email);
+                if(!user.isType()){
+                    Intent intentHomeUser = new Intent(LoginEmailActivity.this, UserBaseActivity.class);
+                    intentHomeUser.putExtras(params);
+                    startActivity(intentHomeUser);
+                } else {
+                    //Intent intentHomeAdmin = new Intent(SplashActivity.this, AdminBaseActivity.class);
+                    //intentHomeAdmin.putExtras(params);
+                    //startActivity(intentHomeAdmin);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "getUser:onCancelled", databaseError.toException());
+            }
+        });*/
     }
 
     @Override

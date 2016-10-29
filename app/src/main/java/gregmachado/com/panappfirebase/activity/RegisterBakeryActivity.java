@@ -139,7 +139,9 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
                 }
 
                 user.setId(firebaseUser.getUid());
+                bakery.setUserID(user.getId());
                 user.saveDB(RegisterBakeryActivity.this);
+                bakery.saveDB(RegisterBakeryActivity.this);
             }
         };
         initViews();
@@ -463,6 +465,7 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.i("LOG", "AddressLocationActivity.onConnectionFailed(" + connectionResult + ")");
     }
+
     private void saveUser() {
         mAuth.createUserWithEmailAndPassword(
                 user.getEmail(),
@@ -485,10 +488,24 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
 
     @Override
     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+        //bakery.saveDB(RegisterBakeryActivity.this);
         mAuth.signOut();
-        bakery.saveDB(RegisterBakeryActivity.this);
-        showToast("Padaria registrada com sucesso!");
         closeProgressDialog();
+        showToast("Padaria registrada com sucesso!");
         finish();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthStateListener);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mAuthStateListener != null) {
+            mAuth.removeAuthStateListener(mAuthStateListener);
+        }
     }
 }

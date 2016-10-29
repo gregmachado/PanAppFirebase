@@ -107,7 +107,7 @@ public class Bakery {
     }
 
     public void saveDB(DatabaseReference.CompletionListener... completionListener) {
-        DatabaseReference firebase = LibraryClass.getFirebase().child("bakeries").child(getId());
+        DatabaseReference firebase = LibraryClass.getFirebase().child("bakeries").child(getUserID());
         if (completionListener.length == 0) {
             firebase.setValue(this);
         } else {

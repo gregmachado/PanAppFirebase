@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/ic_home_black_24dp"
+            android:title="Home" />
+        <item
+            android:id="@+id/nav_bakerys"
+            android:icon="@drawable/ic_store_black_24dp"
+            android:title="Padarias" />
+        <item
+            android:id="@+id/nav_offers"
+            android:icon="@drawable/ic_offers_black_24dp"
+            android:title="Ofertas" />
+        <item
+            android:id="@+id/nav_favorites"
+            android:icon="@drawable/ic_favorite_black_24dp"
+            android:title="Favoritos" />
+        <item
+            android:id="@+id/nav_follow_orders"
+            android:icon="@drawable/ic_follow_order_black_24dp"
+            android:title="Acompanhar Pedido" />
+        <item
+            android:id="@+id/nav_history"
+            android:icon="@drawable/ic_history_black_24dp"
+            android:title="Histórico" />
+        <item
+            android:id="@+id/nav_my_adrees"
+            android:icon="@drawable/ic_addres_black_24dp"
+            android:title="Meus Endereços" />
+        <item
+            android:id="@+id/nav_talk_whit_us"
+            android:icon="@drawable/ic_talk_whit_us_black_24dp"
+            android:title="Fale Conosco" />
+        <item
+            android:id="@+id/nav_notification"
+            android:icon="@drawable/ic_notification_black_24dp"
+            android:title="Notificações" />
+        <item
+            android:id="@+id/nav_exit"
+            android:icon="@drawable/ic_exit_to_app_black_24dp"
+            android:title="Sair" />
+    </group>
+
+</menu>

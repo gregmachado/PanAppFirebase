@@ -1,7 +1,5 @@
 package gregmachado.com.panappfirebase.domain;
 
-import android.content.Context;
-
 import com.google.firebase.database.DatabaseReference;
 
 import gregmachado.com.panappfirebase.util.LibraryClass;
@@ -11,7 +9,6 @@ import gregmachado.com.panappfirebase.util.LibraryClass;
  */
 public class User {
 
-    private static final String TOKEN = "gregmachado.com.panappfirebase.domain.User.TOKEN";
     private String id;
     private String name;
     private String email;
@@ -111,14 +108,5 @@ public class User {
             setId(null);
             firebase.setValue(this, completionListener[0]);
         }
-    }
-
-    public String getTokenSP(Context context ){
-        String token = LibraryClass.getSP( context, TOKEN );
-        return( token );
-    }
-
-    public void saveTokenSP(Context context, String token ){
-        LibraryClass.saveSP( context, TOKEN, token );
     }
 }
