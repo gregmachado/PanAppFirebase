@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -20,11 +21,15 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.domain.User;
 import gregmachado.com.panappfirebase.util.Encryption;
+import gregmachado.com.panappfirebase.util.LibraryClass;
 
 /**
  * Created by gregmachado on 24/10/16.
@@ -54,6 +59,8 @@ public class LoginEmailActivity extends CommonActivity {
         resources = getResources();
         firebaseAuth = FirebaseAuth.getInstance();
         authStateListener = getFirebaseAuthResultHandler();
+        databaseReference = LibraryClass.getFirebase();
+        databaseReference.getRef();
         initViews();
         initWatchers();
 
@@ -251,24 +258,25 @@ public class LoginEmailActivity extends CommonActivity {
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         assert firebaseUser != null;
         String id = firebaseUser.getUid();
-        showToast(id);
-        /*databaseReference.child("users").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+        databaseReference.child("users").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
                 String name = user.getName();
                 String email = user.getEmail();
+                String bakeryID = user.getBakeryID();
                 params = new Bundle();
                 params.putString("name", name);
                 params.putString("email", email);
+                params.putString("bakeryID", bakeryID);
                 if(!user.isType()){
                     Intent intentHomeUser = new Intent(LoginEmailActivity.this, UserBaseActivity.class);
                     intentHomeUser.putExtras(params);
                     startActivity(intentHomeUser);
                 } else {
-                    //Intent intentHomeAdmin = new Intent(SplashActivity.this, AdminBaseActivity.class);
-                    //intentHomeAdmin.putExtras(params);
-                    //startActivity(intentHomeAdmin);
+                    Intent intentHomeAdmin = new Intent(LoginEmailActivity.this, AdminBaseActivity.class);
+                    intentHomeAdmin.putExtras(params);
+                    startActivity(intentHomeAdmin);
                 }
             }
 
@@ -276,7 +284,7 @@ public class LoginEmailActivity extends CommonActivity {
             public void onCancelled(DatabaseError databaseError) {
                 Log.w(TAG, "getUser:onCancelled", databaseError.toException());
             }
-        });*/
+        });
     }
 
     @Override

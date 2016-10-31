@@ -28,6 +28,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -85,6 +86,7 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
     private Adress adress;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
+    private DatabaseReference mDatabaseReference;
 
     // Hashmap for ListView
     ArrayList<HashMap<String, String>> bakerieList;
@@ -92,6 +94,7 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
     private String adressLocation = "";
     private Location l;
     private Double latitude, longitude;
+    private String bakeryID;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -106,6 +109,7 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
         bakerieList = new ArrayList<HashMap<String, String>>();
         resources = getResources();
         mAuth = FirebaseAuth.getInstance();
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
         Button btnSearchByCNPJ = (Button) findViewById(R.id.btn_search_by_cnpj);
         btnSearchByCNPJ.setOnClickListener(new View.OnClickListener() {
@@ -138,10 +142,15 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
                     return;
                 }
 
-                user.setId(firebaseUser.getUid());
+                String id = firebaseUser.getUid();
+                user.setId(id);
                 bakery.setUserID(user.getId());
                 user.saveDB(RegisterBakeryActivity.this);
-                bakery.saveDB(RegisterBakeryActivity.this);
+                //bakery.saveDB(RegisterBakeryActivity.this);
+                String bakeryID = mDatabaseReference.push().getKey();
+                bakery.setId(bakeryID);
+                mDatabaseReference.child("bakeries").child(bakeryID).setValue(bakery);
+                mDatabaseReference.child("users").child(id).child("bakeryID").setValue(bakeryID);
             }
         };
         initViews();

@@ -2,6 +2,8 @@ package gregmachado.com.panappfirebase.domain;
 
 import com.google.firebase.database.DatabaseReference;
 
+import java.util.List;
+
 import gregmachado.com.panappfirebase.util.LibraryClass;
 
 /**
@@ -18,11 +20,13 @@ public class Bakery {
     private String cnpj;
     private String bakeryImage;
     private Adress adress;
+    private boolean favorite;
+    private List<Product> productList;
 
     public Bakery() {}
 
     public Bakery(String id, String userID, String corporateName, String fantasyName, String fone,
-                  String email, String cnpj, String bakeryImage, Adress adress) {
+                  String email, String cnpj, String bakeryImage, Adress adress, boolean favorite, List<Product> productList) {
         this.id = id;
         this.userID = userID;
         this.corporateName = corporateName;
@@ -32,6 +36,8 @@ public class Bakery {
         this.cnpj = cnpj;
         this.bakeryImage = bakeryImage;
         this.adress = adress;
+        this.favorite = favorite;
+        this.productList = productList;
     }
 
     public String getId() {
@@ -104,6 +110,22 @@ public class Bakery {
 
     public void setAdress(Adress adress) {
         this.adress = adress;
+    }
+
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
+    }
+
+    public List<Product> getProductList() {
+        return productList;
+    }
+
+    public void setProductList(List<Product> productList) {
+        this.productList = productList;
     }
 
     public void saveDB(DatabaseReference.CompletionListener... completionListener) {

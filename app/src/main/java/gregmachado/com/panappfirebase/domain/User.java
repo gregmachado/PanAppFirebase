@@ -17,6 +17,7 @@ public class User {
     private boolean type;
     private boolean sendNotification;
     private String image;
+    private String bakeryID;
 
     public User() {
     }
@@ -95,6 +96,14 @@ public class User {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getBakeryID() {
+        return bakeryID;
+    }
+
+    public void setBakeryID(String bakeryID) {
+        this.bakeryID = bakeryID;
     }
 
     public void saveDB(DatabaseReference.CompletionListener... completionListener) {

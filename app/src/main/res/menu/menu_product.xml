@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search"
+        android:actionViewClass="android.widget.SearchView"
+        android:showAsAction="collapseActionView|ifRoom"
+        android:title="Buscar"
+        tools:ignore="AppCompatResource">
+    </item>
+</menu>

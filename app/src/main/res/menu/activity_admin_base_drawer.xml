@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_home_admin"
+            android:icon="@drawable/ic_home_black_24dp"
+            android:title="Home" />
+        <item
+            android:id="@+id/nav_products"
+            android:icon="@drawable/ic_products_black_24dp"
+            android:title="Produtos" />
+        <item
+            android:id="@+id/nav_my_bakery"
+            android:icon="@drawable/ic_store_black_24dp"
+            android:title="Minha Padaria" />
+        <item
+            android:id="@+id/nav_follow_orders_admin"
+            android:icon="@drawable/ic_follow_order_black_24dp"
+            android:title="Acompanhar Pedidos" />
+        <item
+            android:id="@+id/nav_history_admin"
+            android:icon="@drawable/ic_history_black_24dp"
+            android:title="Histórico" />
+        <item
+            android:id="@+id/nav_talk_whit_us_admin"
+            android:icon="@drawable/ic_talk_whit_us_black_24dp"
+            android:title="Fale Conosco" />
+        <item
+            android:id="@+id/nav_exit_admin"
+            android:icon="@drawable/ic_exit_to_app_black_24dp"
+            android:title="Sair" />
+    </group>
+
+</menu>

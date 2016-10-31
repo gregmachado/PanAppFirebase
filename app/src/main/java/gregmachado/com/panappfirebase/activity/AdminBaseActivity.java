@@ -13,35 +13,42 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 
 import gregmachado.com.panappfirebase.R;
+import gregmachado.com.panappfirebase.domain.Bakery;
+import gregmachado.com.panappfirebase.util.ImagePicker;
 import gregmachado.com.panappfirebase.util.LibraryClass;
 
 /**
  * Created by gregmachado on 29/10/16.
  */
 
-public class UserBaseActivity extends AppCompatActivity
+public class AdminBaseActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final String TAG = "MainActivity";
     protected FrameLayout frameLayout;
+    private String bakeryID, adminId;
     private Bundle params;
-    private String userName, userEmail;
-    private Long userId;
-    private TextView tvUserName, tvUserEmail;
+    private String adminName, adminEmail;
+    private TextView tvAdminName, tvAdminEmail;
+    private ImageView ivBakery;
+    private static String TAG = AdminBaseActivity.class.getSimpleName();
+    private Bakery bakery;
+    private static final int PICK_IMAGE_ID = 234;
     private DatabaseReference databaseReference;
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
+    private String id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_base);
+        setContentView(R.layout.activity_admin_base);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setTitle("Home");
@@ -52,16 +59,15 @@ public class UserBaseActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        //new GetBakeryAsyncTask(this).execute();
 
         Intent it = getIntent();
         params = it.getExtras();
 
         if (params != null) {
-            userName = params.getString("name");
-            //userId = params.getLong("id");
-            userEmail = params.getString("email");
+            adminName = params.getString("name");
+            bakeryID = params.getString("bakeryID");
+            adminEmail = params.getString("email");
         }
 
         authStateListener = new FirebaseAuth.AuthStateListener() {
@@ -69,7 +75,7 @@ public class UserBaseActivity extends AppCompatActivity
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
 
                 if (firebaseAuth.getCurrentUser() == null) {
-                    Intent intent = new Intent(UserBaseActivity.this, SelectLoginActivity.class);
+                    Intent intent = new Intent(AdminBaseActivity.this, SelectLoginActivity.class);
                     startActivity(intent);
                     finish();
                 }
@@ -81,7 +87,7 @@ public class UserBaseActivity extends AppCompatActivity
         databaseReference = LibraryClass.getFirebase();
         databaseReference.getRef();
 
-        frameLayout = (FrameLayout)findViewById(R.id.content_frame);
+        frameLayout = (FrameLayout) findViewById(R.id.content_frame);
     }
 
     @Override
@@ -90,10 +96,18 @@ public class UserBaseActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View header = navigationView.getHeaderView(0);
-        tvUserName = (TextView) header.findViewById(R.id.tv_user_name);
-        tvUserEmail = (TextView) header.findViewById(R.id.tv_user_email);
-        tvUserName.setText(userName);
-        tvUserEmail.setText(userEmail);
+        tvAdminName = (TextView) header.findViewById(R.id.tv_user_name);
+        tvAdminEmail = (TextView) header.findViewById(R.id.tv_user_email);
+        ivBakery = (ImageView) header.findViewById(R.id.iv_user);
+        tvAdminName.setText(adminName);
+        tvAdminEmail.setText(adminEmail);
+        ivBakery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent chooseImageIntent = ImagePicker.getPickImageIntent(AdminBaseActivity.this);
+                startActivityForResult(chooseImageIntent, PICK_IMAGE_ID);
+            }
+        });
     }
 
     @Override
@@ -109,7 +123,7 @@ public class UserBaseActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.user_base, menu);
+        getMenuInflater().inflate(R.menu.admin_base, menu);
         return true;
     }
 
@@ -133,36 +147,25 @@ public class UserBaseActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        //params.putLong("userId", userId);
+        params.putString("bakeryID", bakeryID);
 
-        if (id == R.id.nav_bakerys) {
-            Intent intentBakeryList = new Intent(UserBaseActivity.this, BakeryListActivity.class);
-            intentBakeryList.putExtras(params);
-            startActivity(intentBakeryList);
-        } else if (id == R.id.nav_favorites) {
-            //Intent intentFavoriteBakeryList = new Intent(UserBaseActivity.this, FavoriteBakeryListActivity.class);
-            //intentFavoriteBakeryList.putExtras(params);
-            //startActivity(intentFavoriteBakeryList);
-        } else if (id == R.id.nav_notification) {
+        if (id == R.id.nav_products) {
+            Intent intentProductAdmin = new Intent(AdminBaseActivity.this, ProductAdminActivity.class);
+            intentProductAdmin.putExtras(params);
+            startActivity(intentProductAdmin);
+        } else if (id == R.id.nav_follow_orders_admin) {
 
-        } else if (id == R.id.nav_follow_orders) {
-            //Intent intentRequest = new Intent(UserBaseActivity.this, RequestActivity.class);
-            //params.putBoolean("isAdmin", false);
-            //intentRequest.putExtras(params);
-            //startActivity(intentRequest);
-        } else if (id == R.id.nav_history) {
+        } else if (id == R.id.nav_history_admin) {
 
-        } else if (id == R.id.nav_home) {
+        } else if (id == R.id.nav_home_admin) {
 
-        } else if (id == R.id.nav_my_adrees) {
-            //Intent intentAdressList = new Intent(UserBaseActivity.this, AdressListActivity.class);
-            //intentAdressList.putExtras(params);
-            //startActivity(intentAdressList);
-        } else if (id == R.id.nav_offers) {
+        } else if (id == R.id.nav_my_bakery) {
+            /*Intent intentMyBakery = new Intent(AdminBaseActivity.this, MyBakeryActivity.class);
+            intentMyBakery.putExtras(params);
+            startActivity(intentMyBakery);*/
+        } else if (id == R.id.nav_talk_whit_us_admin) {
 
-        } else if (id == R.id.nav_talk_whit_us) {
-
-        } else if (id == R.id.nav_exit) {
+        } else if (id == R.id.nav_exit_admin) {
             FirebaseAuth.getInstance().signOut();
             finish();
         }
@@ -181,3 +184,4 @@ public class UserBaseActivity extends AppCompatActivity
         }
     }
 }
+

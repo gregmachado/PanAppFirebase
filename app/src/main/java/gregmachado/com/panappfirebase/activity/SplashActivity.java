@@ -58,17 +58,19 @@ public class SplashActivity extends AppCompatActivity implements Runnable {
                             User user = dataSnapshot.getValue(User.class);
                             String name = user.getName();
                             String email = user.getEmail();
+                            String bakeryID = user.getBakeryID();
                             params = new Bundle();
                             params.putString("name", name);
                             params.putString("email", email);
+                            params.putString("bakeryID", bakeryID);
                             if(!user.isType()){
                                 Intent intentHomeUser = new Intent(SplashActivity.this, UserBaseActivity.class);
                                 intentHomeUser.putExtras(params);
                                 startActivity(intentHomeUser);
                             } else {
-                                //Intent intentHomeAdmin = new Intent(SplashActivity.this, AdminBaseActivity.class);
-                                //intentHomeAdmin.putExtras(params);
-                                //startActivity(intentHomeAdmin);
+                                Intent intentHomeAdmin = new Intent(SplashActivity.this, AdminBaseActivity.class);
+                                intentHomeAdmin.putExtras(params);
+                                startActivity(intentHomeAdmin);
                             }
                         }
 
@@ -80,7 +82,7 @@ public class SplashActivity extends AppCompatActivity implements Runnable {
                 }
             }
         };
-        
+
         Handler handler = new Handler();
         handler.postDelayed(this, 3000);
     }
