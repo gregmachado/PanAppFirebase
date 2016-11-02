@@ -72,6 +72,7 @@ public class SplashActivity extends AppCompatActivity implements Runnable {
                                 intentHomeAdmin.putExtras(params);
                                 startActivity(intentHomeAdmin);
                             }
+                            finish();
                         }
 
                         @Override

@@ -3,7 +3,6 @@ package gregmachado.com.panappfirebase.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,14 +29,13 @@ import java.util.Iterator;
 import java.util.List;
 
 import gregmachado.com.panappfirebase.R;
-import gregmachado.com.panappfirebase.controller.CartController;
 import gregmachado.com.panappfirebase.domain.Product;
 import gregmachado.com.panappfirebase.viewHolder.ProductViewHolderUser;
 
 /**
  * Created by gregmachado on 30/10/16.
  */
-public class ProductListActivity extends AppCompatActivity {
+public class ProductListActivity extends CommonActivity {
 
     private static final String TAG = ProductListActivity.class.getSimpleName();
     private RecyclerView rvProduct;
@@ -54,7 +52,6 @@ public class ProductListActivity extends AppCompatActivity {
     DatabaseReference mDatabaseReference = database.getReference();
     private FirebaseAuth firebaseAuth;
     private ImageView icProduct;
-    private ProgressBar progressBar;
     private FloatingActionButton btnCart;
     private ArrayList<Product> productsToCart = new ArrayList<>();
     private String productName, category, image;
@@ -67,28 +64,9 @@ public class ProductListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //getLayoutInflater().inflate(R.layout.activity_product_admin, frameLayout);
         setContentView(R.layout.activity_product_list);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_product);
-        setSupportActionBar(toolbar);
         firebaseAuth = FirebaseAuth.getInstance();
+        initViews();
 
-        Intent it = getIntent();
-        params = it.getExtras();
-        if (params != null) {
-            bakeryId = params.getString("bakeryID");
-            name = params.getString("name");
-            userId = params.getString("userID");
-        }
-
-        setTitle("Produtos - " + name);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-        tvNoProducts = (TextView) findViewById(R.id.tv_no_products);
-        icProduct = (ImageView) findViewById(R.id.ic_product);
-        tvItens = (TextView) findViewById(R.id.tv_units);
-        tvPrice = (TextView) findViewById(R.id.tv_total_price);
-        progressBar = (ProgressBar) findViewById(R.id.simpleProgressBar);
-        rvProduct = (RecyclerView) findViewById(R.id.rv_product);
         if (rvProduct != null) {
             //to enable optimization of recyclerview
             rvProduct.setHasFixedSize(true);
@@ -96,38 +74,21 @@ public class ProductListActivity extends AppCompatActivity {
         rvProduct.setItemAnimator(new DefaultItemAnimator());
         //registerForContextMenu(rvProduct);
         rvProduct.setLayoutManager(new LinearLayoutManager(ProductListActivity.this));
-        btnCart = (FloatingActionButton) findViewById(R.id.btn_cart);
-        btnCart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                CartController controller = new CartController(getBaseContext());
-                for (Product productAux : productsToCart) {
-                    String dbName = productAux.getProductName();
-                    Double dbPrice = productAux.getProductPrice();
-                    String dbType = productAux.getType();
-                    String dbBakeryId = productAux.getBakeryId();
-                    //String dbImage = productAux.getProductImage();
-                    int dbItens = productAux.getItensSale();
-                    String dbId = productAux.getId();
-                    int dbUnit = productAux.getUnit();
-                    String result = controller.insert(dbId, dbName, null, dbPrice, dbType, dbBakeryId, dbItens, dbUnit);
-                }
-                Intent i = new Intent(ProductListActivity.this, ProductCartActivity.class);
-                params.putString("userID", userId);
-                params.putString("bakeryID", bakeryId);
-                i.putExtras(params);
-                startActivity(i);
-            }
-        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        progressBar.setVisibility(View.VISIBLE);
+        openProgressBar();
+        if(productsToCart!=null){
+            productsToCart.clear();
+        }
+        setValuesToolbarBottom("00", "00,00");
+        parcialPrice = 0.00;
         mDatabaseReference.child("bakeries").child(bakeryId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                closeProgressBar();
                 if (dataSnapshot.hasChild("products")) {
                     FirebaseRecyclerAdapter<Product, ProductViewHolderUser> adapter = new FirebaseRecyclerAdapter<Product, ProductViewHolderUser>(
                             Product.class,
@@ -254,6 +215,40 @@ public class ProductListActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void initViews() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_product);
+        setSupportActionBar(toolbar);
+        Intent it = getIntent();
+        params = it.getExtras();
+        if (params != null) {
+            bakeryId = params.getString("bakeryID");
+            name = params.getString("name");
+            userId = params.getString("userID");
+        }
+
+        setTitle("Produtos - " + name);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        tvNoProducts = (TextView) findViewById(R.id.tv_no_products);
+        icProduct = (ImageView) findViewById(R.id.ic_product);
+        tvItens = (TextView) findViewById(R.id.tv_units);
+        tvPrice = (TextView) findViewById(R.id.tv_total_price);
+        progressBar = (ProgressBar) findViewById(R.id.simpleProgressBar);
+        rvProduct = (RecyclerView) findViewById(R.id.rv_product);
+    }
+
+    public void openBasket(View view) {
+        Intent i = new Intent(ProductListActivity.this, ProductCartActivity.class);
+        params.putString("userID", userId);
+        params.putString("bakeryID", bakeryId);
+        params.putDouble("total", parcialPrice);
+        i.putExtra("cart", productsToCart);
+        i.putExtras(params);
+        startActivity(i);
     }
 
     private  class SearchFilter implements SearchView.OnQueryTextListener{

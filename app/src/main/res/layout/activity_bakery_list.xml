@@ -1,4 +1,4 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,40 +7,60 @@
     android:orientation="vertical"
     tools:context=".activity.BakeryListActivity">
 
-    <ProgressBar
-        android:id="@+id/simpleProgressBar"
-        android:layout_width="60sp"
-        android:layout_height="60sp"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:visibility="invisible" />
-
-    <ImageView
-        android:id="@+id/ic_bakery"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="40dp"
-        android:visibility="invisible"
-        android:src="@drawable/ic_store_black_36dp" />
-
-    <com.devspark.robototextview.widget.RobotoTextView
-        android:id="@+id/tv_no_bakeries"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerInParent="true"
-        android:layout_marginTop="100dp"
-        android:text="@string/no_bakeries"
-        android:textColor="@color/black_50_opacity"
-        android:textSize="15sp"
-        android:visibility="invisible"
-        app:typeface="roboto_light_italic" />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_bakery"
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-</RelativeLayout>
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar_bakery"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ProgressBar
+            android:id="@+id/simpleProgressBar"
+            android:layout_width="60sp"
+            android:layout_height="60sp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/ic_bakery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="40dp"
+            android:src="@drawable/ic_store_black_36dp"
+            android:visibility="invisible" />
+
+        <com.devspark.robototextview.widget.RobotoTextView
+            android:id="@+id/tv_no_bakeries"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="100dp"
+            android:text="@string/no_bakeries"
+            android:textColor="@color/black_50_opacity"
+            android:textSize="15sp"
+            android:visibility="invisible"
+            app:typeface="roboto_light_italic" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_bakery"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </RelativeLayout>
+
+</LinearLayout>

@@ -13,7 +13,7 @@
         android:gravity="center_vertical"
         android:layout_marginLeft="12dp"
         android:layout_marginStart="12dp"
-        android:text="Total"
+        android:text="@string/total"
         android:textColor="#A9A9A9"
         android:textSize="24sp" />
 
@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="center_vertical"
-        android:text="R$"
+        android:text="@string/real_tag"
         android:layout_marginStart="20dp"
         android:layout_marginLeft="20dp"
         android:textColor="#696969"
@@ -36,7 +36,7 @@
         android:layout_marginLeft="4dp"
         android:layout_marginStart="4dp"
         android:gravity="center_vertical"
-        android:text="00,00"
+        android:text="@string/zero_value"
         android:textColor="#696969"
         android:textSize="24sp" />
 
@@ -46,7 +46,7 @@
         android:layout_height="36sp"
         android:background="@color/colorPrimary"
         android:elevation="8dp"
-        android:text="Finalizar"
+        android:text="@string/finish"
         android:layout_marginStart="40dp"
         android:layout_marginLeft="40dp"
         android:layout_marginRight="10dp"
@@ -55,6 +55,8 @@
         android:textSize="12sp"
         android:paddingLeft="4dp"
         android:drawableLeft="@drawable/ic_check_circle_white_18dp"
+        android:drawableStart="@drawable/ic_check_circle_white_18dp"
+        android:onClick="finishBuy"
         android:textColor="#ffffff" />
 
 </LinearLayout>

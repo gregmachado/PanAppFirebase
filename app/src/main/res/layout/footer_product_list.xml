@@ -10,8 +10,9 @@
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:id="@+id/ic_cart"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        android:layout_width="26dp"
+        android:layout_height="26dp"
+        android:layout_gravity="center"
         android:src="@drawable/ic_shopping_cart_white_18dp" />
 
     <TextView
@@ -20,7 +21,7 @@
         android:layout_height="match_parent"
         android:gravity="center_vertical"
         android:paddingLeft="8dp"
-        android:text="00"
+        android:text="@string/zero"
         android:textColor="#ffffff"
         android:textSize="24sp" />
 
@@ -30,7 +31,7 @@
         android:layout_height="match_parent"
         android:gravity="center_vertical"
         android:paddingLeft="6dp"
-        android:text="Itens"
+        android:text="@string/items"
         android:textColor="#ffffff"
         android:textSize="24sp" />
 
@@ -38,7 +39,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:gravity="center_vertical"
-        android:text="R$"
+        android:text="@string/real_tag"
         android:layout_marginStart="90dp"
         android:layout_marginLeft="90dp"
         android:textColor="#ffffff"
@@ -51,7 +52,7 @@
         android:layout_marginEnd="4dp"
         android:layout_marginRight="4dp"
         android:gravity="center_vertical|end"
-        android:text="00,00"
+        android:text="@string/zero_value"
         android:textColor="#ffffff"
         android:textSize="24sp" />
 

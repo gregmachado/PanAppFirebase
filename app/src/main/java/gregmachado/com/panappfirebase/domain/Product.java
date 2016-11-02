@@ -1,9 +1,11 @@
 package gregmachado.com.panappfirebase.domain;
 
+import java.io.Serializable;
+
 /**
  * Created by gregmachado on 30/10/16.
  */
-public class Product {
+public class Product implements Serializable{
 
     private String id;
     private String productName;

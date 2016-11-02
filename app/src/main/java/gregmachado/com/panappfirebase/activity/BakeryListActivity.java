@@ -16,10 +16,12 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,7 +62,6 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
     private Context context;
     private Double userLatitude, userLongitude;
     private double distance;
-    ;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference mDatabaseReference = database.getReference();
     private FirebaseAuth firebaseAuth;
@@ -71,10 +72,12 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = getApplicationContext();
-        //frameLayout.removeAllViews();
-        //getLayoutInflater().inflate(R.layout.activity_bakery_list, frameLayout);
         setContentView(R.layout.activity_bakery_list);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_bakery);
+        setSupportActionBar(toolbar);
         setTitle("Padarias");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         initViews();
         firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
@@ -96,11 +99,13 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
     @Override
     protected void onResume() {
         super.onResume();
+        openProgressBar();
         callConnection();
         mDatabaseReference.child("bakeries").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.getChildrenCount() > 0) {
+                    closeProgressBar();
                     adapter = new FirebaseRecyclerAdapter<Bakery, BakeryViewHolder>(
                             Bakery.class,
                             R.layout.card_bakery,
@@ -245,6 +250,7 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
         tvNoBakeries = (TextView) findViewById(R.id.tv_no_bakeries);
         rvBakery = (RecyclerView) findViewById(R.id.rv_bakery);
         icBakery = (ImageView) findViewById(R.id.ic_bakery);
+        progressBar = (ProgressBar) findViewById(R.id.simpleProgressBar);
         if (rvBakery != null) {
             //to enable optimization of recyclerview
             rvBakery.setHasFixedSize(true);

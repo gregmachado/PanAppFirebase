@@ -1,19 +1,17 @@
 package gregmachado.com.panappfirebase.activity;
 
 import android.annotation.TargetApi;
-import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,9 +22,7 @@ import java.util.List;
 
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.adapter.CartAdapter;
-import gregmachado.com.panappfirebase.controller.CartController;
 import gregmachado.com.panappfirebase.domain.Product;
-import gregmachado.com.panappfirebase.helper.CartDB;
 import gregmachado.com.panappfirebase.interfaces.ItemClickListener;
 import gregmachado.com.panappfirebase.pagSeguro.PagSeguroAddress;
 import gregmachado.com.panappfirebase.pagSeguro.PagSeguroAreaCode;
@@ -44,113 +40,59 @@ import gregmachado.com.panappfirebase.util.AppUtil;
 /**
  * Created by gregmachado on 02/10/16.
  */
-public class ProductCartActivity extends AppCompatActivity implements ItemClickListener {
+public class ProductCartActivity extends CommonActivity implements ItemClickListener {
 
     private static final String TAG = ProductCartActivity.class.getSimpleName();
     private RecyclerView rvProduct;
     private CartAdapter cartAdapter;
-    private List<Product> list;
+    private List<Product> _list;
     private Product product;
     private String name;
     private TextView tvItens, tvPrice;
-    private List<Product> _list;
-    private CartDB database;
     private Double priceTotal = 0.00, price;
-    private Button btnFinishPurchase;
     private Bundle params;
     private String userId, bakeryId;
     private String[][] itens;
-    private CartController controller;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //getLayoutInflater().inflate(R.layout.activity_product_admin, frameLayout);
         setContentView(R.layout.activity_cart);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_cart);
-        setSupportActionBar(toolbar);
-        controller = new CartController(getBaseContext());
-
-        Intent it = getIntent();
-        params = it.getExtras();
-        if (params != null) {
-            bakeryId = params.getString("bakeryID");
-        }
-
-        setTitle("Meu carrinho");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-        tvItens = (TextView) findViewById(R.id.tv_units);
-        tvPrice = (TextView) findViewById(R.id.tv_total_price_cart);
-        rvProduct = (RecyclerView) findViewById(R.id.product_cart_list);
-        rvProduct.setItemAnimator(new DefaultItemAnimator());
-        registerForContextMenu(rvProduct);
-        loadCartList();
-        btnFinishPurchase = (Button) findViewById(R.id.btn_finish_purchase);
-        btnFinishPurchase.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // at this point you should check if the user has internet connection
-                // before stating the pagseguro checkout process.(it will need internet connection)
-
-                // simulating an user buying
-                final PagSeguroFactory pagseguro = PagSeguroFactory.instance();
-                itens = getItens(_list);
-                List<PagSeguroItem> shoppingCart = new ArrayList<>();
-                for (Iterator<Product> iterator = _list.iterator(); iterator.hasNext(); ) {
-                    Product product = iterator.next();
-                    shoppingCart.add(pagseguro.item(String.valueOf(product.getId()), product.getProductName(), BigDecimal.valueOf(product.getProductPrice()), product.getUnit(), 300));
-                }
-                    PagSeguroPhone buyerPhone = pagseguro.phone(PagSeguroAreaCode.DDD81, "998187427");
-                    PagSeguroBuyer buyer = pagseguro.buyer("Ricardo Ferreira", "14/02/1978", "15061112000", "test@email.com.br", buyerPhone);
-                    PagSeguroAddress buyerAddress = pagseguro.address("Av. Boa Viagem", "51", "Apt201", "Boa Viagem", "51030330", "Recife", PagSeguroBrazilianStates.PERNAMBUCO);
-                    PagSeguroShipping buyerShippingOption = pagseguro.shipping(PagSeguroShippingType.NOT_DEFINED, buyerAddress);
-                    PagSeguroCheckout checkout = pagseguro.checkout("Ref0001", shoppingCart, buyer, buyerShippingOption);
-                // starting payment process
-                controller.deleteAll();
-                new PagSeguroPayment(ProductCartActivity.this).pay(checkout.buildCheckoutXml());
-            }
-        });
+        initViews();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        if (_list != null) {
+            _list.clear();
+        }
+        Intent it = getIntent();
+        params = it.getExtras();
+        if (params != null) {
+            bakeryId = params.getString("bakeryID");
+            int items = params.getInt("items");
+            priceTotal = params.getDouble("total");
+            _list = (ArrayList<Product>)
+                    getIntent().getSerializableExtra("cart");
+        }
+        loadCartList();
+        setValuesToolbarBottom(String.valueOf(priceTotal));
     }
 
     @Override
     public void onClick(View view, int position) {
-        final Product product = list.get(position);
+        final Product product = _list.get(position);
         Toast.makeText(this, "Produto: " + product.getProductName(), Toast.LENGTH_SHORT).show();
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public void loadCartList() {
-        ProgressDialog pd;
-        pd = new ProgressDialog(this);
-        pd.setMessage("Carregando carrinho...");
-        pd.show();
-
-        CartController controller = new CartController(getBaseContext());
-        Cursor cursor = controller.load();
-        _list = cursor2List(cursor);
         setValuesToolbarBottom(String.valueOf(priceTotal));
-
-        /*
-        int ii, jj;
-
-        for (ii=0; ii<itens.length; ii++){
-            for (jj=0; jj<itens[ii].length; jj++){
-                Log.i("Log", "produto " + ii + itens[ii][jj]);
-            }
-        }
-        */
         rvProduct.setLayoutManager(new LinearLayoutManager(this));
-
         cartAdapter = new CartAdapter(this, this, _list, this);
         rvProduct.setAdapter(cartAdapter);
-        pd.dismiss();
     }
 
     private String[][] getItens(List<Product> list) {
@@ -175,7 +117,6 @@ public class ProductCartActivity extends AppCompatActivity implements ItemClickL
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                controller.deleteAll();
                 onBackPressed();
                 return true;
         }
@@ -191,39 +132,18 @@ public class ProductCartActivity extends AppCompatActivity implements ItemClickL
         return price;
     }
 
-    protected List<Product> cursor2List(Cursor cursor){
-        List<Product> products = new ArrayList<Product>();
-        cursor.moveToFirst();
-        do{
-            Product product = new Product();
-            product.setId(cursor.getString(cursor.getColumnIndex(database.ID)));
-            product.setProductName(cursor.getString(cursor.getColumnIndex(database.NAME)));
-            product.setType(cursor.getString(cursor.getColumnIndex(database.TYPE)));
-            product.setUnit(cursor.getInt(cursor.getColumnIndex(database.UNIT)));
-            //product.setProductImage(cursor.getString(cursor.getColumnIndex(database.IMAGE)));
-            product.setBakeryId(cursor.getString(cursor.getColumnIndex(database.BAKERY_ID)));
-            product.setItensSale(cursor.getInt(cursor.getColumnIndex(database.ITENS_SALE)));
-            product.setProductPrice(cursor.getDouble(cursor.getColumnIndex(database.PRICE)));
-            products.add(product);
-            price = product.getProductPrice() * product.getUnit();
-            priceTotal = priceTotal + price;
-
-        } while(cursor.moveToNext());
-        return products;
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_CANCELED) {
             // se foi uma tentativa de pagamento
-            if(requestCode==PagSeguroPayment.PAG_SEGURO_REQUEST_CODE){
+            if (requestCode == PagSeguroPayment.PAG_SEGURO_REQUEST_CODE) {
                 // exibir confirmação de cancelamento
                 final String msg = getString(R.string.transaction_cancelled);
                 AppUtil.showConfirmDialog(this, msg, null);
             }
         } else if (resultCode == RESULT_OK) {
             // se foi uma tentativa de pagamento
-            if(requestCode==PagSeguroPayment.PAG_SEGURO_REQUEST_CODE){
+            if (requestCode == PagSeguroPayment.PAG_SEGURO_REQUEST_CODE) {
                 // exibir confirmação de sucesso
                 final String msg = getString(R.string.transaction_succeded);
                 AppUtil.showConfirmDialog(this, msg, null);
@@ -233,12 +153,11 @@ public class ProductCartActivity extends AppCompatActivity implements ItemClickL
                 intentSchedule.putExtras(params);
                 startActivity(intentSchedule);*/
             }
-        }
-        else if(resultCode == PagSeguroPayment.PAG_SEGURO_REQUEST_CODE){
-            switch (data.getIntExtra(PagSeguroPayment.PAG_SEGURO_EXTRA, 0)){
-                case PagSeguroPayment.PAG_SEGURO_REQUEST_SUCCESS_CODE:{
-                    final String msg =getString(R.string.transaction_succeded);
-                    AppUtil.showConfirmDialog(this,msg,null);
+        } else if (resultCode == PagSeguroPayment.PAG_SEGURO_REQUEST_CODE) {
+            switch (data.getIntExtra(PagSeguroPayment.PAG_SEGURO_EXTRA, 0)) {
+                case PagSeguroPayment.PAG_SEGURO_REQUEST_SUCCESS_CODE: {
+                    final String msg = getString(R.string.transaction_succeded);
+                    AppUtil.showConfirmDialog(this, msg, null);
                     /*Intent intentSchedule = new Intent(ProductCartActivity.this, ScheduleActivity.class);
                     params.putString("userID", userId);
                     params.putSerializable("itens", itens);
@@ -246,17 +165,71 @@ public class ProductCartActivity extends AppCompatActivity implements ItemClickL
                     startActivity(intentSchedule);*/
                     break;
                 }
-                case PagSeguroPayment.PAG_SEGURO_REQUEST_FAILURE_CODE:{
+                case PagSeguroPayment.PAG_SEGURO_REQUEST_FAILURE_CODE: {
                     final String msg = getString(R.string.transaction_error);
-                    AppUtil.showConfirmDialog(this,msg,null);
+                    AppUtil.showConfirmDialog(this, msg, null);
                     break;
                 }
-                case PagSeguroPayment.PAG_SEGURO_REQUEST_CANCELLED_CODE:{
+                case PagSeguroPayment.PAG_SEGURO_REQUEST_CANCELLED_CODE: {
                     final String msg = getString(R.string.transaction_cancelled);
-                    AppUtil.showConfirmDialog(this,msg,null);
+                    AppUtil.showConfirmDialog(this, msg, null);
                     break;
                 }
             }
         }
     }
+
+    @Override
+    protected void initViews() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_cart);
+        setSupportActionBar(toolbar);
+        setTitle("Meu carrinho");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        tvItens = (TextView) findViewById(R.id.tv_units);
+        tvPrice = (TextView) findViewById(R.id.tv_total_price_cart);
+        rvProduct = (RecyclerView) findViewById(R.id.product_cart_list);
+        rvProduct.setItemAnimator(new DefaultItemAnimator());
+        registerForContextMenu(rvProduct);
+    }
+
+    public void finishBuy(View view) {
+        // at this point you should check if the user has internet connection
+        // before stating the pagseguro checkout process.(it will need internet connection)
+
+        // simulating an user buying
+        final PagSeguroFactory pagseguro = PagSeguroFactory.instance();
+        itens = getItens(_list);
+        List<PagSeguroItem> shoppingCart = new ArrayList<>();
+        for (Iterator<Product> iterator = _list.iterator(); iterator.hasNext(); ) {
+            Product product = iterator.next();
+            shoppingCart.add(pagseguro.item(product.getId(), product.getProductName(), BigDecimal.valueOf(product.getProductPrice()), product.getUnit(), 300));
+        }
+        PagSeguroPhone buyerPhone = pagseguro.phone(PagSeguroAreaCode.DDD81, "998187427");
+        PagSeguroBuyer buyer = pagseguro.buyer("Ricardo Ferreira", "14/02/1978", "15061112000", "test@email.com.br", buyerPhone);
+        PagSeguroAddress buyerAddress = pagseguro.address("Av. Boa Viagem", "51", "Apt201", "Boa Viagem", "51030330", "Recife", PagSeguroBrazilianStates.PERNAMBUCO);
+        PagSeguroShipping buyerShippingOption = pagseguro.shipping(PagSeguroShippingType.NOT_DEFINED, buyerAddress);
+        PagSeguroCheckout checkout = pagseguro.checkout("Ref0001", shoppingCart, buyer, buyerShippingOption);
+        // starting payment process
+        new PagSeguroPayment(ProductCartActivity.this).pay(checkout.buildCheckoutXml());
+    }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Sair?");
+        builder.setMessage("Se você voltar agora perderá seus itens. Deseja realmente sair?");
+        builder.setPositiveButton("SIM", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                finish();
+            }
+        });
+        builder.setNegativeButton("NÃO", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
 }

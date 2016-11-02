@@ -50,7 +50,7 @@
             android:layout_alignParentTop="true"
             android:layout_centerInParent="true"
             android:layout_marginTop="100dp"
-            android:text="Não há produtos cadastrados!"
+            android:text="@string/no_products"
             android:visibility="invisible"
             android:textColor="@color/black_50_opacity"
             android:textSize="15sp"
@@ -65,13 +65,16 @@
             android:id="@+id/btn_cart"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:elevation="6dp"
             android:src="@drawable/ic_shopping_cart_white_18dp"
             android:background="@color/colorPrimaryDark"
             android:layout_marginBottom="48dp"
             android:layout_marginRight="16dp"
+            android:layout_marginEnd="16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="openBasket"
             tools:ignore="RelativeOverlap" />
 
         <RelativeLayout
