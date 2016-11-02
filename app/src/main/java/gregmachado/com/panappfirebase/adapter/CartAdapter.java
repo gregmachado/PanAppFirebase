@@ -1,10 +1,7 @@
 package gregmachado.com.panappfirebase.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
-import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,10 +48,6 @@ public class CartAdapter extends RecyclerView.Adapter<CartViewHolder> {
         productViewHolder.tvProductName.setText(products.get(i).getProductName());
         productViewHolder.tvPrice.setText(String.valueOf(products.get(i).getProductPrice()));
         productViewHolder.tvUnits.setText(String.valueOf(products.get(i).getUnit()));
-
-        String strBase64 = products.get(i).getProductImage();
-        byte[] imgBytes = Base64.decode(strBase64, Base64.DEFAULT);
-        Bitmap bitmap = BitmapFactory.decodeByteArray(imgBytes, 0, imgBytes.length);
 
         //productViewHolder.ivProduct.setImageBitmap(bitmap);
 

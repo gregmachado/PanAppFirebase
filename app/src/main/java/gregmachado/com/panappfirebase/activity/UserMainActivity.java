@@ -7,7 +7,6 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,14 +24,12 @@ import gregmachado.com.panappfirebase.util.LibraryClass;
  * Created by gregmachado on 29/10/16.
  */
 
-public class UserBaseActivity extends AppCompatActivity
+public class UserMainActivity extends CommonActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "MainActivity";
     protected FrameLayout frameLayout;
-    private Bundle params;
     private String userName, userEmail;
-    private Long userId;
     private TextView tvUserName, tvUserEmail;
     private DatabaseReference databaseReference;
     private FirebaseAuth firebaseAuth;
@@ -60,40 +57,30 @@ public class UserBaseActivity extends AppCompatActivity
 
         if (params != null) {
             userName = params.getString("name");
-            //userId = params.getLong("id");
             userEmail = params.getString("email");
         }
-
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
 
                 if (firebaseAuth.getCurrentUser() == null) {
-                    Intent intent = new Intent(UserBaseActivity.this, SelectLoginActivity.class);
+                    Intent intent = new Intent(UserMainActivity.this, SelectLoginActivity.class);
                     startActivity(intent);
                     finish();
                 }
             }
         };
-
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseAuth.addAuthStateListener(authStateListener);
         databaseReference = LibraryClass.getFirebase();
         databaseReference.getRef();
-
         frameLayout = (FrameLayout)findViewById(R.id.content_frame);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        View header = navigationView.getHeaderView(0);
-        tvUserName = (TextView) header.findViewById(R.id.tv_user_name);
-        tvUserEmail = (TextView) header.findViewById(R.id.tv_user_email);
-        tvUserName.setText(userName);
-        tvUserEmail.setText(userEmail);
+        initViews();
     }
 
     @Override
@@ -133,20 +120,19 @@ public class UserBaseActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        //params.putLong("userId", userId);
 
         if (id == R.id.nav_bakerys) {
-            Intent intentBakeryList = new Intent(UserBaseActivity.this, BakeryListActivity.class);
+            Intent intentBakeryList = new Intent(UserMainActivity.this, BakeryListActivity.class);
             intentBakeryList.putExtras(params);
             startActivity(intentBakeryList);
         } else if (id == R.id.nav_favorites) {
-            //Intent intentFavoriteBakeryList = new Intent(UserBaseActivity.this, FavoriteBakeryListActivity.class);
+            //Intent intentFavoriteBakeryList = new Intent(UserMainActivity.this, FavoriteBakeryListActivity.class);
             //intentFavoriteBakeryList.putExtras(params);
             //startActivity(intentFavoriteBakeryList);
         } else if (id == R.id.nav_notification) {
 
         } else if (id == R.id.nav_follow_orders) {
-            //Intent intentRequest = new Intent(UserBaseActivity.this, RequestActivity.class);
+            //Intent intentRequest = new Intent(UserMainActivity.this, RequestActivity.class);
             //params.putBoolean("isAdmin", false);
             //intentRequest.putExtras(params);
             //startActivity(intentRequest);
@@ -155,7 +141,7 @@ public class UserBaseActivity extends AppCompatActivity
         } else if (id == R.id.nav_home) {
 
         } else if (id == R.id.nav_my_adrees) {
-            //Intent intentAdressList = new Intent(UserBaseActivity.this, AdressListActivity.class);
+            //Intent intentAdressList = new Intent(UserMainActivity.this, AdressListActivity.class);
             //intentAdressList.putExtras(params);
             //startActivity(intentAdressList);
         } else if (id == R.id.nav_offers) {
@@ -179,5 +165,16 @@ public class UserBaseActivity extends AppCompatActivity
         if (authStateListener != null) {
             firebaseAuth.removeAuthStateListener(authStateListener);
         }
+    }
+
+    @Override
+    protected void initViews() {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        View header = navigationView.getHeaderView(0);
+        tvUserName = (TextView) header.findViewById(R.id.tv_user_name);
+        tvUserEmail = (TextView) header.findViewById(R.id.tv_user_email);
+        tvUserName.setText(userName);
+        tvUserEmail.setText(userEmail);
     }
 }

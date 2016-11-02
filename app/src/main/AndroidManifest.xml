@@ -40,13 +40,14 @@
         <activity android:name=".activity.LoginEmailActivity" />
         <activity android:name=".activity.RegisterActivity" />
         <activity android:name=".activity.RegisterBakeryActivity" />
-        <activity android:name=".activity.UserBaseActivity" />
-        <activity android:name=".activity.AdminBaseActivity" />
+        <activity android:name=".activity.UserMainActivity" />
+        <activity android:name=".activity.AdminMainActivity" />
         <activity android:name=".activity.BakeryListActivity" />
         <activity android:name=".activity.FormProductActivity" />
         <activity android:name=".activity.ProductAdminActivity" />
         <activity android:name=".activity.ProductListActivity" />
         <activity android:name=".activity.ProductCartActivity" />
+        <activity android:name=".pagSeguro.PagSeguroActivity" />
     </application>
 
 </manifest>

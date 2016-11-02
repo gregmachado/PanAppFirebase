@@ -10,10 +10,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -42,48 +39,20 @@ public class LoginEmailActivity extends CommonActivity {
     private EditText inputPassword;
     private String email;
     private String password;
-    private CheckBox cbRememberMe;
-    private Bundle params;
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
     private User user;
-    private ProgressBar progressBar;
     private DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_email);
-
-        params = new Bundle();
-        resources = getResources();
         firebaseAuth = FirebaseAuth.getInstance();
         authStateListener = getFirebaseAuthResultHandler();
         databaseReference = LibraryClass.getFirebase();
         databaseReference.getRef();
         initViews();
-        initWatchers();
-
-        Button btnLogin = (Button) findViewById(R.id.btn_sign);
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (validateFields()) {
-                    openProgressDialog("Autenticando...", "Aguarde um momento!");
-                    initUser();
-                    verifyLogin();
-                }
-            }
-        });
-
-        Button btnRegister = (Button) findViewById(R.id.btn_sign_up);
-        btnRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LoginEmailActivity.this, RegisterActivity.class);
-                startActivity(intent);
-            }
-        });
     }
 
     @Override
@@ -103,6 +72,29 @@ public class LoginEmailActivity extends CommonActivity {
         if (authStateListener != null) {
             firebaseAuth.removeAuthStateListener(authStateListener);
         }
+    }
+
+    @Override
+    protected void initViews() {
+        inputEmail = (AutoCompleteTextView) findViewById(R.id.et_login_email);
+        inputPassword = (EditText) findViewById(R.id.et_login_senha);
+        resources = getResources();
+        TextWatcher textWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                callClearErrors(s);
+            }
+        };
+        inputEmail.addTextChangedListener(textWatcher);
+        inputPassword.addTextChangedListener(textWatcher);
     }
 
     private FirebaseAuth.AuthStateListener getFirebaseAuthResultHandler() {
@@ -129,7 +121,6 @@ public class LoginEmailActivity extends CommonActivity {
         };
         return (callback);
     }
-
 
     /**
      * Chama o método para limpar erros
@@ -196,33 +187,7 @@ public class LoginEmailActivity extends CommonActivity {
         }
     }
 
-    @Override
-    protected void initViews() {
-        inputEmail = (AutoCompleteTextView) findViewById(R.id.et_login_email);
-        inputPassword = (EditText) findViewById(R.id.et_login_senha);
-    }
-
-    private void initWatchers() {
-        TextWatcher textWatcher = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                callClearErrors(s);
-            }
-        };
-        inputEmail.addTextChangedListener(textWatcher);
-        inputPassword.addTextChangedListener(textWatcher);
-    }
-
-    @Override
-    protected void initUser() {
+    private void initUser() {
         user = new User();
         user.setEmail(inputEmail.getText().toString());
         final Encryption cripto = Encryption.getInstance(inputPassword.getText().toString());
@@ -270,11 +235,11 @@ public class LoginEmailActivity extends CommonActivity {
                 params.putString("email", email);
                 params.putString("bakeryID", bakeryID);
                 if(!user.isType()){
-                    Intent intentHomeUser = new Intent(LoginEmailActivity.this, UserBaseActivity.class);
+                    Intent intentHomeUser = new Intent(LoginEmailActivity.this, UserMainActivity.class);
                     intentHomeUser.putExtras(params);
                     startActivity(intentHomeUser);
                 } else {
-                    Intent intentHomeAdmin = new Intent(LoginEmailActivity.this, AdminBaseActivity.class);
+                    Intent intentHomeAdmin = new Intent(LoginEmailActivity.this, AdminMainActivity.class);
                     intentHomeAdmin.putExtras(params);
                     startActivity(intentHomeAdmin);
                 }
@@ -287,12 +252,27 @@ public class LoginEmailActivity extends CommonActivity {
         });
     }
 
-    @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         showSnackbar(connectionResult.getErrorMessage());
     }
 
     private boolean isNameOk(User user, FirebaseUser firebaseUser) {
         return (user.getName() != null || firebaseUser.getDisplayName() != null);
+    }
+
+    public void forgotPass(View view) {
+    }
+
+    public void signUp(View view) {
+        Intent intent = new Intent(LoginEmailActivity.this, RegisterActivity.class);
+        startActivity(intent);
+    }
+
+    public void signIn(View view) {
+        if (validateFields()) {
+            openProgressDialog("Autenticando...", "Aguarde um momento!");
+            initUser();
+            verifyLogin();
+        }
     }
 }

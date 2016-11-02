@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
@@ -30,8 +29,11 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
@@ -44,54 +46,41 @@ import gregmachado.com.panappfirebase.viewHolder.BakeryViewHolder;
  * Created by gregmachado on 29/10/16.
  */
 
-public class BakeryListActivity extends UserBaseActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class BakeryListActivity extends CommonActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     private static final String TAG = BakeryListActivity.class.getSimpleName();
     private static final int PERMISSION_REQUEST_CODE = 555;
     private RecyclerView rvBakery;
     private String bakeryID;
-    private Bundle params;
     private TextView tvNoBakeries;
     private List<Bakery> list;
     private Bakery bakery;
-    private Resources resources;
     private GoogleApiClient googleApiClient;
     private Location l;
-    Context context;
+    private Context context;
     private Double userLatitude, userLongitude;
-    private double distance;;
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference mDatabaseReference = database.getReference();
+    private double distance;
+    ;
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private DatabaseReference mDatabaseReference = database.getReference();
     private FirebaseAuth firebaseAuth;
     private ImageView icBakery;
-    FirebaseRecyclerAdapter<Bakery,BakeryViewHolder> adapter;
+    private FirebaseRecyclerAdapter<Bakery, BakeryViewHolder> adapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = getApplicationContext();
-        frameLayout.removeAllViews();
-        getLayoutInflater().inflate(R.layout.activity_bakery_list, frameLayout);
+        //frameLayout.removeAllViews();
+        //getLayoutInflater().inflate(R.layout.activity_bakery_list, frameLayout);
+        setContentView(R.layout.activity_bakery_list);
         setTitle("Padarias");
+        initViews();
         firebaseAuth = FirebaseAuth.getInstance();
-
-        params = new Bundle();
-        tvNoBakeries = (TextView) findViewById(R.id.tv_no_bakeries);
-        rvBakery = (RecyclerView) findViewById(R.id.rv_bakery);
-        icBakery = (ImageView) findViewById(R.id.ic_bakery);
-        if (rvBakery != null) {
-            //to enable optimization of recyclerview
-            rvBakery.setHasFixedSize(true);
-        }
-        rvBakery.setItemAnimator(new DefaultItemAnimator());
-        //registerForContextMenu(rvBakery);
-        rvBakery.setLayoutManager(new LinearLayoutManager(BakeryListActivity.this));
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         assert firebaseUser != null;
         String id = firebaseUser.getUid();
 
-        resources = getResources();
-        Intent it = getIntent();
         LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
         boolean enabled = service
                 .isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -108,45 +97,60 @@ public class BakeryListActivity extends UserBaseActivity implements GoogleApiCli
     protected void onResume() {
         super.onResume();
         callConnection();
-        adapter = new FirebaseRecyclerAdapter<Bakery, BakeryViewHolder>(
-                Bakery.class,
-                R.layout.card_bakery,
-                BakeryViewHolder.class,
-                //referencing the node where we want the database to store the data from our Object
-                mDatabaseReference.child("bakeries").getRef()
-        ){
+        mDatabaseReference.child("bakeries").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            protected void populateViewHolder(BakeryViewHolder viewHolder, final Bakery model, final int position) {
-                if(tvNoBakeries.getVisibility()== View.VISIBLE){
-                    tvNoBakeries.setVisibility(View.GONE);
-                }
-                if(icBakery.getVisibility()==View.VISIBLE){
-                    icBakery.setVisibility(View.GONE);
-                }
-                viewHolder.tvBakeryName.setText(model.getFantasyName());
-                viewHolder.tvPhone.setText(model.getFone());
-                viewHolder.tvDistrict.setText(model.getAdress().getDistrict());
-                distance = GeoLocation.distanceCalculate(userLatitude, userLongitude,
-                        model.getAdress().getLatitude(), model.getAdress().getLongitude());
-                viewHolder.tvDistance.setText(String.valueOf(distance));
-                //Picasso.with(MainActivity.this).load(model.getMoviePoster()).into(viewHolder.ivMoviePoster);
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.getChildrenCount() > 0) {
+                    adapter = new FirebaseRecyclerAdapter<Bakery, BakeryViewHolder>(
+                            Bakery.class,
+                            R.layout.card_bakery,
+                            BakeryViewHolder.class,
+                            //referencing the node where we want the database to store the data from our Object
+                            mDatabaseReference.child("bakeries").getRef()
+                    ) {
+                        @Override
+                        protected void populateViewHolder(BakeryViewHolder viewHolder, final Bakery model, final int position) {
+                            if (tvNoBakeries.getVisibility() == View.VISIBLE) {
+                                tvNoBakeries.setVisibility(View.GONE);
+                            }
+                            if (icBakery.getVisibility() == View.VISIBLE) {
+                                icBakery.setVisibility(View.GONE);
+                            }
+                            viewHolder.tvBakeryName.setText(model.getFantasyName());
+                            viewHolder.tvPhone.setText(model.getFone());
+                            viewHolder.tvDistrict.setText(model.getAdress().getDistrict());
+                            distance = GeoLocation.distanceCalculate(userLatitude, userLongitude,
+                                    model.getAdress().getLatitude(), model.getAdress().getLongitude());
+                            viewHolder.tvDistance.setText(String.valueOf(distance));
+                            //Picasso.with(MainActivity.this).load(model.getMoviePoster()).into(viewHolder.ivMoviePoster);
 
-                viewHolder.mView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Log.w(TAG, "You clicked on "+ model.getId());
-                        bakeryID = model.getId();
-                        String name = model.getFantasyName();
-                        params.putString("bakeryID", bakeryID);
-                        params.putString("name", name);
-                        Intent intentProductList = new Intent(BakeryListActivity.this, ProductListActivity.class);
-                        intentProductList.putExtras(params);
-                        startActivity(intentProductList);
-                    }
-                });
+                            viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Log.w(TAG, "You clicked on " + model.getId());
+                                    bakeryID = model.getId();
+                                    String name = model.getFantasyName();
+                                    params.putString("bakeryID", bakeryID);
+                                    params.putString("name", name);
+                                    Intent intentProductList = new Intent(BakeryListActivity.this, ProductListActivity.class);
+                                    intentProductList.putExtras(params);
+                                    startActivity(intentProductList);
+                                }
+                            });
+                        }
+                    };
+                    rvBakery.setAdapter(adapter);
+                } else {
+                    tvNoBakeries.setVisibility(View.VISIBLE);
+                    icBakery.setVisibility(View.VISIBLE);
+                }
             }
-        };
-        rvBakery.setAdapter(adapter);
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "getUser:onCancelled", databaseError.toException());
+            }
+        });
     }
 
     private synchronized void callConnection() {
@@ -234,5 +238,19 @@ public class BakeryListActivity extends UserBaseActivity implements GoogleApiCli
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    @Override
+    protected void initViews() {
+        tvNoBakeries = (TextView) findViewById(R.id.tv_no_bakeries);
+        rvBakery = (RecyclerView) findViewById(R.id.rv_bakery);
+        icBakery = (ImageView) findViewById(R.id.ic_bakery);
+        if (rvBakery != null) {
+            //to enable optimization of recyclerview
+            rvBakery.setHasFixedSize(true);
+        }
+        rvBakery.setItemAnimator(new DefaultItemAnimator());
+        //registerForContextMenu(rvBakery);
+        rvBakery.setLayoutManager(new LinearLayoutManager(BakeryListActivity.this));
     }
 }

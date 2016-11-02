@@ -60,6 +60,7 @@ public class ProductCartActivity extends AppCompatActivity implements ItemClickL
     private Bundle params;
     private String userId, bakeryId;
     private String[][] itens;
+    private CartController controller;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,6 +69,7 @@ public class ProductCartActivity extends AppCompatActivity implements ItemClickL
         setContentView(R.layout.activity_cart);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_cart);
         setSupportActionBar(toolbar);
+        controller = new CartController(getBaseContext());
 
         Intent it = getIntent();
         params = it.getExtras();
@@ -106,7 +108,6 @@ public class ProductCartActivity extends AppCompatActivity implements ItemClickL
                     PagSeguroShipping buyerShippingOption = pagseguro.shipping(PagSeguroShippingType.NOT_DEFINED, buyerAddress);
                     PagSeguroCheckout checkout = pagseguro.checkout("Ref0001", shoppingCart, buyer, buyerShippingOption);
                 // starting payment process
-                CartController controller = new CartController(getBaseContext());
                 controller.deleteAll();
                 new PagSeguroPayment(ProductCartActivity.this).pay(checkout.buildCheckoutXml());
             }
@@ -174,6 +175,7 @@ public class ProductCartActivity extends AppCompatActivity implements ItemClickL
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                controller.deleteAll();
                 onBackPressed();
                 return true;
         }

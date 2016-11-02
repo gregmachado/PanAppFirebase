@@ -19,7 +19,7 @@ public class CartDB extends SQLiteOpenHelper {
     public static final String BAKERY_ID = "bakery_id";
     public static final String ITENS_SALE = "itens_sale";
     public static final String UNIT = "units";
-    private static final int VERSION = 10;
+    private static final int VERSION = 17;
 
     public CartDB(Context context){
         super(context, NAME_DB,null,VERSION);
@@ -28,11 +28,11 @@ public class CartDB extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String sql = "CREATE TABLE "+ TABLE +"( "
-                + ID + " integer primary key,"
+                + ID + " text,"
                 + NAME + " text,"
                 + IMAGE + " text,"
                 + PRICE + " real,"
-                + BAKERY_ID + " integer,"
+                + BAKERY_ID + " text,"
                 + ITENS_SALE + " integer,"
                 + UNIT + " integer,"
                 + TYPE + " text"

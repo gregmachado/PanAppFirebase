@@ -64,11 +64,11 @@ public class SplashActivity extends AppCompatActivity implements Runnable {
                             params.putString("email", email);
                             params.putString("bakeryID", bakeryID);
                             if(!user.isType()){
-                                Intent intentHomeUser = new Intent(SplashActivity.this, UserBaseActivity.class);
+                                Intent intentHomeUser = new Intent(SplashActivity.this, UserMainActivity.class);
                                 intentHomeUser.putExtras(params);
                                 startActivity(intentHomeUser);
                             } else {
-                                Intent intentHomeAdmin = new Intent(SplashActivity.this, AdminBaseActivity.class);
+                                Intent intentHomeAdmin = new Intent(SplashActivity.this, AdminMainActivity.class);
                                 intentHomeAdmin.putExtras(params);
                                 startActivity(intentHomeAdmin);
                             }

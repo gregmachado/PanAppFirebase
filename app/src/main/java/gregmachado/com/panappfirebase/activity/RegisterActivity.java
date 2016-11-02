@@ -8,7 +8,6 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
@@ -32,7 +31,6 @@ import gregmachado.com.panappfirebase.util.Encryption;
 public class RegisterActivity extends CommonActivity implements DatabaseReference.CompletionListener{
 
     private static final String TAG = RegisterActivity.class.getSimpleName();
-    private Button btnRegister;
     private Resources resources;
     private EditText inputName, inputEmail, inputPassword;
     private String name, email, password;
@@ -45,7 +43,6 @@ public class RegisterActivity extends CommonActivity implements DatabaseReferenc
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        resources = getResources();
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -58,35 +55,14 @@ public class RegisterActivity extends CommonActivity implements DatabaseReferenc
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-
                 if (firebaseUser == null || user.getId() != null) {
                     return;
                 }
-
                 user.setId(firebaseUser.getUid());
                 user.saveDB(RegisterActivity.this);
             }
         };
-
         initViews();
-        initWatchers();
-
-        // Register Button Click event
-        btnRegister.setOnClickListener(new View.OnClickListener() {
-                                           public void onClick(View view) {
-                                               if (validateFields()) {
-                                                   if (cbTerms.isChecked()) {
-                                                       openProgressDialog("Cadastrando...", "Aguarde um momento!");
-                                                       initUser();
-                                                       saveUser();
-                                                   } else{
-                                                       showToast("Por favor, leia e aceite os termos de uso!");
-                                                   }
-                                               }
-                                           }
-                                       }
-        );
-
     }
 
     @Override
@@ -101,26 +77,6 @@ public class RegisterActivity extends CommonActivity implements DatabaseReferenc
         if (mAuthStateListener != null) {
             mAuth.removeAuthStateListener(mAuthStateListener);
         }
-    }
-
-    private void initWatchers() {
-        TextWatcher textWatcher = new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                callClearErrors(s);
-            }
-        };
-        inputName.addTextChangedListener(textWatcher);
-        inputEmail.addTextChangedListener(textWatcher);
-        inputPassword.addTextChangedListener(textWatcher);
     }
 
     /**
@@ -236,7 +192,6 @@ public class RegisterActivity extends CommonActivity implements DatabaseReferenc
         finish();
     }
 
-    @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
 
     }
@@ -246,8 +201,25 @@ public class RegisterActivity extends CommonActivity implements DatabaseReferenc
         inputName = (EditText) findViewById(R.id.et_cadastre_name);
         inputEmail = (EditText) findViewById(R.id.et_cadastre_email);
         inputPassword = (EditText) findViewById(R.id.et_cadastre_pass);
-        btnRegister = (Button) findViewById(R.id.btn_create_account);
         cbTerms = (CheckBox) findViewById(R.id.cb_terms);
+        resources = getResources();
+        TextWatcher textWatcher = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                callClearErrors(s);
+            }
+        };
+        inputName.addTextChangedListener(textWatcher);
+        inputEmail.addTextChangedListener(textWatcher);
+        inputPassword.addTextChangedListener(textWatcher);
     }
 
     protected void initUser() {
@@ -258,5 +230,17 @@ public class RegisterActivity extends CommonActivity implements DatabaseReferenc
         user.setPassword(cripto.getEncryptPassword());
         user.setType(false);
         user.setSendNotification(true);
+    }
+
+    public void createAccount(View view) {
+        if (validateFields()) {
+            if (cbTerms.isChecked()) {
+                openProgressDialog("Cadastrando...", "Aguarde um momento!");
+                initUser();
+                saveUser();
+            } else{
+                showToast("Por favor, leia e aceite os termos de uso!");
+            }
+        }
     }
 }

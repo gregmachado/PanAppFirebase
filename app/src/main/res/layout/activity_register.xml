@@ -37,8 +37,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/ic_perm_identity_black_18dp"
+                    android:drawableStart="@drawable/ic_perm_identity_black_18dp"
                     android:ems="10"
-                    android:hint="Nome"
+                    android:hint="@string/name"
                     android:inputType="textCapWords"
                     android:maxLength="20" />
             </android.support.design.widget.TextInputLayout>
@@ -63,8 +64,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/ic_email_black_18dp"
+                    android:drawableStart="@drawable/ic_email_black_18dp"
                     android:ems="10"
-                    android:hint="Email"
+                    android:hint="@string/email"
                     android:inputType="textEmailAddress" />
             </android.support.design.widget.TextInputLayout>
         </LinearLayout>
@@ -88,8 +90,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/ic_lock_open_black_18dp"
+                    android:drawableStart="@drawable/ic_lock_open_black_18dp"
                     android:ems="10"
-                    android:hint="Senha"
+                    android:hint="@string/password"
                     android:inputType="textPassword"
                     android:maxLength="16" />
             </android.support.design.widget.TextInputLayout>
@@ -114,7 +117,8 @@
             android:layout_marginBottom="10dp"
             android:background="@drawable/btn_azul_claro"
             android:elevation="8dp"
-            android:text="Criar Conta"
+            android:text="@string/create_account"
+            android:onClick="createAccount"
             android:textColor="#ffffff" />
 
     </LinearLayout>

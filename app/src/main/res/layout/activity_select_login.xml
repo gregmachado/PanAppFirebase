@@ -26,11 +26,13 @@
             android:layout_gravity="center_horizontal"
             android:background="#3498db"
             android:elevation="8dp"
-            android:text="Entrar com Email"
+            android:text="@string/signin_whit_email"
             android:drawableLeft="@drawable/ic_email"
+            android:drawableStart="@drawable/ic_email"
             android:paddingStart="10sp"
             android:paddingEnd="10sp"
             android:textColor="#ffffff"
+            android:onClick="selectSignInEmail"
             android:paddingLeft="10sp" />
 
         <Button
@@ -40,13 +42,15 @@
             android:layout_height="wrap_content"
             android:background="#da4d3e"
             android:elevation="8dp"
-            android:text="Entrar com google"
+            android:text="@string/signin_whit_google"
             android:textColor="#ffffff"
             android:drawableLeft="@drawable/ic_action_gplus"
+            android:drawableStart="@drawable/ic_action_gplus"
             android:paddingStart="10sp"
             android:paddingEnd="10sp"
             android:paddingLeft="10sp"
             android:layout_marginTop="10dp"
+            android:onClick="selectSignInGoogle"
             android:layout_marginBottom="10dp" />
 
         <Button
@@ -56,11 +60,13 @@
             android:layout_gravity="center_horizontal"
             android:background="#395694"
             android:elevation="8dp"
-            android:text="Entrar com Facebook"
+            android:text="@string/action_sign_in_facebook"
             android:drawableLeft="@drawable/ic_action_facebook"
+            android:drawableStart="@drawable/ic_action_facebook"
             android:paddingLeft="10sp"
             android:paddingStart="10sp"
             android:paddingEnd="10sp"
+            android:onClick="selectSignInFaceBook"
             android:textColor="#ffffff" />
 
         <Button
@@ -71,7 +77,8 @@
             android:background="@android:color/transparent"
             android:elevation="8dp"
             android:layout_marginTop="10dp"
-            android:text="Possui uma padaria? Cadastre aqui!"
+            android:text="@string/register_bakery_label"
+            android:onClick="registerBakery"
             android:textColor="#ffffff" />
 
     </LinearLayout>

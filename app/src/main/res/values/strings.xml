@@ -38,4 +38,26 @@
     <string name="msg_not_exist_pendent_request">Não há nenhum pedido pendente!</string>
     <string name="msg_not_exist_delivered_request">Não há nenhum pedido entregue!</string>
     <string name="msg_not_exist_adress_regitred">Não existem endereços cadastrados!</string>
+    <string name="email">Email</string>
+    <string name="password">Senha</string>
+    <string name="signIn">Entrar</string>
+    <string name="register">Cadastrar</string>
+    <string name="name">Nome</string>
+    <string name="create_account">Criar Conta</string>
+    <string name="signin_whit_email">Entrar com Email</string>
+    <string name="signin_whit_google">Entrar com google</string>
+    <string name="register_bakery_label">Possui uma padaria? Cadastre aqui!</string>
+    <string name="cnpj">CNPJ</string>
+    <string name="search">Buscar</string>
+    <string name="corporate_name">Razão Social</string>
+    <string name="fantasy_name">Nome Fantasia</string>
+    <string name="phone">Telefone</string>
+    <string name="adress">Endereço</string>
+    <string name="street">Rua</string>
+    <string name="number">Número</string>
+    <string name="district">Bairro</string>
+    <string name="city">Cidade</string>
+    <string name="acess">Acesso</string>
+    <string name="register_bakery">Cadastrar padaria</string>
+    <string name="no_bakeries">Não há padarias cadastradas!</string>
 </resources>

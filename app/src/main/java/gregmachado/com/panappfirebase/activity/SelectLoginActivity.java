@@ -3,9 +3,7 @@ package gregmachado.com.panappfirebase.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -28,7 +26,7 @@ import gregmachado.com.panappfirebase.domain.User;
 /**
  * Created by gregmachado on 17/06/16.
  */
-public class SelectLoginActivity extends AppCompatActivity {
+public class SelectLoginActivity extends CommonActivity {
 
     private static final int RC_GOOGLE_SIGN_IN = 1;
     private GoogleApiClient mGoogleApiClient;
@@ -42,43 +40,11 @@ public class SelectLoginActivity extends AppCompatActivity {
 
         //mAuth = FirebaseAuth.getInstance();
         //initGoogleSignIn();
+    }
 
-        Button btnLoginEmail = (Button) findViewById(R.id.btn_login_email);
-        assert btnLoginEmail != null;
-        btnLoginEmail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intentLoginEmail = new Intent(SelectLoginActivity.this, LoginEmailActivity.class);
-                startActivity(intentLoginEmail);
-            }
-        });
+    @Override
+    protected void initViews() {
 
-        Button btnLoginGPlus = (Button) findViewById(R.id.btn_login_gplus);
-        assert btnLoginGPlus != null;
-        btnLoginGPlus.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                signIn();
-            }
-        });
-
-        Button btnLoginFace = (Button) findViewById(R.id.btn_login_face);
-        assert btnLoginFace != null;
-        btnLoginFace.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            }
-        });
-
-        Button btnRegisterBakery = (Button) findViewById(R.id.btn_register_bakery);
-        assert btnRegisterBakery != null;
-        btnRegisterBakery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intentRegisterBakery = new Intent(SelectLoginActivity.this, RegisterBakeryActivity.class);
-                startActivity(intentRegisterBakery);
-            }
-        });
     }
 
     @Override
@@ -114,11 +80,6 @@ public class SelectLoginActivity extends AppCompatActivity {
                 .build();
     }
 
-    private void signIn() {
-        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, RC_GOOGLE_SIGN_IN);
-    }
-
     private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
         AuthCredential credential = GoogleAuthProvider.getCredential(acct.getIdToken(), null);
         mAuth.signInWithCredential(credential)
@@ -134,5 +95,23 @@ public class SelectLoginActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    public void selectSignInEmail(View view) {
+        Intent intentLoginEmail = new Intent(SelectLoginActivity.this, LoginEmailActivity.class);
+        startActivity(intentLoginEmail);
+    }
+
+    public void selectSignInGoogle(View view) {
+        Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+        startActivityForResult(signInIntent, RC_GOOGLE_SIGN_IN);
+    }
+
+    public void selectSignInFaceBook(View view) {
+    }
+
+    public void registerBakery(View view) {
+        Intent intentRegisterBakery = new Intent(SelectLoginActivity.this, RegisterBakeryActivity.class);
+        startActivity(intentRegisterBakery);
     }
 }

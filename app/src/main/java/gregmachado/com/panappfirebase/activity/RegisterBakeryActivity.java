@@ -14,7 +14,6 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -105,43 +104,17 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
-
         bakerieList = new ArrayList<HashMap<String, String>>();
-        resources = getResources();
         mAuth = FirebaseAuth.getInstance();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
 
-        Button btnSearchByCNPJ = (Button) findViewById(R.id.btn_search_by_cnpj);
-        btnSearchByCNPJ.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cnpjAux = inputCnpj.getText().toString().trim();
-                // Calling async task to get json
-                new GetBakery().execute();
-            }
-        });
-
-        Button btnAddBakery = (Button) findViewById(R.id.btn_add_bakery);
-        btnAddBakery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (validateFields()) {
-                    openProgressDialog("Cadastrando...", "Aguarde um momento!");
-                    initUser();
-                    initBakery();
-                    saveUser();
-                }
-            }
-        });
         mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-
                 if (firebaseUser == null || user.getId() != null) {
                     return;
                 }
-
                 String id = firebaseUser.getUid();
                 user.setId(id);
                 bakery.setUserID(user.getId());
@@ -273,6 +246,21 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
         }
     }
 
+    public void searchByCNPJ(View view) {
+        cnpjAux = inputCnpj.getText().toString().trim();
+        // Calling async task to get json
+        new GetBakery().execute();
+    }
+
+    public void addBakery(View view) {
+        if (validateFields()) {
+            openProgressDialog("Cadastrando...", "Aguarde um momento!");
+            initUser();
+            initBakery();
+            saveUser();
+        }
+    }
+
     /**
      * Async task class to get json by making HTTP call
      */
@@ -361,7 +349,6 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
             closeProgressDialog();
             setEditText(fantasyJson, nameJson, emailJson, streetJson, numberJson, districtJson, cityJson, phoneJson);
         }
-
     }
 
     private void setEditText(String fantasy, String name, String email, String street, String number, String district, String city, String phone) {
@@ -416,10 +403,8 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
         inputDiscrict = (EditText) findViewById(R.id.input_district);
         inputCity = (EditText) findViewById(R.id.input_city);
         inputAdminPassword = (EditText) findViewById(R.id.input_admin_password);
-
     }
 
-    @Override
     protected void initUser() {
         user = new User();
         user.setName(fantasyName);
@@ -444,6 +429,7 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
 
     private void initWatchers(){
 
+        resources = getResources();
         TextWatcher textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
