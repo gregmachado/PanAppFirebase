@@ -17,7 +17,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -47,10 +46,8 @@ public class ProductListActivity extends CommonActivity {
     private Product product;
     private String name;
     private TextView tvItens, tvPrice;
-    private String userId;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference mDatabaseReference = database.getReference();
-    private FirebaseAuth firebaseAuth;
     private ImageView icProduct;
     private FloatingActionButton btnCart;
     private ArrayList<Product> productsToCart = new ArrayList<>();
@@ -64,7 +61,6 @@ public class ProductListActivity extends CommonActivity {
         super.onCreate(savedInstanceState);
         //getLayoutInflater().inflate(R.layout.activity_product_admin, frameLayout);
         setContentView(R.layout.activity_product_list);
-        firebaseAuth = FirebaseAuth.getInstance();
         initViews();
 
         if (rvProduct != null) {
@@ -226,7 +222,6 @@ public class ProductListActivity extends CommonActivity {
         if (params != null) {
             bakeryId = params.getString("bakeryID");
             name = params.getString("name");
-            userId = params.getString("userID");
         }
 
         setTitle("Produtos - " + name);
@@ -243,7 +238,6 @@ public class ProductListActivity extends CommonActivity {
 
     public void openBasket(View view) {
         Intent i = new Intent(ProductListActivity.this, ProductCartActivity.class);
-        params.putString("userID", userId);
         params.putString("bakeryID", bakeryId);
         params.putDouble("total", parcialPrice);
         i.putExtra("cart", productsToCart);

@@ -1,11 +1,14 @@
 package gregmachado.com.panappfirebase.domain;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.Serializable;
 
 /**
  * Created by gregmachado on 30/10/16.
  */
-public class Product implements Serializable{
+public class Product implements Serializable, Parcelable{
 
     private String id;
     private String productName;
@@ -29,6 +32,28 @@ public class Product implements Serializable{
         this.itensSale = itensSale;
         this.unit = unit;
     }
+
+    protected Product(Parcel in) {
+        id = in.readString();
+        productName = in.readString();
+        productImage = in.readString();
+        type = in.readString();
+        bakeryId = in.readString();
+        itensSale = in.readInt();
+        unit = in.readInt();
+    }
+
+    public static final Creator<Product> CREATOR = new Creator<Product>() {
+        @Override
+        public Product createFromParcel(Parcel in) {
+            return new Product(in);
+        }
+
+        @Override
+        public Product[] newArray(int size) {
+            return new Product[size];
+        }
+    };
 
     public String getId() {
         return id;
@@ -92,5 +117,21 @@ public class Product implements Serializable{
 
     public void setUnit(int unit) {
         this.unit = unit;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(productName);
+        dest.writeString(productImage);
+        dest.writeString(type);
+        dest.writeString(bakeryId);
+        dest.writeInt(itensSale);
+        dest.writeInt(unit);
     }
 }

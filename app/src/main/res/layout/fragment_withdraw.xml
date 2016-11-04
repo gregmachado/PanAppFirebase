@@ -5,7 +5,7 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:text="Escolha o dia:"
+        android:text="@string/chose_day"
         android:textColor="#ffffff"
         android:textSize="16sp"
         android:background="@color/colorPrimaryDark"
@@ -22,19 +22,19 @@
 
         <RadioButton
             android:id="@+id/rb_today"
-            android:text="Hoje - "
+            android:text="@string/today"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         <RadioButton
             android:id="@+id/rb_tomorrow"
-            android:text="Amanhã - "
+            android:text="@string/tomorrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </RadioGroup>
 
     <TextView
-        android:text="Escolha o horário desejado:"
+        android:text="@string/chose_hour"
         android:textColor="#ffffff"
         android:textSize="16sp"
         android:background="@color/colorPrimaryDark"
@@ -47,14 +47,14 @@
         android:layout_gravity="center_horizontal"
         android:textSize="20sp"
         android:id="@+id/tv_time"
-        android:text="00:00"
+        android:text="@string/zero_hour"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/btn_finish"
         android:elevation="8dp"
-        android:text="Finalizar"
+        android:text="@string/finish"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:layout_marginLeft="10dp"

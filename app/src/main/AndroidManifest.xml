@@ -48,6 +48,7 @@
         <activity android:name=".activity.ProductListActivity" />
         <activity android:name=".activity.ProductCartActivity" />
         <activity android:name=".pagSeguro.PagSeguroActivity" />
+        <activity android:name=".activity.ScheduleActivity" />
     </application>
 
 </manifest>

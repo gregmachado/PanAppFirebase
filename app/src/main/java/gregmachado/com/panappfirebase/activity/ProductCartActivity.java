@@ -46,13 +46,10 @@ public class ProductCartActivity extends CommonActivity implements ItemClickList
     private RecyclerView rvProduct;
     private CartAdapter cartAdapter;
     private List<Product> _list;
-    private Product product;
-    private String name;
     private TextView tvItens, tvPrice;
     private Double priceTotal = 0.00, price;
     private Bundle params;
-    private String userId, bakeryId;
-    private String[][] itens;
+    private String bakeryId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,7 +69,6 @@ public class ProductCartActivity extends CommonActivity implements ItemClickList
         params = it.getExtras();
         if (params != null) {
             bakeryId = params.getString("bakeryID");
-            int items = params.getInt("items");
             priceTotal = params.getDouble("total");
             _list = (ArrayList<Product>)
                     getIntent().getSerializableExtra("cart");
@@ -93,24 +89,6 @@ public class ProductCartActivity extends CommonActivity implements ItemClickList
         rvProduct.setLayoutManager(new LinearLayoutManager(this));
         cartAdapter = new CartAdapter(this, this, _list, this);
         rvProduct.setAdapter(cartAdapter);
-    }
-
-    private String[][] getItens(List<Product> list) {
-        int l = list.size();
-        int i = 0;
-        Double total;
-        String[][] strings = new String[l][6];
-        for (Product product : list) {
-            strings[i][0] = String.valueOf(product.getId());
-            strings[i][1] = product.getProductName();
-            strings[i][2] = product.getType();
-            strings[i][3] = String.valueOf(product.getUnit());
-            strings[i][4] = String.valueOf(product.getProductPrice());
-            total = product.getProductPrice() * product.getUnit();
-            strings[i][5] = String.valueOf(total);
-            i++;
-        }
-        return strings;
     }
 
     @Override
@@ -147,22 +125,14 @@ public class ProductCartActivity extends CommonActivity implements ItemClickList
                 // exibir confirmação de sucesso
                 final String msg = getString(R.string.transaction_succeded);
                 AppUtil.showConfirmDialog(this, msg, null);
-                /*Intent intentSchedule = new Intent(ProductCartActivity.this, ScheduleActivity.class);
-                params.putString("userID", userId);
-                params.putString("bakeryID", bakeryId);
-                intentSchedule.putExtras(params);
-                startActivity(intentSchedule);*/
+
             }
         } else if (resultCode == PagSeguroPayment.PAG_SEGURO_REQUEST_CODE) {
             switch (data.getIntExtra(PagSeguroPayment.PAG_SEGURO_EXTRA, 0)) {
                 case PagSeguroPayment.PAG_SEGURO_REQUEST_SUCCESS_CODE: {
                     final String msg = getString(R.string.transaction_succeded);
                     AppUtil.showConfirmDialog(this, msg, null);
-                    /*Intent intentSchedule = new Intent(ProductCartActivity.this, ScheduleActivity.class);
-                    params.putString("userID", userId);
-                    params.putSerializable("itens", itens);
-                    intentSchedule.putExtras(params);
-                    startActivity(intentSchedule);*/
+                    callScheduleActivity();
                     break;
                 }
                 case PagSeguroPayment.PAG_SEGURO_REQUEST_FAILURE_CODE: {
@@ -177,6 +147,15 @@ public class ProductCartActivity extends CommonActivity implements ItemClickList
                 }
             }
         }
+    }
+
+    private void callScheduleActivity() {
+        Intent intentSchedule = new Intent(ProductCartActivity.this, ScheduleActivity.class);
+        ArrayList<Product> requestItems = cartAdapter.getProducts();
+        params.putString("bakeryID", bakeryId);
+        intentSchedule.putExtras(params);
+        intentSchedule.putExtra("items", requestItems);
+        startActivity(intentSchedule);
     }
 
     @Override
@@ -199,7 +178,6 @@ public class ProductCartActivity extends CommonActivity implements ItemClickList
 
         // simulating an user buying
         final PagSeguroFactory pagseguro = PagSeguroFactory.instance();
-        itens = getItens(_list);
         List<PagSeguroItem> shoppingCart = new ArrayList<>();
         for (Iterator<Product> iterator = _list.iterator(); iterator.hasNext(); ) {
             Product product = iterator.next();

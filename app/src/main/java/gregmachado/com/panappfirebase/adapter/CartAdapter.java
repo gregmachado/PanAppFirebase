@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import gregmachado.com.panappfirebase.R;
@@ -78,4 +79,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartViewHolder> {
         return (!value.equals("")) ? Integer.valueOf(value) : 0;
     }
 
+    public ArrayList<Product> getProducts(){
+        return (ArrayList<Product>) products;
+    }
 }
