@@ -417,7 +417,7 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
 
     private void initBakery(){
         bakery = new Bakery();
-        adress = new Adress(user.getId(), null, null, street, district, city, number, latitude, longitude, null);
+        adress = new Adress(user.getId(),street, district, city, number, latitude, longitude);
         bakery.setEmail(email);
         bakery.setAdress(adress);
         bakery.setCnpj(cnpj);

@@ -8,12 +8,13 @@
         android:text="@string/chose_day"
         android:textColor="#ffffff"
         android:textSize="16sp"
+        android:paddingLeft="8dp"
         android:background="@color/colorPrimaryDark"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
     <RadioGroup
-        android:id="@+id/rg_date_delivery"
+        android:id="@+id/rg_date_withdraw"
         android:layout_marginBottom="5dp"
         android:layout_marginTop="5dp"
         android:checkedButton="@+id/rb_today"
@@ -21,13 +22,13 @@
         android:layout_height="wrap_content">
 
         <RadioButton
-            android:id="@+id/rb_today"
+            android:id="@+id/rb_today_withdraw"
             android:text="@string/today"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
         <RadioButton
-            android:id="@+id/rb_tomorrow"
+            android:id="@+id/rb_tomorrow_withdraw"
             android:text="@string/tomorrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
@@ -35,6 +36,7 @@
 
     <TextView
         android:text="@string/chose_hour"
+        android:paddingLeft="8dp"
         android:textColor="#ffffff"
         android:textSize="16sp"
         android:background="@color/colorPrimaryDark"
@@ -46,13 +48,13 @@
         android:layout_marginBottom="5dp"
         android:layout_gravity="center_horizontal"
         android:textSize="20sp"
-        android:id="@+id/tv_time"
+        android:id="@+id/tv_time_withdraw"
         android:text="@string/zero_hour"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
     <Button
-        android:id="@+id/btn_finish"
+        android:id="@+id/btn_finish_withdraw"
         android:elevation="8dp"
         android:text="@string/finish"
         android:textColor="@color/white"

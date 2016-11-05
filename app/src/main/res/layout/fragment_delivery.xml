@@ -7,26 +7,39 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingLeft="8dp"
         android:background="@color/colorPrimaryDark"
         android:text="@string/chose_delivery_adress"
         android:textColor="#ffffff"
         android:textSize="16sp" />
 
-    <ListView
-        android:id="@+id/lv_addres_delivery"
+    <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_height="180dp"
-        android:layout_marginBottom="5dp"
-        android:layout_marginTop="5dp"
-        android:cacheColorHint="#f8f8ff"
-        android:choiceMode="singleChoice"
-        android:divider="#000000"
-        android:footerDividersEnabled="true"
-        android:textFilterEnabled="true"/>
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_adress_delivery"
+            android:padding="8dp"
+            android:layout_height="180dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent" />
+
+        <ProgressBar
+            android:id="@+id/simpleProgressBar"
+            android:layout_width="60sp"
+            android:layout_height="60sp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:visibility="invisible" />
+
+    </RelativeLayout>
+
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingLeft="8dp"
         android:background="@color/colorPrimaryDark"
         android:text="@string/chose_day"
         android:textColor="#ffffff"
@@ -56,6 +69,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingLeft="8dp"
         android:background="@color/colorPrimaryDark"
         android:text="@string/chose_hour"
         android:textColor="#ffffff"
@@ -83,7 +97,6 @@
         android:elevation="8dp"
         android:text="@string/finish"
         android:textColor="@color/white"
-        android:onClick="finishRequest"
         android:textSize="20sp" />
 
 </LinearLayout>

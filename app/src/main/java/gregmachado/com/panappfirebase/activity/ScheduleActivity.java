@@ -33,7 +33,7 @@ public class ScheduleActivity extends CommonActivity{
     private ViewPager viewPager;
     private TabLayout tabLayout;
     private FirebaseAuth firebaseAuth;
-    private WithdrawtFragment withdrawtFragment;
+    private WithdrawFragment withdrawFragment;
     private DeliveryFragment deliveryFragment;
 
     @Override
@@ -47,10 +47,10 @@ public class ScheduleActivity extends CommonActivity{
     }
 
     private void setupViewPager(ViewPager viewPager) {
-        withdrawtFragment = new WithdrawtFragment();
+        withdrawFragment = new WithdrawFragment();
         deliveryFragment = new DeliveryFragment();
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(withdrawtFragment, "RECEBER EM CASA");
+        adapter.addFragment(withdrawFragment, "RECEBER EM CASA");
         adapter.addFragment(deliveryFragment, "RETIRAR NA PADARIA");
         viewPager.setAdapter(adapter);
     }
@@ -91,7 +91,7 @@ public class ScheduleActivity extends CommonActivity{
         setTitle("Agendamento");
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
-        sendParamsToFragment(bakeryId, userId, items, withdrawtFragment);
+        sendParamsToFragment(bakeryId, userId, items, withdrawFragment);
         sendParamsToFragment(bakeryId, userId, items, deliveryFragment);
         tabLayout = (TabLayout) findViewById(R.id.tabs_schedule);
         tabLayout.setupWithViewPager(viewPager);

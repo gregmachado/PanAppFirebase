@@ -11,6 +11,10 @@ public class Adress {
 
     private String id;
     private String userID;
+    private String adressName;
+    private String Cep;
+    private String state;
+    private String reference;
     private String complement, country;
     private String street;
     private String district;
@@ -20,9 +24,15 @@ public class Adress {
 
     public Adress() {}
 
-    public Adress(String userID, String complement, String country, String street,
-                  String district, String city, int number, Double latitude, Double longitude, Double distance) {
+    public Adress(String id, String userID, String adressName, String cep, String state, String reference,
+                  String complement, String country, String street, String district, String city, int number,
+                  Double latitude, Double longitude, Double distance) {
+        this.id = id;
         this.userID = userID;
+        this.adressName = adressName;
+        Cep = cep;
+        this.state = state;
+        this.reference = reference;
         this.complement = complement;
         this.country = country;
         this.street = street;
@@ -32,6 +42,17 @@ public class Adress {
         this.latitude = latitude;
         this.longitude = longitude;
         this.distance = distance;
+    }
+
+    public Adress(String userID, String street, String district, String city, int number,
+                  Double latitude, Double longitude) {
+        this.userID = userID;
+        this.street = street;
+        this.district = district;
+        this.city = city;
+        this.number = number;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     public String getId() {
@@ -120,6 +141,38 @@ public class Adress {
 
     public void setDistance(Double distance) {
         this.distance = distance;
+    }
+
+    public String getAdressName() {
+        return adressName;
+    }
+
+    public void setAdressName(String adressName) {
+        this.adressName = adressName;
+    }
+
+    public String getCep() {
+        return Cep;
+    }
+
+    public void setCep(String cep) {
+        Cep = cep;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
     }
 
     public void saveDB(DatabaseReference.CompletionListener... completionListener) {

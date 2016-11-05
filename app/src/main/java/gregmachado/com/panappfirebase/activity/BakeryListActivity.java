@@ -104,8 +104,8 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
         mDatabaseReference.child("bakeries").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                closeProgressBar();
                 if (dataSnapshot.getChildrenCount() > 0) {
-                    closeProgressBar();
                     adapter = new FirebaseRecyclerAdapter<Bakery, BakeryViewHolder>(
                             Bakery.class,
                             R.layout.card_bakery,

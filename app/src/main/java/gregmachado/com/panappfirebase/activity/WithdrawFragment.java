@@ -2,6 +2,7 @@ package gregmachado.com.panappfirebase.activity;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +13,6 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Calendar;
 import java.util.List;
@@ -26,28 +26,23 @@ import gregmachado.com.panappfirebase.util.DateUtil;
 /**
  * Created by gregmachado on 03/11/16.
  */
-public class WithdrawtFragment extends Fragment {
+public class WithdrawFragment extends Fragment {
 
     private TextView tvTime;
     private RadioButton rbToday, rbTomorrow;
     private RadioGroup radioGroup;
-    private String today, tomorrow, scheduleDay, scheduleHour, adress, method, creatonDate;
+    private String today, tomorrow, scheduleDay, scheduleHour, method, creatonDate;
     private Request request;
     private String bakeryId, userId;
     private List<Product> products;
     private DatabaseReference mDatabaseReference;
 
-    public WithdrawtFragment(){}
+    public WithdrawFragment(){}
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         method = "withdraw";
-        dateTimeSelect();
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-        String requestID = mDatabaseReference.push().getKey();
-        request.setRequestID(requestID);
-        mDatabaseReference.child("users").child(userId).child("requests").child(requestID).setValue(request);
     }
 
     @Override
@@ -58,18 +53,26 @@ public class WithdrawtFragment extends Fragment {
         products = getArguments().getParcelableArrayList("products");
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_withdraw, container, false);
-        rbToday = (RadioButton) v.findViewById(R.id.rb_today);
-        rbTomorrow = (RadioButton) v.findViewById(R.id.rb_tomorrow);
-        tvTime = (TextView) v.findViewById(R.id.tv_time);
-        radioGroup = (RadioGroup) v.findViewById(R.id.rg_date_delivery);
-        Button btnFinish = (Button) v.findViewById(R.id.btn_finish);
+        rbToday = (RadioButton) v.findViewById(R.id.rb_today_withdraw);
+        rbTomorrow = (RadioButton) v.findViewById(R.id.rb_tomorrow_withdraw);
+        tvTime = (TextView) v.findViewById(R.id.tv_time_withdraw);
+        radioGroup = (RadioGroup) v.findViewById(R.id.rg_date_withdraw);
+        Button btnFinish = (Button) v.findViewById(R.id.btn_finish_withdraw);
         btnFinish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getValues();
                 request = initRequest();
+                /*mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+                String requestID = mDatabaseReference.push().getKey();
+                request.setRequestID(requestID);
+                mDatabaseReference.child("users").child(userId).child("requests").child(requestID).setValue(request);*/
+                Log.i("itens: ", request.getBakeryID() + request.getCreationDate() + request.getMethod() + request.getRequestID() +
+                request.getScheduleDate() + request.getUserID() + request.getDelivered() + request.getProductList() +
+                request.getScheduleHour());
             }
         });
+        dateTimeSelect();
         return v;
     }
 
@@ -110,9 +113,9 @@ public class WithdrawtFragment extends Fragment {
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if(checkedId == R.id.rb_today) {
+                if(checkedId == R.id.rb_today_withdraw) {
                     scheduleDay = today;
-                } else if(checkedId == R.id.rb_tomorrow) {
+                } else if(checkedId == R.id.rb_tomorrow_withdraw) {
                     scheduleDay = tomorrow;
                 }
             }

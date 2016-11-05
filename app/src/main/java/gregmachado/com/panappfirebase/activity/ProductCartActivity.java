@@ -80,7 +80,7 @@ public class ProductCartActivity extends CommonActivity implements ItemClickList
     @Override
     public void onClick(View view, int position) {
         final Product product = _list.get(position);
-        Toast.makeText(this, "Produto: " + product.getProductName(), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Produto: " + product.getProductPrice(), Toast.LENGTH_SHORT).show();
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)

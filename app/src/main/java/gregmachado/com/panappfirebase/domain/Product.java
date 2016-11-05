@@ -41,6 +41,7 @@ public class Product implements Serializable, Parcelable{
         bakeryId = in.readString();
         itensSale = in.readInt();
         unit = in.readInt();
+        productPrice = in.readDouble();
     }
 
     public static final Creator<Product> CREATOR = new Creator<Product>() {
@@ -133,5 +134,6 @@ public class Product implements Serializable, Parcelable{
         dest.writeString(bakeryId);
         dest.writeInt(itensSale);
         dest.writeInt(unit);
+        dest.writeDouble(productPrice);
     }
 }

@@ -69,8 +69,10 @@
     <string name="items">Itens</string>
     <string name="chose_delivery_adress">Escolha o endereço de entrega:</string>
     <string name="chose_day">Escolha o dia:</string>
-    <string name="today">Hoje -</string>
-    <string name="tomorrow">Amanhã -</string>
+    <string name="today">Hoje - </string>
+    <string name="tomorrow">Amanhã - </string>
     <string name="chose_hour">Escolha o horário desejado:</string>
     <string name="zero_hour">00:00</string>
+    <string name="street_name">Nome da rua</string>
+    <string name="no_adress">Não existem endereços cadastrados!</string>
 </resources>

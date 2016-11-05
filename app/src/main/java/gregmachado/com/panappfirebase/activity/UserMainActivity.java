@@ -133,18 +133,18 @@ public class UserMainActivity extends CommonActivity
         } else if (id == R.id.nav_notification) {
 
         } else if (id == R.id.nav_follow_orders) {
-            //Intent intentRequest = new Intent(UserMainActivity.this, RequestActivity.class);
+            Intent intentRequest = new Intent(UserMainActivity.this, ScheduleActivity.class);
             //params.putBoolean("isAdmin", false);
-            //intentRequest.putExtras(params);
-            //startActivity(intentRequest);
+            intentRequest.putExtras(params);
+            startActivity(intentRequest);
         } else if (id == R.id.nav_history) {
 
         } else if (id == R.id.nav_home) {
 
         } else if (id == R.id.nav_my_adrees) {
-            //Intent intentAdressList = new Intent(UserMainActivity.this, AdressListActivity.class);
-            //intentAdressList.putExtras(params);
-            //startActivity(intentAdressList);
+            Intent intentAdressList = new Intent(UserMainActivity.this, AdressListActivity.class);
+            intentAdressList.putExtras(params);
+            startActivity(intentAdressList);
         } else if (id == R.id.nav_offers) {
 
         } else if (id == R.id.nav_talk_whit_us) {

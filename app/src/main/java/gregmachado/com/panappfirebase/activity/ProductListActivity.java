@@ -109,7 +109,7 @@ public class ProductListActivity extends CommonActivity {
                             viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    Log.w(TAG, "You clicked on " + model.getProductName());
+                                    Log.w(TAG, "You clicked on " + model.getProductPrice());
                                 }
                             });
 
