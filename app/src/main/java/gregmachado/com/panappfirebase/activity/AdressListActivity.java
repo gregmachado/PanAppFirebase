@@ -25,7 +25,7 @@ import java.util.List;
 
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.domain.Adress;
-import gregmachado.com.panappfirebase.viewHolder.AdressViewHolder;
+import gregmachado.com.panappfirebase.viewHolder.MyAdressViewHolder;
 
 /**
  * Created by gregmachado on 09/10/16.
@@ -72,21 +72,24 @@ public class AdressListActivity extends CommonActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 closeProgressBar();
                 if (dataSnapshot.hasChild("adress")) {
-                    FirebaseRecyclerAdapter<Adress, AdressViewHolder> adapter = new FirebaseRecyclerAdapter<Adress, AdressViewHolder>(
+                    FirebaseRecyclerAdapter<Adress, MyAdressViewHolder> adapter = new FirebaseRecyclerAdapter<Adress, MyAdressViewHolder>(
                             Adress.class,
                             R.layout.card_my_adress,
-                            AdressViewHolder.class,
+                            MyAdressViewHolder.class,
                             //referencing the node where we want the database to store the data from our Object
                             mDatabaseReference.child("users").child(userId).child("adress").getRef()
                     ) {
                         @Override
-                        protected void populateViewHolder(final AdressViewHolder viewHolder, final Adress model, final int position) {
+                        protected void populateViewHolder(final MyAdressViewHolder viewHolder, final Adress model, final int position) {
 
                             viewHolder.tvStreet.setText(model.getStreet());
                             viewHolder.tvComplement.setText(model.getComplement());
                             viewHolder.tvDistrict.setText(model.getDistrict());
-                            viewHolder.tvCity.setText(model.getCity());
-                            viewHolder.tvNumber.setText(model.getNumber());
+                            viewHolder.tvCityState.setText(String.format("%s/%s", model.getCity(), model.getState()));
+                            viewHolder.tvNumber.setText(String.valueOf(model.getNumber()));
+                            viewHolder.tvReference.setText(model.getReference());
+                            viewHolder.tvCep.setText(model.getCep());
+                            viewHolder.tvName.setText(model.getAdressName());
                             viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {

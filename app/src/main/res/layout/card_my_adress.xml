@@ -1,206 +1,207 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_marginBottom="4dp"
     android:layout_marginTop="4dp"
     android:elevation="8dp">
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="220dp"
-        android:baselineAligned="false">
+        android:layout_height="wrap_content"
+        android:baselineAligned="false"
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:orientation="horizontal"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/tv_adress_name"
-                android:paddingTop="4dp"
-                android:maxLength="21"
-                android:maxLines="1"
-                android:paddingLeft="30dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:maxLength="21"
+                android:maxLines="1"
                 android:orientation="vertical"
-                android:textColor="@color/colorPrimarytext"
+                android:paddingLeft="30dp"
+                android:paddingTop="4dp"
                 android:text="Nome"
+                android:textColor="@color/colorPrimarytext"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
             <ImageButton
-                android:layout_marginLeft="10dp"
-                android:background="@android:color/transparent"
                 android:id="@+id/ibtn_edit"
-                android:src="@drawable/ic_mode_edit"
                 android:layout_width="32sp"
-                android:layout_height="32sp" />
-        </LinearLayout>
+                android:layout_height="32sp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="12dp"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_mode_edit_black_24dp" />
+        </RelativeLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
             <LinearLayout
-                android:layout_weight="1"
-                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/tv_street_lbl"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/grey"
-                    android:text="@string/street"
-                    android:paddingTop="8dp"
                     android:paddingLeft="30dp"
+                    android:paddingTop="8dp"
+                    android:text="@string/street"
+                    android:textColor="@color/grey"
                     android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/tv_street"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimarytext"
-                    android:text="@string/street_name"
-                    android:paddingTop="4dp"
                     android:paddingLeft="30dp"
+                    android:paddingTop="4dp"
+                    android:text="@string/street_name"
+                    android:textColor="@color/colorPrimarytext"
                     android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/tv_number_lbl"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/grey"
-                    android:text="Número"
-                    android:paddingTop="8dp"
                     android:paddingLeft="30dp"
+                    android:paddingTop="8dp"
+                    android:text="Número"
+                    android:textColor="@color/grey"
                     android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/tv_number"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimarytext"
-                    android:text="123"
-                    android:paddingTop="4dp"
                     android:paddingLeft="30dp"
+                    android:paddingTop="4dp"
+                    android:text="123"
+                    android:textColor="@color/colorPrimarytext"
                     android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/tv_district_lbl"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/grey"
-                    android:text="Bairro"
-                    android:paddingTop="8dp"
                     android:paddingLeft="30dp"
+                    android:paddingTop="8dp"
+                    android:text="Bairro"
+                    android:textColor="@color/grey"
                     android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/tv_district"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimarytext"
-                    android:text="Nome do bairro"
-                    android:paddingTop="4dp"
                     android:paddingLeft="30dp"
+                    android:paddingTop="4dp"
+                    android:text="Nome do bairro"
+                    android:textColor="@color/colorPrimarytext"
                     android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/tv_reference_lbl"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/grey"
-                    android:text="Referência"
-                    android:paddingTop="8dp"
                     android:paddingLeft="30dp"
+                    android:paddingTop="8dp"
+                    android:text="Referência"
+                    android:textColor="@color/grey"
                     android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/tv_reference"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimarytext"
-                    android:text="Nome da referência"
-                    android:paddingTop="4dp"
                     android:paddingLeft="30dp"
+                    android:paddingTop="4dp"
+                    android:text="Nome da referência"
+                    android:textColor="@color/colorPrimarytext"
                     android:textSize="14sp" />
             </LinearLayout>
 
             <LinearLayout
-                android:layout_weight="1"
-                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/tv_complement_lbl"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/grey"
-                    android:text="Complemento"
                     android:layout_marginTop="51dp"
                     android:paddingLeft="30dp"
+                    android:text="Complemento"
+                    android:textColor="@color/grey"
                     android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/tv_complement"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimarytext"
-                    android:text="Apto 201"
-                    android:paddingTop="4dp"
                     android:paddingLeft="30dp"
+                    android:paddingTop="4dp"
+                    android:text="Apto 201"
+                    android:textColor="@color/colorPrimarytext"
                     android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/tv_cep_lbl"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/grey"
-                    android:text="CEP"
                     android:layout_marginTop="8dp"
                     android:paddingLeft="30dp"
+                    android:text="CEP"
+                    android:textColor="@color/grey"
                     android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/tv_cep"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimarytext"
-                    android:text="95000-000"
-                    android:paddingTop="4dp"
                     android:paddingLeft="30dp"
+                    android:paddingTop="4dp"
+                    android:text="95000-000"
+                    android:textColor="@color/colorPrimarytext"
                     android:textSize="14sp" />
 
                 <TextView
                     android:id="@+id/tv_city_state_lbl"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/grey"
-                    android:text="Cidade/Estado"
                     android:layout_marginTop="8dp"
                     android:paddingLeft="30dp"
+                    android:text="Cidade/Estado"
+                    android:textColor="@color/grey"
                     android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/tv_city_state"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/colorPrimarytext"
-                    android:text="Caxias do Sul/RS"
-                    android:paddingTop="4dp"
                     android:paddingLeft="30dp"
+                    android:paddingTop="4dp"
+                    android:text="Caxias do Sul/RS"
+                    android:textColor="@color/colorPrimarytext"
                     android:textSize="14sp" />
 
             </LinearLayout>
-
         </LinearLayout>
-
-        </LinearLayout>
+    </LinearLayout>
 </android.support.v7.widget.CardView>

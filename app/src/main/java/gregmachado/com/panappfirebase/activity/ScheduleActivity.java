@@ -50,8 +50,8 @@ public class ScheduleActivity extends CommonActivity{
         withdrawFragment = new WithdrawFragment();
         deliveryFragment = new DeliveryFragment();
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(withdrawFragment, "RECEBER EM CASA");
-        adapter.addFragment(deliveryFragment, "RETIRAR NA PADARIA");
+        adapter.addFragment(withdrawFragment, "RETIRAR NA PADARIA");
+        adapter.addFragment(deliveryFragment, "RECEBER EM CASA");
         viewPager.setAdapter(adapter);
     }
 

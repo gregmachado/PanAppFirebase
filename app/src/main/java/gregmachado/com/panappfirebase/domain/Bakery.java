@@ -21,12 +21,15 @@ public class Bakery {
     private String bakeryImage;
     private Adress adress;
     private boolean favorite;
+    private boolean hasDelivery;
+    private String startTime, finishTime;
     private List<Product> productList;
 
     public Bakery() {}
 
-    public Bakery(String id, String userID, String corporateName, String fantasyName, String fone,
-                  String email, String cnpj, String bakeryImage, Adress adress, boolean favorite, List<Product> productList) {
+    public Bakery(String id, String userID, String corporateName, String fantasyName, String fone, String email,
+                  String cnpj, String bakeryImage, Adress adress, boolean favorite, boolean hasDelivery,
+                  String startTime, String finishTime, List<Product> productList) {
         this.id = id;
         this.userID = userID;
         this.corporateName = corporateName;
@@ -37,6 +40,9 @@ public class Bakery {
         this.bakeryImage = bakeryImage;
         this.adress = adress;
         this.favorite = favorite;
+        this.hasDelivery = hasDelivery;
+        this.startTime = startTime;
+        this.finishTime = finishTime;
         this.productList = productList;
     }
 
@@ -126,6 +132,30 @@ public class Bakery {
 
     public void setProductList(List<Product> productList) {
         this.productList = productList;
+    }
+
+    public boolean isHasDelivery() {
+        return hasDelivery;
+    }
+
+    public void setHasDelivery(boolean hasDelivery) {
+        this.hasDelivery = hasDelivery;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getFinishTime() {
+        return finishTime;
+    }
+
+    public void setFinishTime(String finishTime) {
+        this.finishTime = finishTime;
     }
 
     public void saveDB(DatabaseReference.CompletionListener... completionListener) {

@@ -20,13 +20,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.domain.User;
 import gregmachado.com.panappfirebase.util.Encryption;
-import gregmachado.com.panappfirebase.util.LibraryClass;
 
 /**
  * Created by gregmachado on 24/10/16.
@@ -42,7 +40,6 @@ public class LoginEmailActivity extends CommonActivity {
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
     private User user;
-    private DatabaseReference databaseReference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,8 +47,6 @@ public class LoginEmailActivity extends CommonActivity {
         setContentView(R.layout.activity_login_email);
         firebaseAuth = FirebaseAuth.getInstance();
         authStateListener = getFirebaseAuthResultHandler();
-        databaseReference = LibraryClass.getFirebase();
-        databaseReference.getRef();
         initViews();
     }
 
@@ -223,7 +218,7 @@ public class LoginEmailActivity extends CommonActivity {
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         assert firebaseUser != null;
         String id = firebaseUser.getUid();
-        databaseReference.child("users").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabaseReference.child("users").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User user = dataSnapshot.getValue(User.class);
@@ -234,6 +229,7 @@ public class LoginEmailActivity extends CommonActivity {
                 params.putString("name", name);
                 params.putString("email", email);
                 params.putString("bakeryID", bakeryID);
+                closeProgressDialog();
                 if(!user.isType()){
                     Intent intentHomeUser = new Intent(LoginEmailActivity.this, UserMainActivity.class);
                     intentHomeUser.putExtras(params);

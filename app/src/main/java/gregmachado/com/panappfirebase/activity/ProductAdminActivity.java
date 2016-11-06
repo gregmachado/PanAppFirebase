@@ -1,10 +1,10 @@
 package gregmachado.com.panappfirebase.activity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,55 +19,52 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.domain.Product;
-import gregmachado.com.panappfirebase.util.LibraryClass;
 import gregmachado.com.panappfirebase.viewHolder.ProductViewHolder;
 
 /**
  * Created by gregmachado on 30/10/16.
  */
-public class ProductAdminActivity extends AppCompatActivity {
+public class ProductAdminActivity extends CommonActivity {
 
     private static final String TAG = ProductAdminActivity.class.getSimpleName();
     private RecyclerView rvProductAdmin;
-    private String bakeryId, id;
-    private Bundle params;
+    private String bakeryId;
     private TextView tvNoProducts;
-    private Product product;
-    private AlertDialog dialog;
-    private DatabaseReference mDatabaseReference;
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference databaseReference = database.getReference();
     private ImageView icProduct;
-    private ProgressBar progressBar;
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+    private StorageReference mStorage;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         //getLayoutInflater().inflate(R.layout.activity_product_admin, frameLayout);
         setContentView(R.layout.activity_product_admin);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_product);
-        setSupportActionBar(toolbar);
-        setTitle("Meus Produtos");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-
+        initViews();
         Intent it = getIntent();
         params = it.getExtras();
         if (params != null) {
             bakeryId = params.getString("bakeryID");
         }
+        mStorage = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com");
+    }
 
-        mDatabaseReference = LibraryClass.getFirebase();
-        mDatabaseReference.getRef();
-
+    @Override
+    protected void initViews() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_product);
+        setSupportActionBar(toolbar);
+        setTitle("Meus Produtos");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         tvNoProducts = (TextView) findViewById(R.id.tv_no_products_admin);
         icProduct = (ImageView) findViewById(R.id.ic_product);
         progressBar = (ProgressBar) findViewById(R.id.simpleProgressBar);
@@ -79,34 +76,24 @@ public class ProductAdminActivity extends AppCompatActivity {
         rvProductAdmin.setItemAnimator(new DefaultItemAnimator());
         //registerForContextMenu(rvProductAdmin);
         rvProductAdmin.setLayoutManager(new LinearLayoutManager(ProductAdminActivity.this));
-        FloatingActionButton btnNewProduct = (FloatingActionButton) findViewById(R.id.btn_add_product);
-        btnNewProduct.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                params.putString("bakeryID", bakeryId);
-                params.putBoolean("update", false);
-                Intent intentFormProduct = new Intent(ProductAdminActivity.this, FormProductActivity.class);
-                intentFormProduct.putExtras(params);
-                startActivity(intentFormProduct);
-            }
-        });
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         Log.w(TAG, "ID: " + bakeryId);
-        progressBar.setVisibility(View.VISIBLE);
+        openProgressBar();
         mDatabaseReference.child("bakeries").child(bakeryId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                closeProgressBar();
                 if (dataSnapshot.hasChild("products")) {
                     FirebaseRecyclerAdapter<Product, ProductViewHolder> adapter = new FirebaseRecyclerAdapter<Product, ProductViewHolder>(
                             Product.class,
                             R.layout.card_product,
                             ProductViewHolder.class,
                             //referencing the node where we want the database to store the data from our Object
-                            databaseReference.child("bakeries").child(bakeryId).child("products").getRef()
+                            mDatabaseReference.child("bakeries").child(bakeryId).child("products").getRef()
                     ) {
                         @Override
                         protected void populateViewHolder(final ProductViewHolder viewHolder, final Product model, final int position) {
@@ -121,7 +108,20 @@ public class ProductAdminActivity extends AppCompatActivity {
                             viewHolder.tvItensSale.setText(String.valueOf(model.getItensSale()));
                             viewHolder.tvProductType.setText(model.getType());
                             viewHolder.tvProductPrice.setText(String.valueOf(model.getProductPrice()));
-                            //Picasso.with(MainActivity.this).load(model.getMoviePoster()).into(viewHolder.ivMoviePoster);
+                            StorageReference imageRef = mStorage.child(model.getId());
+                            final long ONE_MEGABYTE = 1024 * 1024;
+                            imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                @Override
+                                public void onSuccess(byte[] bytes) {
+                                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                    viewHolder.ivProduct.setImageBitmap(bitmap);
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception exception) {
+                                    // Handle any errors
+                                }
+                            });
 
                             viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                                 @Override
@@ -177,7 +177,6 @@ public class ProductAdminActivity extends AppCompatActivity {
                 Log.w(TAG, "getUser:onCancelled", databaseError.toException());
             }
         });
-        progressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -201,6 +200,14 @@ public class ProductAdminActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void newProduct(View view) {
+        params.putString("bakeryID", bakeryId);
+        params.putBoolean("update", false);
+        Intent intentFormProduct = new Intent(ProductAdminActivity.this, FormProductActivity.class);
+        intentFormProduct.putExtras(params);
+        startActivity(intentFormProduct);
     }
 
     private class SearchFilter implements SearchView.OnQueryTextListener {

@@ -44,6 +44,7 @@ public class FormAdressActivity extends CommonActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form_adress);
+        resources = getResources();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_new_adress);
         setSupportActionBar(toolbar);
         setTitle("Novo Endereço");
@@ -186,6 +187,7 @@ public class FormAdressActivity extends CommonActivity {
             String adressID = mDatabaseReference.push().getKey();
             adress.setId(adressID);
             mDatabaseReference.child("users").child(userId).child("adress").child(adressID).setValue(adress);
+            showToast("Endereço cadastrado");
             finish();
         }
     }

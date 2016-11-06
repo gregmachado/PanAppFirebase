@@ -1,7 +1,10 @@
 package gregmachado.com.panappfirebase.activity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,11 +20,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -46,8 +51,6 @@ public class ProductListActivity extends CommonActivity {
     private Product product;
     private String name;
     private TextView tvItens, tvPrice;
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference mDatabaseReference = database.getReference();
     private ImageView icProduct;
     private FloatingActionButton btnCart;
     private ArrayList<Product> productsToCart = new ArrayList<>();
@@ -55,11 +58,12 @@ public class ProductListActivity extends CommonActivity {
     private Double price, parcialPrice = 0.00;
     private int unit, items;
     private int count = 0;
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+    private StorageReference mStorage;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //getLayoutInflater().inflate(R.layout.activity_product_admin, frameLayout);
         setContentView(R.layout.activity_product_list);
         initViews();
 
@@ -70,6 +74,7 @@ public class ProductListActivity extends CommonActivity {
         rvProduct.setItemAnimator(new DefaultItemAnimator());
         //registerForContextMenu(rvProduct);
         rvProduct.setLayoutManager(new LinearLayoutManager(ProductListActivity.this));
+        mStorage = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com");
     }
 
     @Override
@@ -105,6 +110,20 @@ public class ProductListActivity extends CommonActivity {
                             viewHolder.tvPrice.setText(String.valueOf(model.getProductPrice()));
                             viewHolder.tvCategory.setText(model.getType());
                             viewHolder.tvItensSale.setText(String.valueOf(model.getItensSale()));
+                            StorageReference imageRef = mStorage.child(model.getId());
+                            final long ONE_MEGABYTE = 1024 * 1024;
+                            imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                @Override
+                                public void onSuccess(byte[] bytes) {
+                                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                                    viewHolder.ivProduct.setImageBitmap(bitmap);
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception exception) {
+                                    // Handle any errors
+                                }
+                            });
 
                             viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                                 @Override

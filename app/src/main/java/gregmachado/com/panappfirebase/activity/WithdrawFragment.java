@@ -2,7 +2,6 @@ package gregmachado.com.panappfirebase.activity;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,10 +10,15 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import gregmachado.com.panappfirebase.R;
@@ -28,7 +32,7 @@ import gregmachado.com.panappfirebase.util.DateUtil;
  */
 public class WithdrawFragment extends Fragment {
 
-    private TextView tvTime;
+    private TextView tvTime, tvStartTime, tvFinishTime;
     private RadioButton rbToday, rbTomorrow;
     private RadioGroup radioGroup;
     private String today, tomorrow, scheduleDay, scheduleHour, method, creatonDate;
@@ -56,24 +60,44 @@ public class WithdrawFragment extends Fragment {
         rbToday = (RadioButton) v.findViewById(R.id.rb_today_withdraw);
         rbTomorrow = (RadioButton) v.findViewById(R.id.rb_tomorrow_withdraw);
         tvTime = (TextView) v.findViewById(R.id.tv_time_withdraw);
+        tvStartTime = (TextView) v.findViewById(R.id.tv_start_time);
+        tvFinishTime = (TextView) v.findViewById(R.id.tv_finish_time);
         radioGroup = (RadioGroup) v.findViewById(R.id.rg_date_withdraw);
         Button btnFinish = (Button) v.findViewById(R.id.btn_finish_withdraw);
         btnFinish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getValues();
-                request = initRequest();
-                /*mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-                String requestID = mDatabaseReference.push().getKey();
-                request.setRequestID(requestID);
-                mDatabaseReference.child("users").child(userId).child("requests").child(requestID).setValue(request);*/
-                Log.i("itens: ", request.getBakeryID() + request.getCreationDate() + request.getMethod() + request.getRequestID() +
-                request.getScheduleDate() + request.getUserID() + request.getDelivered() + request.getProductList() +
-                request.getScheduleHour());
+                if(compareTime()){
+                    request = initRequest();
+                    mDatabaseReference = FirebaseDatabase.getInstance().getReference();
+                    String requestID = mDatabaseReference.push().getKey();
+                    request.setRequestID(requestID);
+                    mDatabaseReference.child("users").child(userId).child("requests").child(requestID).setValue(request);
+                    Toast.makeText(getContext(), "Pedido realizado com sucesso!", Toast.LENGTH_SHORT).show();
+                    getActivity().finish();
+                } else {
+                    Toast.makeText(getContext(), "Horário do pedido inválido!", Toast.LENGTH_SHORT).show();
+                    tvTime.setTextColor(getResources().getColor(R.color.errorColor));
+                }
             }
         });
         dateTimeSelect();
         return v;
+    }
+
+    private boolean compareTime() {
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+        try {
+            Date dataS = format.parse(tvStartTime.getText().toString().trim());
+            Date dataF = format.parse(tvFinishTime.getText().toString().trim());
+            Date data = format.parse(tvTime.getText().toString().trim());
+            return !(data.after(dataF) || (data.before(dataS)));
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return false;
+        }
     }
 
     private Request initRequest() {

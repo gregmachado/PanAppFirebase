@@ -75,4 +75,12 @@
     <string name="zero_hour">00:00</string>
     <string name="street_name">Nome da rua</string>
     <string name="no_adress">Não existem endereços cadastrados!</string>
+    <string name="no_has_delivery">A padaria não possui delivery!</string>
+    <string name="send">Enviar</string>
+    <string name="state">Estado</string>
+    <string name="start_time">Horário Inicial:</string>
+    <string name="finish_time">Horário Final:</string>
+    <string name="bakery_found">Padaria encontrada!</string>
+    <string name="bakery_not_found">Padaria não encontrada!</string>
+    <string name="work_time">Horário de funcionamento:</string>
 </resources>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#67CBD1">
@@ -11,93 +12,78 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <LinearLayout
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_cnpj"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:background="#ffffff">
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/input_layout_cnpj"
-                android:layout_width="220dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:background="#ffffff">
-
-                <EditText
-                    android:id="@+id/input_cnpj"
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/cnpj"
-                    android:maxLength="14"
-                    android:inputType="number"
-                    android:singleLine="true" />
-            </android.support.design.widget.TextInputLayout>
-
-            <Button
-                android:id="@+id/btn_search_by_cnpj"
+            <EditText
+                android:id="@+id/input_cnpj"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#3DA2C4"
-                android:text="@string/search"
+                android:hint="@string/cnpj"
+                android:inputType="number"
+                android:maxLength="14"
+                android:singleLine="true" />
+        </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:id="@+id/btn_search_by_cnpj"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:background="#3DA2C4"
+            android:elevation="4dp"
+            android:onClick="searchByCNPJ"
+            android:text="@string/search"
+            android:textColor="#ffffff" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.devspark.robototextview.widget.RobotoTextView
+                android:id="@+id/tv_result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="6dp"
-                android:elevation="4dp"
-                android:onClick="searchByCNPJ"
-                android:textColor="#ffffff"/>
+                android:layout_marginTop="8dp"
+                android:textColor="@color/black_50_opacity"
+                android:textSize="18sp"
+                app:typeface="roboto_light_italic" />
 
-        </LinearLayout>
+            <ImageView
+                android:id="@+id/ic_bakery_found"
+                android:src="@drawable/ic_check_black_24dp"
+                android:visibility="invisible"
+                android:layout_marginTop="8dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/input_layout_corporate_name"
+            <ImageView
+                android:id="@+id/ic_bakery_not_found"
+                android:src="@drawable/ic_warning_red_500_24dp"
+                android:visibility="invisible"
+                android:layout_marginTop="8dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:clickable="false"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:background="#ffffff">
-
-            <EditText
-                android:id="@+id/input_corporate_name"
-                android:editable="false"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/corporate_name"
-                android:inputType="textCapWords"
-                android:singleLine="true" />
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/input_layout_fantasy_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:background="#ffffff">
-
-            <EditText
-                android:id="@+id/input_fantasy_name"
-                android:editable="false"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/fantasy_name"
-                android:inputType="textCapWords"
-                android:singleLine="true" />
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/input_layout_fone"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:background="#ffffff">
-
-            <EditText
-                android:id="@+id/input_fone"
-                android:editable="false"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/phone"
-                android:inputType="phone"
-                android:singleLine="true" />
-        </android.support.design.widget.TextInputLayout>
+            android:layout_marginTop="5dp"
+            android:text="@string/acess"
+            android:textSize="15sp" />
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/input_layout_email"
@@ -114,100 +100,6 @@
                 android:inputType="textEmailAddress"
                 android:singleLine="true" />
         </android.support.design.widget.TextInputLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="@string/adress"
-            android:textSize="15sp" />
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/input_layout_street"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:background="#ffffff">
-
-            <EditText
-                android:id="@+id/input_street"
-                android:editable="false"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/street"
-                android:inputType="textCapWords"
-                android:singleLine="true" />
-        </android.support.design.widget.TextInputLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/input_layout_number"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_weight="2"
-                android:background="#ffffff"
-                android:paddingRight="2dp">
-
-                <EditText
-                    android:id="@+id/input_number"
-                    android:editable="false"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/number"
-                    android:inputType="number"
-                    android:singleLine="true" />
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/input_layout_district"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_weight="1"
-                android:background="#ffffff"
-                android:paddingLeft="2dp">
-
-                <EditText
-                    android:id="@+id/input_district"
-                    android:editable="false"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/district"
-                    android:inputType="textCapWords"
-                    android:singleLine="true" />
-            </android.support.design.widget.TextInputLayout>
-
-        </LinearLayout>
-
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/input_layout_city"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:background="#ffffff">
-
-            <EditText
-                android:id="@+id/input_city"
-                android:editable="false"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/city"
-                android:inputType="textCapWords"
-                android:singleLine="true" />
-        </android.support.design.widget.TextInputLayout>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:text="@string/acess"
-            android:textSize="15dp" />
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/input_layout_admin_password"
@@ -231,9 +123,10 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:background="#3DA2C4"
+            android:enabled="false"
             android:elevation="4dp"
-            android:text="@string/register_bakery"
             android:onClick="addBakery"
+            android:text="@string/register_bakery"
             android:textColor="@color/white" />
     </LinearLayout>
 </ScrollView>

@@ -51,7 +51,7 @@
             android:layout_alignParentTop="true"
             android:layout_centerInParent="true"
             android:layout_marginTop="100dp"
-            android:text="Não há produtos cadastrados!"
+            android:text="@string/no_products"
             android:textColor="@color/black_50_opacity"
             android:textSize="15sp"
             app:typeface="roboto_light_italic" />
@@ -72,6 +72,7 @@
             android:layout_marginRight="16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="newProduct"
             tools:ignore="RelativeOverlap" />
     </RelativeLayout>
 

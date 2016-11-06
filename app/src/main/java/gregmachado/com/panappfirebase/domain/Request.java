@@ -11,14 +11,14 @@ public class Request {
     private String bakeryID, userID;
     private String creationDate, scheduleDate;
     private String method, scheduleHour;
-    private Adress adress;
+    private String  adress;
     private Boolean delivered;
     private List<Product> productList;
 
     public Request() {}
 
     public Request(String bakeryID, String userID, String creationDate, String scheduleDate,
-                   String method, String scheduleHour, Adress adress, Boolean delivered, List<Product> productList) {
+                   String method, String scheduleHour, String adress, Boolean delivered, List<Product> productList) {
         this.bakeryID = bakeryID;
         this.userID = userID;
         this.creationDate = creationDate;
@@ -86,11 +86,11 @@ public class Request {
         this.scheduleHour = scheduleHour;
     }
 
-    public Adress getAdress() {
+    public String getAdress() {
         return adress;
     }
 
-    public void setAdress(Adress adress) {
+    public void setAdress(String adress) {
         this.adress = adress;
     }
 

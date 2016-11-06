@@ -51,6 +51,8 @@
         <activity android:name=".activity.ScheduleActivity" />
         <activity android:name=".activity.AdressListActivity" />
         <activity android:name=".activity.FormAdressActivity" />
+        <activity android:name=".activity.MyBakeryActivity" />
+        <activity android:name=".activity.FormEditBakeryActivity" />
     </application>
 
 </manifest>

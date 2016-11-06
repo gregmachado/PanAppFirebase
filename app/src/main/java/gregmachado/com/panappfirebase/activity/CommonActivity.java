@@ -12,12 +12,17 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 
 abstract public class CommonActivity extends AppCompatActivity {
 
     protected ProgressBar progressBar;
     protected ProgressDialog progressDialog;
     protected Bundle params = new Bundle();
+    protected FirebaseDatabase database = FirebaseDatabase.getInstance();
+    protected DatabaseReference mDatabaseReference = database.getReference();
 
     protected void showSnackbar(String message ){
         Snackbar.make(progressBar,

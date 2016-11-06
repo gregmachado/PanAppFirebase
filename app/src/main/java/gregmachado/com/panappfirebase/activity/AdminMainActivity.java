@@ -1,5 +1,6 @@
 package gregmachado.com.panappfirebase.activity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -7,6 +8,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -47,25 +49,13 @@ public class AdminMainActivity extends CommonActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_base);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        setTitle("Home");
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
         Intent it = getIntent();
         params = it.getExtras();
-
         if (params != null) {
             adminName = params.getString("name");
             bakeryID = params.getString("bakeryID");
             adminEmail = params.getString("email");
         }
-
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -80,23 +70,13 @@ public class AdminMainActivity extends CommonActivity
         firebaseAuth.addAuthStateListener(authStateListener);
         databaseReference = LibraryClass.getFirebase();
         databaseReference.getRef();
-
         frameLayout = (FrameLayout) findViewById(R.id.content_frame);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-    }
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
+        initViews();
     }
 
     @Override
@@ -137,14 +117,13 @@ public class AdminMainActivity extends CommonActivity
         } else if (id == R.id.nav_home_admin) {
 
         } else if (id == R.id.nav_my_bakery) {
-            /*Intent intentMyBakery = new Intent(AdminMainActivity.this, MyBakeryActivity.class);
+            Intent intentMyBakery = new Intent(AdminMainActivity.this, MyBakeryActivity.class);
             intentMyBakery.putExtras(params);
-            startActivity(intentMyBakery);*/
+            startActivity(intentMyBakery);
         } else if (id == R.id.nav_talk_whit_us_admin) {
 
         } else if (id == R.id.nav_exit_admin) {
-            FirebaseAuth.getInstance().signOut();
-            finish();
+           onBackPressed();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -163,6 +142,15 @@ public class AdminMainActivity extends CommonActivity
 
     @Override
     protected void initViews() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        setTitle("Home");
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View header = navigationView.getHeaderView(0);
@@ -178,6 +166,25 @@ public class AdminMainActivity extends CommonActivity
                 startActivityForResult(chooseImageIntent, PICK_IMAGE_ID);
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Sair?");
+        builder.setMessage("Deseja realmente sair?");
+        builder.setPositiveButton("SIM", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                FirebaseAuth.getInstance().signOut();
+                finish();
+            }
+        });
+        builder.setNegativeButton("NÃO", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 }
 

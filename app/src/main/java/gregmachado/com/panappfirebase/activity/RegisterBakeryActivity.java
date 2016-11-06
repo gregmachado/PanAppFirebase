@@ -1,6 +1,6 @@
 package gregmachado.com.panappfirebase.activity;
 
-import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.location.Address;
 import android.location.Geocoder;
@@ -14,7 +14,10 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -38,7 +41,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import br.com.jansenfelipe.androidmask.MaskEditTextChangedListener;
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.domain.Adress;
 import gregmachado.com.panappfirebase.domain.Bakery;
@@ -51,16 +53,15 @@ import gregmachado.com.panappfirebase.util.ServiceHandler;
  */
 
 public class RegisterBakeryActivity extends CommonActivity implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, DatabaseReference.CompletionListener{
+        GoogleApiClient.OnConnectionFailedListener, DatabaseReference.CompletionListener {
 
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private Resources resources;
-    private EditText inputCorporateName, inputFantasyName, inputFone, inputEmail, inputCnpj, inputStreet, inputNumber, inputDiscrict, inputCity, inputAdminPassword;
-    private String corporateName, fantasyName, fone, email, cnpj, street, district, city, adminPassword, idString, numberString, cnpjAux;
+    private EditText inputCnpj, inputAdminPassword, inputEmail;
+    private String corporateName, fantasyName, fone, email, cnpj, street, district, city, adminPassword, cnpjAux;
     private int number;
     private static final String TAG = RegisterBakeryActivity.class.getSimpleName();
-    private ProgressDialog progressDialog, pDialog;
     // URL to get contacts JSON
     private static String url = "http://receitaws.com.br/v1/cnpj/";
     // JSON Node names
@@ -86,7 +87,6 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
     private DatabaseReference mDatabaseReference;
-
     // Hashmap for ListView
     ArrayList<HashMap<String, String>> bakerieList;
     private String code;
@@ -94,6 +94,9 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
     private Location l;
     private Double latitude, longitude;
     private String bakeryID;
+    private TextView tvResult;
+    private ImageView icFound, icNotFound;
+    private Button btnAddBakery;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -120,7 +123,7 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
                 bakery.setUserID(user.getId());
                 user.saveDB(RegisterBakeryActivity.this);
                 //bakery.saveDB(RegisterBakeryActivity.this);
-                String bakeryID = mDatabaseReference.push().getKey();
+                bakeryID = mDatabaseReference.push().getKey();
                 bakery.setId(bakeryID);
                 mDatabaseReference.child("bakeries").child(bakeryID).setValue(bakery);
                 mDatabaseReference.child("users").child(id).child("bakeryID").setValue(bakeryID);
@@ -137,7 +140,7 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
      */
     private void callClearErrors(Editable s) {
         if (!s.toString().isEmpty()) {
-            clearErrorFields(inputCorporateName);
+            clearErrorFields(inputAdminPassword);
         }
     }
 
@@ -149,84 +152,37 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
      * @return boolean que indica se os campos foram validados com sucesso ou não
      */
     private boolean validateFields() {
-        corporateName = inputCorporateName.getText().toString().trim();
-        email = inputEmail.getText().toString().trim();
-        fantasyName = inputFantasyName.getText().toString().trim();
-        fone = inputFone.getText().toString().trim();
         cnpj = inputCnpj.getText().toString().trim();
-        street = inputStreet.getText().toString().trim();
-        number = Integer.parseInt(inputNumber.getText().toString().trim());
-        String numberAux = inputNumber.getText().toString().trim();
-        district = inputDiscrict.getText().toString().trim();
-        city = inputCity.getText().toString().trim();
         adminPassword = inputAdminPassword.getText().toString().trim();
-        return (!isEmptyFields(email, fantasyName, fone, cnpj, street, district, numberAux, city, adminPassword) && hasSizeValid(fone, cnpj) && emailValid(email));
+        email = inputEmail.getText().toString().trim();
+        return (!isEmptyFields(adminPassword, email) && hasSizeValid(cnpj, adminPassword) && emailValid(email));
     }
 
-    private boolean isEmptyFields(String email, String fantasyName, String fone, String cnpj, String street, String district, String number, String city, String adminPassword) {
-        if (TextUtils.isEmpty(email)) {
-            inputEmail.requestFocus(); //seta o foco para o campo email
+    private boolean isEmptyFields(String adminPassword, String email) {
+        if (TextUtils.isEmpty(adminPassword)) {
+            inputAdminPassword.requestFocus();
+            inputAdminPassword.setError(resources.getString(R.string.register_password_required));
+            return true;
+        } else  if (TextUtils.isEmpty(email)) {
+            inputEmail.requestFocus();
             inputEmail.setError(resources.getString(R.string.register_email_required));
             return true;
-        } else if (TextUtils.isEmpty(fantasyName)) {
-            inputFantasyName.requestFocus(); //seta o foco para o campo
-            inputFantasyName.setError(resources.getString(R.string.register_field_required));
-            return true;
-        } else if (TextUtils.isEmpty(fone)) {
-            inputFone.requestFocus(); //seta o foco para o campo
-            inputFone.setError(resources.getString(R.string.register_field_required));
-            return true;
-        } else if (TextUtils.isEmpty(cnpj)) {
-            inputCnpj.requestFocus(); //seta o foco para o campo
-            inputCnpj.setError(resources.getString(R.string.register_field_required));
-            return true;
-        } else if (TextUtils.isEmpty(street)) {
-            inputStreet.requestFocus(); //seta o foco para o campo
-            inputStreet.setError(resources.getString(R.string.register_field_required));
-            return true;
-        } else if (TextUtils.isEmpty(district)) {
-            inputDiscrict.requestFocus(); //seta o foco para o campo
-            inputDiscrict.setError(resources.getString(R.string.register_field_required));
-            return true;
-        } else if (TextUtils.isEmpty(number)) {
-            inputNumber.requestFocus(); //seta o foco para o campo
-            inputNumber.setError(resources.getString(R.string.register_field_required));
-            return true;
-        } else if (TextUtils.isEmpty(city)) {
-            inputCity.requestFocus(); //seta o foco para o campo
-            inputCity.setError(resources.getString(R.string.register_field_required));
-            return true;
-        } else if (TextUtils.isEmpty(adminPassword)) {
-            inputAdminPassword.requestFocus(); //seta o foco para o campo
-            inputAdminPassword.setError(resources.getString(R.string.register_field_required));
-            return true;
         }
-        return false;
+            return false;
     }
 
-    private boolean hasSizeValid(String fone, String cnpj) {
+    private boolean hasSizeValid(String cnpj, String adminPassword) {
 
-        if (!(fone.length() > 11)) {
-            inputFone.requestFocus();
-            inputFone.setError(resources.getString(R.string.register_fone_size_invalid));
-            return false;
-        } else if (!(cnpj.length() > 4)) {
+        if (!(cnpj.length() > 13)) {
             inputCnpj.requestFocus();
             inputCnpj.setError(resources.getString(R.string.register_cnpj_size_invalid));
             return false;
+        } else if (!(adminPassword.length() > 4)) {
+            inputAdminPassword.requestFocus();
+            inputAdminPassword.setError(resources.getString(R.string.register_pass_size_invalid));
+            return false;
         }
         return true;
-    }
-
-    /**
-     * Limpa os ícones e as mensagens de erro dos campos desejados
-     *
-     * @param editTexts lista de campos do tipo EditText
-     */
-    private void clearErrorFields(EditText... editTexts) {
-        for (EditText editText : editTexts) {
-            editText.setError(null);
-        }
     }
 
     private boolean emailValid(String email) {
@@ -246,6 +202,17 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
         }
     }
 
+    /**
+     * Limpa os ícones e as mensagens de erro dos campos desejados
+     *
+     * @param editTexts lista de campos do tipo EditText
+     */
+    private void clearErrorFields(EditText... editTexts) {
+        for (EditText editText : editTexts) {
+            editText.setError(null);
+        }
+    }
+
     public void searchByCNPJ(View view) {
         cnpjAux = inputCnpj.getText().toString().trim();
         // Calling async task to get json
@@ -253,6 +220,7 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
     }
 
     public void addBakery(View view) {
+        setBakery(fantasyJson, nameJson, emailJson, streetJson, numberJson, districtJson, cityJson, phoneJson);
         if (validateFields()) {
             openProgressDialog("Cadastrando...", "Aguarde um momento!");
             initUser();
@@ -264,7 +232,7 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
     /**
      * Async task class to get json by making HTTP call
      */
-    private class GetBakery extends AsyncTask<Void, Void, Void> {
+    private class GetBakery extends AsyncTask<Void, Void, Boolean> {
 
         @Override
         protected void onPreExecute() {
@@ -274,14 +242,14 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
         }
 
         @Override
-        protected Void doInBackground(Void... arg0) {
+        protected Boolean doInBackground(Void... arg0) {
 
             // Creating service handler class instance
             ServiceHandler sh = new ServiceHandler();
-
-            url = url + cnpjAux;
+            String newUrl = "";
+            newUrl = url + cnpjAux;
             // Making a request to url and getting response
-            String jsonStr = sh.makeServiceCall(url, ServiceHandler.GET);
+            String jsonStr = sh.makeServiceCall(newUrl, ServiceHandler.GET);
 
             Log.d("Response: ", "> " + jsonStr);
 
@@ -329,40 +297,52 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
                         latitude = a.getLatitude();
                         longitude = a.getLongitude();
                     } else {
-
                     }
 
                     // adding contact to contact list
                     bakerieList.add(bakery);
+                    return !jsonStr.contains("ERROR");
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    return false;
                 }
             } else {
                 Log.e("ServiceHandler", "Couldn't get any data from the url");
+                return false;
             }
-            return null;
         }
 
         @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
+        protected void onPostExecute(Boolean result) {
+            if (result) {
+                tvResult.setText(R.string.bakery_found);
+                icNotFound.setVisibility(View.INVISIBLE);
+                icFound.setVisibility(View.VISIBLE);
+                btnAddBakery.setEnabled(true);
+                inputEmail.setText(emailJson);
+            } else {
+                tvResult.setText(R.string.bakery_not_found);
+                icFound.setVisibility(View.INVISIBLE);
+                icNotFound.setVisibility(View.VISIBLE);
+                btnAddBakery.setEnabled(false);
+            }
             closeProgressDialog();
-            setEditText(fantasyJson, nameJson, emailJson, streetJson, numberJson, districtJson, cityJson, phoneJson);
         }
     }
 
-    private void setEditText(String fantasy, String name, String email, String street, String number, String district, String city, String phone) {
-        inputDiscrict.setText(district);
-        inputCity.setText(city);
-        inputEmail.setText(email);
-        inputFantasyName.setText(fantasy);
-        inputFone.setText(phone);
-        inputCorporateName.setText(name);
-        inputStreet.setText(street);
-        inputNumber.setText(number);
+    private void setBakery(String fantasyJ, String nameJ, String emailJ, String streetJ, String numberJ,
+                           String districtJ, String cityJ, String phoneJ) {
+        district = districtJ;
+        city = cityJ;
+        email = emailJ;
+        fantasyName = fantasyJ;
+        fone = phoneJ;
+        corporateName = nameJ;
+        street = streetJ;
+        number = Integer.parseInt(numberJ);
     }
 
-    private synchronized void callConnection(){
+    private synchronized void callConnection() {
         Log.i("LOG", "RegisterBakeryActivity.callConnection()");
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addOnConnectionFailedListener(this)
@@ -378,7 +358,7 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
 
         //l = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
-        if(l != null){
+        if (l != null) {
             mLastLocation = l;
         }
     }
@@ -390,19 +370,13 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
 
     @Override
     protected void initViews() {
-        inputCorporateName = (EditText) findViewById(R.id.input_corporate_name);
-        inputCorporateName.setKeyListener(null);
-        inputFantasyName = (EditText) findViewById(R.id.input_fantasy_name);
-        inputFone = (EditText) findViewById(R.id.input_fone);
-        MaskEditTextChangedListener maskFone = new MaskEditTextChangedListener("(##)####-####", inputFone);
-        inputFone.addTextChangedListener(maskFone);
-        inputEmail = (EditText) findViewById(R.id.input_email);
         inputCnpj = (EditText) findViewById(R.id.input_cnpj);
-        inputStreet = (EditText) findViewById(R.id.input_street);
-        inputNumber = (EditText) findViewById(R.id.input_number);
-        inputDiscrict = (EditText) findViewById(R.id.input_district);
-        inputCity = (EditText) findViewById(R.id.input_city);
         inputAdminPassword = (EditText) findViewById(R.id.input_admin_password);
+        inputEmail = (EditText) findViewById(R.id.input_email);
+        tvResult = (TextView) findViewById(R.id.tv_result);
+        icFound = (ImageView) findViewById(R.id.ic_bakery_found);
+        icNotFound = (ImageView) findViewById(R.id.ic_bakery_not_found);
+        btnAddBakery = (Button) findViewById(R.id.btn_add_bakery);
     }
 
     protected void initUser() {
@@ -415,9 +389,9 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
         user.setSendNotification(true);
     }
 
-    private void initBakery(){
+    private void initBakery() {
         bakery = new Bakery();
-        adress = new Adress(user.getId(),street, district, city, number, latitude, longitude);
+        adress = new Adress(user.getId(), street, district, city, number, latitude, longitude);
         bakery.setEmail(email);
         bakery.setAdress(adress);
         bakery.setCnpj(cnpj);
@@ -427,7 +401,7 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
         bakery.setUserID(user.getId());
     }
 
-    private void initWatchers(){
+    private void initWatchers() {
 
         resources = getResources();
         TextWatcher textWatcher = new TextWatcher() {
@@ -444,16 +418,9 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
                 callClearErrors(s);
             }
         };
-        inputCorporateName.addTextChangedListener(textWatcher);
-        inputFantasyName.addTextChangedListener(textWatcher);
-        inputFone.addTextChangedListener(textWatcher);
-        inputEmail.addTextChangedListener(textWatcher);
         inputCnpj.addTextChangedListener(textWatcher);
-        inputStreet.addTextChangedListener(textWatcher);
-        inputNumber.addTextChangedListener(textWatcher);
-        inputDiscrict.addTextChangedListener(textWatcher);
-        inputCity.addTextChangedListener(textWatcher);
         inputAdminPassword.addTextChangedListener(textWatcher);
+        inputEmail.addTextChangedListener(textWatcher);
     }
 
     @Override
@@ -484,10 +451,14 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
     @Override
     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
         //bakery.saveDB(RegisterBakeryActivity.this);
-        mAuth.signOut();
+        //mAuth.signOut();
+        params.putString("bakeryID", bakeryID);
+        params.putBoolean("isRegister", true);
+        Intent intentFormEditBakery = new Intent(RegisterBakeryActivity.this, FormEditBakeryActivity.class);
+        intentFormEditBakery.putExtras(params);
         closeProgressDialog();
-        showToast("Padaria registrada com sucesso!");
-        finish();
+        //showToast("Padaria registrada com sucesso!");
+        startActivity(intentFormEditBakery);
     }
 
     @Override

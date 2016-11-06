@@ -1,13 +1,12 @@
 package gregmachado.com.panappfirebase.activity;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -21,7 +20,11 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
-import com.google.firebase.database.DatabaseReference;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
@@ -30,21 +33,19 @@ import java.util.List;
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.domain.Product;
 import gregmachado.com.panappfirebase.util.ImagePicker;
-import gregmachado.com.panappfirebase.util.LibraryClass;
 
 /**
  * Created by gregmachado on 30/10/16.
  */
-public class FormProductActivity extends AppCompatActivity {
+public class FormProductActivity extends CommonActivity {
 
     private Spinner spTypeProduct;
     private EditText inputNameProduct, inputPriceProduct;
     private String strPrice, productName, productType, strBakeryId, strImage;
-    private String localFile;
+    private String productID;
     private Double productPrice;
     private Resources resources;
     private static final String TAG = FormProductActivity.class.getSimpleName();
-    private ProgressDialog progressDialog;
     private String bakeryID, id;
     private Integer items;
     private Product product;
@@ -53,24 +54,24 @@ public class FormProductActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_ID = 234;
     private byte[] image;
     private Boolean update;
-    private Bundle params;
-    private DatabaseReference mDatabaseReference;
     private List<Product> products;
+    private StorageReference mStorageRef;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form_product);
+        initViews();
+        product = new Product();
+    }
+
+    @Override
+    protected void initViews() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_new_product);
         setSupportActionBar(toolbar);
         setTitle("Novo Produto");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-        Intent it = getIntent();
-        params = it.getExtras();
-        mDatabaseReference = LibraryClass.getFirebase();
-        mDatabaseReference.getRef();
-
         TextWatcher textWatcher = new TextWatcher() {
 
             @Override
@@ -123,6 +124,8 @@ public class FormProductActivity extends AppCompatActivity {
 
             }
         });
+        Intent it = getIntent();
+        params = it.getExtras();
         if (params != null) {
             bakeryID = params.getString("bakeryID");
             update = params.getBoolean("update");
@@ -142,7 +145,6 @@ public class FormProductActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (validateFields()) {
-                    product = new Product();
                     product.setProductName(productName);
                     product.setProductPrice(productPrice);
                     product.setType(productType);
@@ -150,14 +152,51 @@ public class FormProductActivity extends AppCompatActivity {
                     if (update) {
 
                     } else {
-                        String productID = mDatabaseReference.push().getKey();
-                        product.setId(productID);
-                        mDatabaseReference.child("bakeries").child(bakeryID).child("products").child(productID).setValue(product);
-                        finish();
+                        openProgressDialog("Aguarde...", "Salvando Produto");
+                            uploadImageAndSaveProduct();
                     }
                 }
             }
         });
+    }
+
+    private void uploadImageAndSaveProduct() {
+
+        FirebaseStorage storage = FirebaseStorage.getInstance();
+        productID = mDatabaseReference.push().getKey();
+        product.setId(productID);
+        mStorageRef = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com").child(productID);
+        imageProduct.setDrawingCacheEnabled(true);
+        imageProduct.buildDrawingCache();
+        Bitmap bitmap = imageProduct.getDrawingCache();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        UploadTask uploadTask = mStorageRef.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                closeProgressDialog();
+                showToast("Erro ao gravar imagem!");
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                if (downloadUrl != null) {
+                    product.setProductImage(downloadUrl.toString());
+                }
+                saveProduct();
+            }
+        });
+    }
+
+    private void saveProduct() {
+        closeProgressDialog();
+        mDatabaseReference.child("bakeries").child(bakeryID).child("products").child(productID).setValue(product);
+        finish();
     }
 
     private void fillLabels(String strImage, String productName, Double productPrice, String productType) {
@@ -207,12 +246,9 @@ public class FormProductActivity extends AppCompatActivity {
 
     public void loadPhoto(String localPhoto) {
         Bitmap imagePhoto = BitmapFactory.decodeFile(localPhoto);
-
         //Gerar imagem reduzida
         Bitmap reducedImagePhoto = Bitmap.createScaledBitmap(imagePhoto, 150, 200, true);
-
         product.setProductImage(localPhoto);
-
         imageProduct.setImageBitmap(reducedImagePhoto);
     }
 
@@ -231,20 +267,6 @@ public class FormProductActivity extends AppCompatActivity {
         }
     }
 
-    public ImageView getPhoto() {
-        return imageProduct;
-    }
-
-    public byte[] convertImageToByte(ImageView imageProduct) {
-
-        Bitmap bitmap = ((BitmapDrawable) imageProduct.getDrawable()).getBitmap();
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.PNG, 90, stream);
-        image = stream.toByteArray();
-
-        return image;
-    }
-
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         switch (requestCode) {
@@ -256,6 +278,5 @@ public class FormProductActivity extends AppCompatActivity {
                 super.onActivityResult(requestCode, resultCode, data);
                 break;
         }
-
     }
 }

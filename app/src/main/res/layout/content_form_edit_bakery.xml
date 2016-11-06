@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <com.devspark.robototextview.widget.RobotoTextView
+            android:id="@+id/lbl_cnpj"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CNPJ"
+            android:textColor="@color/black_50_opacity"
+            android:textSize="18sp"
+            app:typeface="roboto_light_italic" />
+
+        <com.devspark.robototextview.widget.RobotoTextView
+            android:id="@+id/lbl_corporate_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Razão Social"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/black_50_opacity"
+            android:textSize="18sp"
+            app:typeface="roboto_light_italic" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_fantasy_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/input_fantasy_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:editable="false"
+                android:hint="@string/fantasy_name"
+                android:inputType="textCapWords"
+                android:singleLine="true" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_fone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/input_fone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:editable="false"
+                android:hint="@string/phone"
+                android:inputType="phone"
+                android:singleLine="true" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/input_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/email"
+                android:inputType="textEmailAddress"
+                android:singleLine="true" />
+        </android.support.design.widget.TextInputLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/adress"
+            android:textSize="15sp" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_street"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/input_street"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:editable="false"
+                android:hint="@string/street"
+                android:inputType="textCapWords"
+                android:singleLine="true" />
+        </android.support.design.widget.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/input_layout_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:paddingRight="2dp">
+
+                <EditText
+                    android:id="@+id/input_number"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:editable="false"
+                    android:hint="@string/number"
+                    android:inputType="number"
+                    android:singleLine="true" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/input_layout_district"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingLeft="2dp">
+
+                <EditText
+                    android:id="@+id/input_district"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:editable="false"
+                    android:hint="@string/district"
+                    android:inputType="textCapWords"
+                    android:singleLine="true" />
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_city"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/input_city"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:editable="false"
+                android:hint="@string/city"
+                android:inputType="textCapWords"
+                android:singleLine="true" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_state"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/input_state"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:editable="false"
+                android:hint="@string/state"
+                android:inputType="textCapWords"
+                android:singleLine="true" />
+        </android.support.design.widget.TextInputLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <com.devspark.robototextview.widget.RobotoTextView
+                android:id="@+id/lbl_has_delivery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Possui delivery?"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/black_50_opacity"
+                android:textSize="18sp"
+                app:typeface="roboto_light_italic" />
+
+
+            <Switch
+                android:id="@+id/switch_delivery"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <com.devspark.robototextview.widget.RobotoTextView
+                android:id="@+id/lbl_start_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/start_time"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/black_50_opacity"
+                android:textSize="18sp"
+                app:typeface="roboto_light_italic" />
+
+            <com.devspark.robototextview.widget.RobotoTextView
+                android:id="@+id/tv_start_time"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/zero_hour"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/black_50_opacity"
+                android:textSize="18sp"
+                app:typeface="roboto_light_italic" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <com.devspark.robototextview.widget.RobotoTextView
+                android:id="@+id/lbl_finish_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/finish_time"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/black_50_opacity"
+                android:textSize="18sp"
+                app:typeface="roboto_light_italic" />
+
+            <com.devspark.robototextview.widget.RobotoTextView
+                android:id="@+id/tv_finish_time"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/zero_hour"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/black_50_opacity"
+                android:textSize="18sp"
+                app:typeface="roboto_light_italic" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_add_bakery"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="#3DA2C4"
+            android:elevation="4dp"
+            android:onClick="sendEditBakery"
+            android:text="@string/send"
+            android:textColor="@color/white" />
+    </LinearLayout>
+</ScrollView>

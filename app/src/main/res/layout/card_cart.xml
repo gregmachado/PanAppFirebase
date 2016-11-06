@@ -17,28 +17,13 @@
         android:padding="8dp"
         tools:background="#22000000">
 
-        <ImageView
-            android:id="@+id/iv_product_cart"
-            android:layout_width="80sp"
-            android:layout_height="80sp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginEnd="16sp"
-            android:layout_marginRight="16sp"
-            android:src="@drawable/img_product"
-            tools:ignore="ContentDescription"
-            android:scaleType="fitCenter"/>
-
         <TextView
             android:id="@+id/tv_product_cart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toEndOf="@+id/iv_product_cart"
-            android:layout_toRightOf="@+id/iv_product_cart"
             android:layout_alignParentTop="true"
             android:text="Produto"
-            android:textSize="20sp"
+            android:textSize="16sp"
             android:textStyle="bold"
             tools:ignore="HardcodedText" />
 
@@ -47,8 +32,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_product_cart"
-            android:layout_toEndOf="@+id/iv_product_cart"
-            android:layout_toRightOf="@+id/iv_product_cart"
             android:paddingTop="4dp"
             android:text="R$ "
             android:textColor="@color/colorPrimaryDark"
@@ -71,18 +54,57 @@
             tools:ignore="HardcodedText" />
 
         <TextView
+            android:id="@+id/tv_sub_tag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_price_tag_cart"
+            android:paddingTop="4dp"
+            android:text="Subtotal "
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/tv_price_tag_cart_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_price_tag_cart"
+            android:layout_toEndOf="@+id/tv_sub_tag"
+            android:layout_toRightOf="@+id/tv_sub_tag"
+            android:paddingTop="4dp"
+            android:text="R$ "
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+
+
+        <TextView
+            android:id="@+id/tv_price_cart_sub"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_price_tag_cart"
+            android:layout_toEndOf="@+id/tv_price_tag_cart_2"
+            android:layout_toRightOf="@+id/tv_price_tag_cart_2"
+            android:paddingTop="4dp"
+            android:text="Sub Preço"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+
+        <TextView
             android:id="@+id/tv_unit_cart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_product_cart"
             android:paddingLeft="4sp"
             android:paddingRight="4sp"
-            android:paddingTop="4dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:text="xx"
             android:textColor="#696969"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:textStyle="bold"
             tools:ignore="HardcodedText" />
 
@@ -90,31 +112,25 @@
             android:id="@+id/tv_unit_tag_cart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_product_cart"
             android:layout_toLeftOf="@id/tv_unit_cart"
             android:layout_toStartOf="@id/tv_unit_cart"
             android:paddingBottom="12sp"
-            android:paddingTop="4dp"
             android:text="Unidades: "
             android:textColor="#696969"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:textStyle="bold"
             tools:ignore="HardcodedText" />
 
-        <Button
+        <ImageButton
+            android:src="@drawable/ic_delete_forever_black_36dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:id="@+id/btn_remove_cart"
-            android:layout_width="130sp"
-            android:layout_height="30sp"
-            android:background="@color/redButton"
-            android:layout_below="@id/tv_price_tag_cart"
-            android:layout_marginTop="8dp"
+            android:layout_below="@id/tv_unit_tag_cart"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:elevation="8dp"
-            android:text="Remover"
-            android:textSize="14sp"
-            android:drawableLeft="@drawable/ic_delete_forever_white_18dp"
-            android:textColor="#ffffff" />
+            android:background="@android:color/transparent"
+            android:elevation="8dp" />
 
     </RelativeLayout>
 </android.support.v7.widget.CardView>

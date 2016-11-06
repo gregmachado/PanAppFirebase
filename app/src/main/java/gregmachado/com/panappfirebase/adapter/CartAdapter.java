@@ -1,6 +1,8 @@
 package gregmachado.com.panappfirebase.adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -49,22 +51,35 @@ public class CartAdapter extends RecyclerView.Adapter<CartViewHolder> {
         productViewHolder.tvProductName.setText(products.get(i).getProductName());
         productViewHolder.tvPrice.setText(String.valueOf(products.get(i).getProductPrice()));
         productViewHolder.tvUnits.setText(String.valueOf(products.get(i).getUnit()));
-
-        //productViewHolder.ivProduct.setImageBitmap(bitmap);
+        Double subTotal = products.get(i).getProductPrice() * products.get(i).getUnit();
+        productViewHolder.tvSubTotal.setText(String.valueOf(subTotal));
 
         productViewHolder.btnRemoveCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                items = getValue(productViewHolder);
-                price = products.get(i).getProductPrice() * items;
-                String itemLabel = products.get(position).getProductName();
-                products.remove(position);
-                notifyItemRemoved(position);
-                notifyItemRangeChanged(position, products.size());
-                parcialPrice = productCartActivity.getValuesToolbarBottom();
-                parcialPrice = parcialPrice - price;
-                productCartActivity.setValuesToolbarBottom(String.valueOf(parcialPrice));
-                Toast.makeText(mContext, "Removed : " + itemLabel, Toast.LENGTH_SHORT).show();
+                AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                builder.setTitle("Excluir?");
+                builder.setMessage("Deseja realmente excluir o item?");
+                builder.setPositiveButton("SIM", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        items = getValue(productViewHolder);
+                        price = products.get(i).getProductPrice() * items;
+                        String itemLabel = products.get(position).getProductName();
+                        products.remove(position);
+                        notifyItemRemoved(position);
+                        notifyItemRangeChanged(position, products.size());
+                        parcialPrice = productCartActivity.getValuesToolbarBottom();
+                        parcialPrice = parcialPrice - price;
+                        productCartActivity.setValuesToolbarBottom(String.valueOf(parcialPrice));
+                        Toast.makeText(mContext, "Removed : " + itemLabel, Toast.LENGTH_SHORT).show();
+                    }
+                });
+                builder.setNegativeButton("NÃO", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface arg0, int arg1) {
+                    }
+                });
+                AlertDialog alertDialog = builder.create();
+                alertDialog.show();
             }
         });
     }
