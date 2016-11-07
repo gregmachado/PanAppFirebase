@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,15 +14,20 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.domain.Request;
+import gregmachado.com.panappfirebase.viewHolder.RequestViewHolderUser;
 
 /**
  * Created by gregmachado on 16/10/16.
@@ -77,17 +83,60 @@ public class DeliveredRequestFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
+        loadRequest();
     }
 
-    private void getRequest(Request requestAux, Request request) {
-        request.setDelivered(requestAux.getDelivered());
-        request.setAdress(requestAux.getAdress());
-        request.setMethod(requestAux.getMethod());
-        request.setScheduleHour(requestAux.getScheduleHour());
-        request.setScheduleDate(requestAux.getScheduleDate());
-        request.setBakeryID(requestAux.getBakeryID());
-        request.setCreationDate(requestAux.getCreationDate());
-        request.setUserID(requestAux.getUserID());
+    private void loadRequest() {
+        simpleProgressBar.setVisibility(View.VISIBLE);
+        mDatabaseReference.child("users").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                simpleProgressBar.setVisibility(View.INVISIBLE);
+                if (dataSnapshot.hasChild("requests")) {
+                    FirebaseRecyclerAdapter<Request, RequestViewHolderUser> adapter = new FirebaseRecyclerAdapter<Request, RequestViewHolderUser>(
+                            Request.class,
+                            R.layout.card_request_user,
+                            RequestViewHolderUser.class,
+                            //referencing the node where we want the database to store the data from our Object
+                            mDatabaseReference.child("users").child(userId).child("requests").getRef()
+                    ) {
+                        @Override
+                        protected void populateViewHolder(final RequestViewHolderUser viewHolder, final Request model, final int position) {
+                            if (txtAnswer.getVisibility() == View.VISIBLE) {
+                                txtAnswer.setVisibility(View.GONE);
+                            }
+                            if (ic_request.getVisibility() == View.VISIBLE) {
+                                ic_request.setVisibility(View.GONE);
+                            }
+                            viewHolder.tvRequestCode.setText(model.getRequestID());
+                            viewHolder.tvMethod.setText(model.getMethod());
+                            viewHolder.tvHour.setText(model.getScheduleHour());
+                            viewHolder.tvBakeryName.setText(model.getBakeryID());
+                            viewHolder.tvDate.setText(model.getScheduleDate());
+                            viewHolder.tvUnits.setText(model.getProductList().size());
+                            viewHolder.tvStatus.setText("Entregue");
+
+                            viewHolder.mView.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    Log.w(TAG, "You clicked on " + model.getRequestID());
+                                }
+                            });
+                        }
+                    };
+
+                    rvRequest.setAdapter(adapter);
+                } else {
+                    txtAnswer.setVisibility(View.VISIBLE);
+                    ic_request.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "getUser:onCancelled", databaseError.toException());
+            }
+        });
+        simpleProgressBar.setVisibility(View.GONE);
     }
 }

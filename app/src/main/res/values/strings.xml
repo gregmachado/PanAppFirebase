@@ -83,4 +83,6 @@
     <string name="bakery_found">Padaria encontrada!</string>
     <string name="bakery_not_found">Padaria não encontrada!</string>
     <string name="work_time">Horário de funcionamento:</string>
+    <string name="no_pendent_requests">Não há pedidos pendentes!</string>
+    <string name="no_delivered_requests">Não há pedidos entregues!</string>
 </resources>

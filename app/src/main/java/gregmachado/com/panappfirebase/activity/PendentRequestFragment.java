@@ -140,16 +140,4 @@ public class PendentRequestFragment extends Fragment {
         });
         simpleProgressBar.setVisibility(View.GONE);
     }
-
-    private void getRequest(Request requestAux, Request request) {
-        request.setDelivered(requestAux.getDelivered());
-        request.setAdress(requestAux.getAdress());
-        request.setMethod(requestAux.getMethod());
-        request.setScheduleHour(requestAux.getScheduleHour());
-        request.setScheduleDate(requestAux.getScheduleDate());
-        request.setBakeryID(requestAux.getBakeryID());
-        request.setCreationDate(requestAux.getCreationDate());
-        request.setUserID(requestAux.getUserID());
-    }
-
 }

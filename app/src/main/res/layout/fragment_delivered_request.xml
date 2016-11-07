@@ -23,6 +23,7 @@
             android:layout_marginTop="40dp"
             android:layout_centerInParent="true"
             android:layout_alignParentTop="true"
+            android:visibility="invisible"
             android:src="@drawable/ic_assignment_turned_in_black_36dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
@@ -31,6 +32,8 @@
             android:id="@+id/tv_answer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="@string/no_delivered_requests"
+            android:visibility="invisible"
             android:layout_marginTop="100dp"
             android:layout_centerInParent="true"
             android:layout_alignParentTop="true"
