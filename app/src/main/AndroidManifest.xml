@@ -53,6 +53,7 @@
         <activity android:name=".activity.FormAdressActivity" />
         <activity android:name=".activity.MyBakeryActivity" />
         <activity android:name=".activity.FormEditBakeryActivity" />
+        <activity android:name=".activity.RequestActivity" />
     </application>
 
 </manifest>

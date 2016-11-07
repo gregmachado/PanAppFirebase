@@ -123,12 +123,14 @@ public class UserMainActivity extends CommonActivity
         } else if (id == R.id.nav_notification) {
 
         } else if (id == R.id.nav_follow_orders) {
-            Intent intentRequest = new Intent(UserMainActivity.this, ScheduleActivity.class);
+            Intent intentRequest = new Intent(UserMainActivity.this, RequestActivity.class);
             //params.putBoolean("isAdmin", false);
             intentRequest.putExtras(params);
             startActivity(intentRequest);
         } else if (id == R.id.nav_history) {
-
+            Intent intentRequest = new Intent(UserMainActivity.this, ScheduleActivity.class);
+            intentRequest.putExtras(params);
+            startActivity(intentRequest);
         } else if (id == R.id.nav_home) {
 
         } else if (id == R.id.nav_my_adrees) {

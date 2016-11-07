@@ -43,7 +43,7 @@ import gregmachado.com.panappfirebase.util.DateUtil;
 public class DeliveryFragment extends Fragment {
 
     private static final String TAG = DeliveryFragment.class.getSimpleName();
-    private TextView tvTime, tvNoHasDelivery,lbl01, lbl02, lbl03, tvStartTime, tvFinishTime;
+    private TextView tvTime, tvNoHasDelivery, lbl01, lbl02, lbl03, tvStartTime, tvFinishTime;
     private RadioButton rbToday, rbTomorrow;
     private RadioGroup radioGroup;
     private String today, tomorrow, scheduleDay, scheduleHour, adress, method, creatonDate;
@@ -51,12 +51,13 @@ public class DeliveryFragment extends Fragment {
     private String bakeryId, userId;
     private List<Product> products;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private DatabaseReference mDatabaseReference = database.getReference();;
+    private DatabaseReference mDatabaseReference = database.getReference();
     private ProgressBar simpleProgressBar;
     private Button btnFinish;
     private Spinner spinner;
 
-    public DeliveryFragment(){}
+    public DeliveryFragment() {
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -101,7 +102,7 @@ public class DeliveryFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 getValues();
-                if(compareTime()){
+                if (compareTime()) {
                     request = initRequest();
                     mDatabaseReference = FirebaseDatabase.getInstance().getReference();
                     String requestID = mDatabaseReference.push().getKey();
@@ -144,13 +145,13 @@ public class DeliveryFragment extends Fragment {
                 Bakery bakery = dataSnapshot.getValue(Bakery.class);
                 tvStartTime.setText(bakery.getStartTime());
                 tvFinishTime.setText(bakery.getFinishTime());
-                if(bakery.isHasDelivery()){
+                if (bakery.isHasDelivery()) {
                     mDatabaseReference.child("users").child(userId).child("adress").addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.getChildrenCount() > 0) {
                                 final List<String> adress = new ArrayList<String>();
-                                for (DataSnapshot adressSnapshot: dataSnapshot.getChildren()) {
+                                for (DataSnapshot adressSnapshot : dataSnapshot.getChildren()) {
                                     String street = adressSnapshot.child("street").getValue(String.class);
                                     Integer num = adressSnapshot.child("number").getValue(Integer.class);
                                     String number = String.valueOf(num);
@@ -231,9 +232,9 @@ public class DeliveryFragment extends Fragment {
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if(checkedId == R.id.rb_today) {
+                if (checkedId == R.id.rb_today) {
                     scheduleDay = today;
-                } else if(checkedId == R.id.rb_tomorrow) {
+                } else if (checkedId == R.id.rb_tomorrow) {
                     scheduleDay = tomorrow;
                 }
             }
@@ -243,7 +244,7 @@ public class DeliveryFragment extends Fragment {
     private CustomTimePickerDialog.OnTimeSetListener timeSetListener = new CustomTimePickerDialog.OnTimeSetListener() {
         @Override
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            tvTime.setText(String.format("%02d", hourOfDay) + ":" +String.format("%02d", minute));
+            tvTime.setText(String.format("%02d", hourOfDay) + ":" + String.format("%02d", minute));
         }
     };
 }

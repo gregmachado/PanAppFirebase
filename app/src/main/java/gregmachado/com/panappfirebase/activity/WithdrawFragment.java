@@ -2,6 +2,7 @@ package gregmachado.com.panappfirebase.activity;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +13,11 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -22,6 +26,7 @@ import java.util.Date;
 import java.util.List;
 
 import gregmachado.com.panappfirebase.R;
+import gregmachado.com.panappfirebase.domain.Bakery;
 import gregmachado.com.panappfirebase.domain.Product;
 import gregmachado.com.panappfirebase.domain.Request;
 import gregmachado.com.panappfirebase.util.CustomTimePickerDialog;
@@ -32,6 +37,7 @@ import gregmachado.com.panappfirebase.util.DateUtil;
  */
 public class WithdrawFragment extends Fragment {
 
+    private static final String TAG = WithdrawFragment.class.getSimpleName();
     private TextView tvTime, tvStartTime, tvFinishTime;
     private RadioButton rbToday, rbTomorrow;
     private RadioGroup radioGroup;
@@ -39,7 +45,8 @@ public class WithdrawFragment extends Fragment {
     private Request request;
     private String bakeryId, userId;
     private List<Product> products;
-    private DatabaseReference mDatabaseReference;
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private DatabaseReference mDatabaseReference = database.getReference();
 
     public WithdrawFragment(){}
 
@@ -63,6 +70,7 @@ public class WithdrawFragment extends Fragment {
         tvStartTime = (TextView) v.findViewById(R.id.tv_start_time);
         tvFinishTime = (TextView) v.findViewById(R.id.tv_finish_time);
         radioGroup = (RadioGroup) v.findViewById(R.id.rg_date_withdraw);
+        loadTime();
         Button btnFinish = (Button) v.findViewById(R.id.btn_finish_withdraw);
         btnFinish.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,6 +92,25 @@ public class WithdrawFragment extends Fragment {
         });
         dateTimeSelect();
         return v;
+    }
+
+    private void loadTime() {
+        //user test
+        //bakeryId = "-KVuZ4G7BewSuHBfNB7x";
+        Log.w(TAG, bakeryId);
+        mDatabaseReference.child("bakeries").child(bakeryId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Bakery bakery = dataSnapshot.getValue(Bakery.class);
+                tvStartTime.setText(bakery.getStartTime());
+                tvFinishTime.setText(bakery.getFinishTime());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "getUser:onCancelled", databaseError.toException());
+            }
+        });
     }
 
     private boolean compareTime() {
