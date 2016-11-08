@@ -122,13 +122,14 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
                                 icBakery.setVisibility(View.GONE);
                             }
                             viewHolder.tvBakeryName.setText(model.getFantasyName());
-                            viewHolder.tvPhone.setText(model.getFone());
-                            viewHolder.tvDistrict.setText(model.getAdress().getDistrict());
                             distance = GeoLocation.distanceCalculate(userLatitude, userLongitude,
                                     model.getAdress().getLatitude(), model.getAdress().getLongitude());
                             viewHolder.tvDistance.setText(String.valueOf(distance));
-                            //Picasso.with(MainActivity.this).load(model.getMoviePoster()).into(viewHolder.ivMoviePoster);
-
+                            if(model.isFavorite()){
+                                viewHolder.ibtnFavoriteOn.setVisibility(View.VISIBLE);
+                            } else {
+                                viewHolder.ibtnFavoriteOff.setVisibility(View.VISIBLE);
+                            }
                             viewHolder.mView.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {

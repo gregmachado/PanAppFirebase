@@ -85,4 +85,6 @@
     <string name="work_time">Horário de funcionamento:</string>
     <string name="no_pendent_requests">Não há pedidos pendentes!</string>
     <string name="no_delivered_requests">Não há pedidos entregues!</string>
+    <string name="bakery_name">Nome Padaria</string>
+    <string name="km">km</string>
 </resources>
