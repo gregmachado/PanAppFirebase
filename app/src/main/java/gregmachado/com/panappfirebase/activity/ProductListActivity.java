@@ -4,17 +4,23 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -50,7 +56,7 @@ public class ProductListActivity extends CommonActivity {
     private ArrayList<Product> listCart;
     private Product product;
     private String name;
-    private TextView tvItens, tvPrice;
+    public TextView tvItens, tvPrice;
     private ImageView icProduct;
     private FloatingActionButton btnCart;
     private ArrayList<Product> productsToCart = new ArrayList<>();
@@ -60,6 +66,9 @@ public class ProductListActivity extends CommonActivity {
     private int count = 0;
     FirebaseStorage storage = FirebaseStorage.getInstance();
     private StorageReference mStorage;
+    private Handler handler;
+    private TextView tvUnits;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -81,7 +90,7 @@ public class ProductListActivity extends CommonActivity {
     protected void onResume() {
         super.onResume();
         openProgressBar();
-        if(productsToCart!=null){
+        if (productsToCart != null) {
             productsToCart.clear();
         }
         setValuesToolbarBottom("00", "00,00");
@@ -132,64 +141,144 @@ public class ProductListActivity extends CommonActivity {
                                 }
                             });
 
-                            viewHolder.btnPlus.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    increase(viewHolder, model.getItensSale());
-                                }
-                            });
-                            viewHolder.btnLess.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    decrease(viewHolder);
-                                }
-                            });
                             viewHolder.btnAddCart.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    if(viewHolder.btnAddCart.getText().equals("Adicionar")){
-                                        Product product = new Product();
-                                        product.setProductName(model.getProductName());
-                                        product.setProductPrice(model.getProductPrice());
-                                        product.setType(model.getType());
-                                        product.setBakeryId(model.getBakeryId());
-                                        product.setProductImage(model.getProductImage());
-                                        product.setItensSale(model.getItensSale());
-                                        product.setId(model.getId());
-                                        items = getValue(viewHolder);
-                                        product.setUnit(items);
-                                        price = model.getProductPrice() * items;
-                                        if (items > 0){
-                                            productsToCart.add(product);
-                                            viewHolder.btnAddCart.setText("Remover");
-                                            viewHolder.btnAddCart.setBackgroundResource(R.color.redButton);
+                                    LayoutInflater inflater = getLayoutInflater();
+                                    View dialoglayout = inflater.inflate(R.layout.dialog_units, null);
+                                    final AlertDialog.Builder builder = new AlertDialog.Builder(ProductListActivity.this);
+                                    final AlertDialog dialog = builder.create();
+                                    dialog.setView(dialoglayout);
 
-                                            count ++;
-                                            parcialPrice = parcialPrice + price;
-                                            setValuesToolbarBottom(String.valueOf(count), String.valueOf(parcialPrice));
-
-                                            viewHolder.btnPlus.setEnabled(false);
-                                            viewHolder.btnLess.setEnabled(false);
+                                    tvUnits = (TextView) dialoglayout.findViewById(R.id.tv_unit_sale);
+                                    ImageButton btnPlus = (ImageButton) dialoglayout.findViewById(R.id.btn_plus);
+                                    btnPlus.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            increase(viewHolder, Integer.valueOf(viewHolder.tvItensSale.getText().toString()));
                                         }
-                                    } else {
-                                        Iterator<Product> it = productsToCart.iterator();
-                                        while(it.hasNext()){
-                                            if(it.next().getId().equals(model.getId())){
-                                                it.remove();
-                                                items = getValue(viewHolder);
-                                                price = model.getProductPrice() * items;
+                                    });
+                                    btnPlus.setOnTouchListener(new View.OnTouchListener() {
+                                        @Override
+                                        public boolean onTouch(View v, MotionEvent event) {
+                                            switch(event.getAction()) {
+
+                                                case MotionEvent.ACTION_DOWN:
+                                                    if (handler != null) return true;
+                                                    handler = new Handler();
+                                                    handler.postDelayed(actionPlus, 100);
+                                                    break;
+
+                                                case MotionEvent.ACTION_UP:
+                                                    if (handler == null) return true;
+                                                    handler.removeCallbacks(actionPlus);
+                                                    handler = null;
+                                                    break;
+                                            }
+                                            return false;
+                                        }
+                                        Runnable actionPlus = new Runnable() {
+
+                                            @Override
+                                            public void run() {
+                                                increase(viewHolder, Integer.valueOf(viewHolder.tvItensSale.getText().toString()));
+                                                handler.postDelayed(this, 100);
+                                            }
+                                        };
+                                    });
+                                    ImageButton btnLess = (ImageButton) dialoglayout.findViewById(R.id.btn_less);
+                                    btnLess.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            decrease(viewHolder);
+                                        }
+                                    });
+                                    btnLess.setOnTouchListener(new View.OnTouchListener() {
+                                        @Override
+                                        public boolean onTouch(View v, MotionEvent event) {
+                                            switch(event.getAction()) {
+
+                                                case MotionEvent.ACTION_DOWN:
+                                                    if (handler != null) return true;
+                                                    handler = new Handler();
+                                                    handler.postDelayed(actionLess, 100);
+                                                    break;
+
+                                                case MotionEvent.ACTION_UP:
+                                                    if (handler == null) return true;
+                                                    handler.removeCallbacks(actionLess);
+                                                    handler = null;
+                                                    break;
+                                            }
+                                            return false;
+                                        }
+                                        Runnable actionLess = new Runnable() {
+
+                                            @Override
+                                            public void run() {
+                                                decrease(viewHolder);
+                                                handler.postDelayed(this, 100);
+                                            }
+                                        };
+                                    });
+                                    Button btnCancel = (Button) dialoglayout.findViewById(R.id.btn_cancel);
+                                    btnCancel.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                                    Button btnAddToCart = (Button) dialoglayout.findViewById(R.id.btn_add_cart);
+                                    btnAddToCart.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            Product product = new Product();
+                                            product.setProductName(model.getProductName());
+                                            product.setProductPrice(model.getProductPrice());
+                                            product.setType(model.getType());
+                                            product.setBakeryId(model.getBakeryId());
+                                            product.setProductImage(model.getProductImage());
+                                            product.setId(model.getId());
+                                            items = getValue(viewHolder);
+                                            product.setUnit(items);
+                                            price = model.getProductPrice() * items;
+                                            if (items > 0) {
+                                                productsToCart.add(product);
+                                                viewHolder.btnAddCart.setVisibility(View.INVISIBLE);
+                                                viewHolder.btnRemoveCart.setVisibility(View.VISIBLE);
+
+                                                count++;
+                                                parcialPrice = parcialPrice + price;
+                                                setValuesToolbarBottom(String.valueOf(count), String.valueOf(parcialPrice));
+
+                                                viewHolder.tvUnitInCart.setText(String.valueOf(items));
+                                                viewHolder.llCart.setVisibility(View.VISIBLE);
+                                                dialog.dismiss();
                                             }
                                         }
-                                        viewHolder.btnAddCart.setText("Adicionar");
-                                        viewHolder.btnAddCart.setBackgroundResource(R.color.colorPrimary);
-
-                                        count --;
-                                        parcialPrice = parcialPrice - price;
-                                        setValuesToolbarBottom(String.valueOf(count), String.valueOf(parcialPrice));
-
-                                        viewHolder.btnPlus.setEnabled(true);
-                                        viewHolder.btnLess.setEnabled(true);
+                                    });
+                                    dialog.show();
+                                }
+                            });
+                            viewHolder.btnRemoveCart.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Iterator<Product> it = productsToCart.iterator();
+                                    while (it.hasNext()) {
+                                        if (it.next().getId().equals(model.getId())) {
+                                            it.remove();
+                                            items = getValue(viewHolder);
+                                            price = model.getProductPrice() * items;
+                                        }
                                     }
+                                    viewHolder.btnAddCart.setVisibility(View.VISIBLE);
+                                    viewHolder.btnRemoveCart.setVisibility(View.INVISIBLE);
+
+                                    count--;
+                                    parcialPrice = parcialPrice - price;
+                                    setValuesToolbarBottom(String.valueOf(count), String.valueOf(parcialPrice));
+
+                                    viewHolder.llCart.setVisibility(View.INVISIBLE);
                                 }
                             });
                         }
@@ -201,6 +290,7 @@ public class ProductListActivity extends CommonActivity {
                     btnCart.setVisibility(View.GONE);
                 }
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.w(TAG, "getUser:onCancelled", databaseError.toException());
@@ -264,7 +354,7 @@ public class ProductListActivity extends CommonActivity {
         startActivity(i);
     }
 
-    private  class SearchFilter implements SearchView.OnQueryTextListener{
+    private class SearchFilter implements SearchView.OnQueryTextListener {
         @Override
         public boolean onQueryTextSubmit(String query) {
             return false;
@@ -277,7 +367,7 @@ public class ProductListActivity extends CommonActivity {
         }
     }
 
-    public void setValuesToolbarBottom(String items, String price){
+    public void setValuesToolbarBottom(String items, String price) {
         tvItens.setText(items);
         tvPrice.setText(price);
     }
@@ -285,22 +375,19 @@ public class ProductListActivity extends CommonActivity {
     protected void decrease(ProductViewHolderUser productViewHolder) {
         if (isValid(productViewHolder)) {
             int value = getValue(productViewHolder)-1;
-            productViewHolder.tvUnitSale.setText(String.valueOf(value));
+            tvUnits.setText(String.valueOf(value));
         }
     }
 
-    private void refresh(ProductViewHolderUser productViewHolder, int value) {
-        productViewHolder.tvUnitSale.setText("0");
-    }
     protected void increase(ProductViewHolderUser productViewHolder, Integer itensSale) {
         int value = getValue(productViewHolder)+1;
         if(value <= itensSale){
-            productViewHolder.tvUnitSale.setText(String.valueOf(value));
+            tvUnits.setText(String.valueOf(value));
         }
     }
 
     private int getValue(ProductViewHolderUser productViewHolder) {
-        String value = productViewHolder.tvUnitSale.getText().toString();
+        String value = tvUnits.getText().toString();
         return (!value.equals("")) ? Integer.valueOf(value) : 0;
     }
 

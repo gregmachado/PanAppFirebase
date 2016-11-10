@@ -87,4 +87,10 @@
     <string name="no_delivered_requests">Não há pedidos entregues!</string>
     <string name="bakery_name">Nome Padaria</string>
     <string name="km">km</string>
+    <string name="zero_single">0</string>
+    <string name="add">Adicionar</string>
+    <string name="add_to_cart">adicionar ao carrinho</string>
+    <string name="remove">remover</string>
+    <string name="cancel">cancelar</string>
+    <string name="chose_unit">Escolha a quantidade</string>
 </resources>

@@ -1,0 +1,87 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="240sp"
+    android:layout_height="wrap_content">
+
+    <com.devspark.robototextview.widget.RobotoTextView
+        android:id="@+id/tv_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="8sp"
+        android:layout_marginLeft="4sp"
+        android:layout_marginRight="4sp"
+        android:layout_marginBottom="4sp"
+        android:text="@string/chose_unit"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/black_50_opacity"
+        android:textSize="20sp"
+        app:typeface="roboto_light_italic" />
+
+    <ImageButton
+        android:id="@+id/btn_less"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="22sp"
+        android:layout_marginEnd="16sp"
+        android:layout_marginRight="16sp"
+        android:layout_below="@+id/tv_header"
+        android:layout_toLeftOf="@+id/tv_unit_sale"
+        android:layout_toStartOf="@+id/tv_unit_sale"
+        android:src="@drawable/ic_remove_circle_outline_primary_48dp"
+        android:background="@android:color/transparent" />
+
+    <com.devspark.robototextview.widget.RobotoTextView
+        android:id="@+id/tv_unit_sale"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_header"
+        android:layout_marginTop="12sp"
+        android:layout_centerHorizontal="true"
+        android:text="@string/zero_single"
+        app:typeface="roboto_mono_light"
+        app:fontFamily="roboto_mono"
+        android:textSize="48sp" />
+
+    <ImageButton
+        android:id="@+id/btn_plus"
+        android:background="@android:color/transparent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_header"
+        android:layout_marginTop="22sp"
+        android:layout_marginLeft="16sp"
+        android:layout_marginStart="16sp"
+        android:layout_toRightOf="@+id/tv_unit_sale"
+        android:layout_toEndOf="@id/tv_unit_sale"
+        android:src="@drawable/ic_add_circle_outline_primary_48dp" />
+
+    <Button
+        android:id="@+id/btn_add_cart"
+        android:layout_width="160sp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="22sp"
+        android:background="@drawable/btn_radius_28dp_primary_color"
+        android:layout_below="@id/btn_less"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/white"
+        android:text="@string/add"
+        android:elevation="4dp"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/btn_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8sp"
+        android:background="@android:color/transparent"
+        android:layout_below="@id/btn_add_cart"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/colorPrimaryDark"
+        android:text="@string/cancel"
+        android:elevation="4dp"
+        android:textSize="16sp" />
+
+</RelativeLayout>
