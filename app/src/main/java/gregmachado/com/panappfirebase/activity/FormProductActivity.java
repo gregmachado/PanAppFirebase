@@ -18,16 +18,16 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import gregmachado.com.panappfirebase.R;
@@ -39,7 +39,7 @@ import gregmachado.com.panappfirebase.util.ImagePicker;
  */
 public class FormProductActivity extends CommonActivity {
 
-    private Spinner spTypeProduct;
+    private MaterialBetterSpinner spTypeProduct;
     private EditText inputNameProduct, inputPriceProduct;
     private String strPrice, productName, productType, strBakeryId, strImage;
     private String productID;
@@ -49,13 +49,14 @@ public class FormProductActivity extends CommonActivity {
     private String bakeryID, id;
     private Integer items;
     private Product product;
-    private ImageView imageProduct;
+    private ImageView imageProduct, imageAddPhoto;
     private ArrayAdapter<String> dataAdapter;
     private static final int PICK_IMAGE_ID = 234;
     private byte[] image;
-    private Boolean update;
+    private Boolean update, noPhoto = true;
     private List<Product> products;
     private StorageReference mStorageRef;
+    private TextView tvAddPhoto;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,6 +64,7 @@ public class FormProductActivity extends CommonActivity {
         setContentView(R.layout.activity_form_product);
         initViews();
         product = new Product();
+        resources = getResources();
     }
 
     @Override
@@ -99,19 +101,12 @@ public class FormProductActivity extends CommonActivity {
         inputNameProduct = (EditText) findViewById(R.id.et_product_name);
         inputNameProduct.addTextChangedListener(textWatcher);
         inputPriceProduct = (EditText) findViewById(R.id.et_product_price);
-        spTypeProduct = (Spinner) findViewById(R.id.sp_product_type);
+        tvAddPhoto = (TextView) findViewById(R.id.tv_add_photo);
+        imageAddPhoto = (ImageView) findViewById(R.id.img_add_photo);
+        spTypeProduct = (MaterialBetterSpinner) findViewById(R.id.spinner_category);
         Button btnAddProduct = (Button) findViewById(R.id.btn_save_product);
-        List<String> categories = new ArrayList<String>();
-        categories.add("Pães");
-        categories.add("Bolos");
-        categories.add("Cucas");
-        categories.add("Bebidas");
-        categories.add("Salgados");
-        categories.add("Doces");
-        categories.add("Frios");
-        categories.add("Biscoitos");
-        categories.add("Outros");
-        dataAdapter = new ArrayAdapter<String>(this, android.R.layout.select_dialog_item, categories);
+        String[] categories = getResources().getStringArray(R.array.category);
+        dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, categories);
         spTypeProduct.setAdapter(dataAdapter);
         spTypeProduct.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -153,7 +148,7 @@ public class FormProductActivity extends CommonActivity {
 
                     } else {
                         openProgressDialog("Aguarde...", "Salvando Produto");
-                            uploadImageAndSaveProduct();
+                        uploadImageAndSaveProduct();
                     }
                 }
             }
@@ -161,36 +156,39 @@ public class FormProductActivity extends CommonActivity {
     }
 
     private void uploadImageAndSaveProduct() {
-
         FirebaseStorage storage = FirebaseStorage.getInstance();
         productID = mDatabaseReference.push().getKey();
         product.setId(productID);
-        mStorageRef = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com").child(productID);
-        imageProduct.setDrawingCacheEnabled(true);
-        imageProduct.buildDrawingCache();
-        Bitmap bitmap = imageProduct.getDrawingCache();
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-        byte[] data = baos.toByteArray();
+        if (noPhoto){
+            saveProduct();
+        } else {
+            mStorageRef = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com").child(productID);
+            imageProduct.setDrawingCacheEnabled(true);
+            imageProduct.buildDrawingCache();
+            Bitmap bitmap = imageProduct.getDrawingCache();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] data = baos.toByteArray();
 
-        UploadTask uploadTask = mStorageRef.putBytes(data);
-        uploadTask.addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                closeProgressDialog();
-                showToast("Erro ao gravar imagem!");
-            }
-        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-            @Override
-            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                if (downloadUrl != null) {
-                    product.setProductImage(downloadUrl.toString());
+            UploadTask uploadTask = mStorageRef.putBytes(data);
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    closeProgressDialog();
+                    showToast("Erro ao gravar imagem!");
                 }
-                saveProduct();
-            }
-        });
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                    if (downloadUrl != null) {
+                        product.setProductImage(downloadUrl.toString());
+                    }
+                    saveProduct();
+                }
+            });
+        }
     }
 
     private void saveProduct() {
@@ -225,12 +223,19 @@ public class FormProductActivity extends CommonActivity {
     }
 
     private boolean validateFields() {
-        productName = inputNameProduct.getText().toString().trim();
-        productPrice = Double.valueOf(inputPriceProduct.getText().toString().trim());
-        return (!isEmptyFields(productName, productPrice));
+        String p = inputPriceProduct.getText().toString().trim();
+        if(!TextUtils.isEmpty(p)){
+            productName = inputNameProduct.getText().toString().trim();
+            productPrice = Double.parseDouble(inputPriceProduct.getText().toString().trim());
+            productType = spTypeProduct.getText().toString();
+            return (!isEmptyFields(productName, productPrice, productType));
+        } else{
+            inputPriceProduct.setError(resources.getString(R.string.price_product_required));
+        }
+        return false;
     }
 
-    private boolean isEmptyFields(String name, Double price) {
+    private boolean isEmptyFields(String name, Double price, String productType) {
         String priceAux = price.toString();
         if (TextUtils.isEmpty(name)) {
             inputNameProduct.requestFocus(); //seta o foco para o campo name
@@ -239,6 +244,10 @@ public class FormProductActivity extends CommonActivity {
         } else if (TextUtils.isEmpty(priceAux)) {
             inputPriceProduct.requestFocus(); //seta o foco para o campo email
             inputPriceProduct.setError(resources.getString(R.string.price_product_required));
+            return true;
+        } else if (TextUtils.isEmpty(productType)) {
+            spTypeProduct.requestFocus();
+            spTypeProduct.setError(resources.getString(R.string.register_field_required));
             return true;
         }
         return false;
@@ -254,7 +263,7 @@ public class FormProductActivity extends CommonActivity {
 
     public void setProduct(Product product) {
         inputNameProduct.setText(product.getProductName());
-        inputPriceProduct.setText(product.getProductPrice().toString());
+        inputPriceProduct.setText(String.valueOf(product.getProductPrice()));
         String compareValue = product.getType();
         if (!compareValue.equals(null)) {
             int spinnerPostion = dataAdapter.getPosition(compareValue);
@@ -273,6 +282,8 @@ public class FormProductActivity extends CommonActivity {
             case PICK_IMAGE_ID:
                 Bitmap bitmap = ImagePicker.getImageFromResult(this, resultCode, data);
                 imageProduct.setImageBitmap(bitmap);
+                tvAddPhoto.setVisibility(View.INVISIBLE);
+                imageAddPhoto.setVisibility(View.INVISIBLE);
                 break;
             default:
                 super.onActivityResult(requestCode, resultCode, data);

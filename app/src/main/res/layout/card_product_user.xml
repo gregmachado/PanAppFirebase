@@ -3,7 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_margin="12dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
     app:cardCornerRadius="5dp"
     android:elevation="8dp">
 
@@ -86,8 +88,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_product"
-            android:layout_toLeftOf="@id/tv_unit_tag"
-            android:layout_toStartOf="@id/tv_unit_tag"
+            android:layout_toLeftOf="@+id/tv_unit_tag"
+            android:layout_toStartOf="@+id/tv_unit_tag"
             android:paddingTop="4dp"
             android:text="xx"
             android:textColor="@color/colorPrimaryDark"

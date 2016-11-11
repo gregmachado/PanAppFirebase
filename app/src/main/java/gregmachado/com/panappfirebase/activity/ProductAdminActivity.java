@@ -1,10 +1,7 @@
 package gregmachado.com.panappfirebase.activity;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -17,17 +14,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-
 import gregmachado.com.panappfirebase.R;
+import gregmachado.com.panappfirebase.adapter.ProductAdapterAdmin;
 import gregmachado.com.panappfirebase.domain.Product;
 import gregmachado.com.panappfirebase.viewHolder.ProductViewHolder;
 
@@ -41,13 +33,11 @@ public class ProductAdminActivity extends CommonActivity {
     private String bakeryId;
     private TextView tvNoProducts;
     private ImageView icProduct;
-    FirebaseStorage storage = FirebaseStorage.getInstance();
-    private StorageReference mStorage;
+    private FirebaseRecyclerAdapter<Product, ProductViewHolder> adapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //getLayoutInflater().inflate(R.layout.activity_product_admin, frameLayout);
         setContentView(R.layout.activity_product_admin);
         initViews();
         Intent it = getIntent();
@@ -55,7 +45,6 @@ public class ProductAdminActivity extends CommonActivity {
         if (params != null) {
             bakeryId = params.getString("bakeryID");
         }
-        mStorage = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com");
     }
 
     @Override
@@ -88,83 +77,15 @@ public class ProductAdminActivity extends CommonActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 closeProgressBar();
                 if (dataSnapshot.hasChild("products")) {
-                    FirebaseRecyclerAdapter<Product, ProductViewHolder> adapter = new FirebaseRecyclerAdapter<Product, ProductViewHolder>(
-                            Product.class,
-                            R.layout.card_product,
-                            ProductViewHolder.class,
-                            //referencing the node where we want the database to store the data from our Object
-                            mDatabaseReference.child("bakeries").child(bakeryId).child("products").getRef()
-                    ) {
-                        @Override
-                        protected void populateViewHolder(final ProductViewHolder viewHolder, final Product model, final int position) {
-                            if (tvNoProducts.getVisibility() == View.VISIBLE) {
-                                tvNoProducts.setVisibility(View.GONE);
-                            }
-                            if (icProduct.getVisibility() == View.VISIBLE) {
-                                icProduct.setVisibility(View.GONE);
-                            }
-                            viewHolder.tvProductName.setText(model.getProductName());
-                            viewHolder.tvUnits.setText(String.valueOf(model.getUnit()));
-                            viewHolder.tvItensSale.setText(String.valueOf(model.getItensSale()));
-                            viewHolder.tvProductType.setText(model.getType());
-                            viewHolder.tvProductPrice.setText(String.valueOf(model.getProductPrice()));
-                            StorageReference imageRef = mStorage.child(model.getId());
-                            final long ONE_MEGABYTE = 1024 * 1024;
-                            imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                                @Override
-                                public void onSuccess(byte[] bytes) {
-                                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                                    viewHolder.ivProduct.setImageBitmap(bitmap);
-                                }
-                            }).addOnFailureListener(new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception exception) {
-                                    // Handle any errors
-                                }
-                            });
-
-                            viewHolder.mView.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    Log.w(TAG, "You clicked on " + model.getProductName());
-                                }
-                            });
-                            viewHolder.btnPlus.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    increase(viewHolder);
-                                }
-                            });
-                            viewHolder.btnLess.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    decrease(viewHolder);
-                                }
-                            });
-                            viewHolder.mView.setOnLongClickListener(new View.OnLongClickListener() {
-                                @Override
-                                public boolean onLongClick(View v) {
-                                    //setPosition(productViewHolder.getPosition());
-                                    return false;
-                                }
-                            });
-                            viewHolder.btnSale.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    String productID = model.getId();
-                                    int unit = model.getItensSale();
-                                    Integer items = getValue(viewHolder);
-                                    Log.w(TAG, "id produto: " + productID);
-                                    if (items > 0) {
-                                        items = items + unit;
-                                        mDatabaseReference.child("bakeries").child(bakeryId).child("products")
-                                                .child(productID).child("itensSale").setValue(items);
-                                        refresh(viewHolder, items);
-                                    }
-                                }
-                            });
-                        }
-                    };
+                    if (tvNoProducts.getVisibility() == View.VISIBLE) {
+                        tvNoProducts.setVisibility(View.GONE);
+                    }
+                    if (icProduct.getVisibility() == View.VISIBLE) {
+                        icProduct.setVisibility(View.GONE);
+                    }
+                    adapter = new ProductAdapterAdmin(mDatabaseReference.child("bakeries").child(bakeryId).child("products").getRef(),
+                            ProductAdminActivity.this, ProductAdminActivity.this, bakeryId
+                    ) {};
                     rvProductAdmin.setAdapter(adapter);
                 } else {
                     tvNoProducts.setVisibility(View.VISIBLE);
@@ -221,31 +142,5 @@ public class ProductAdminActivity extends CommonActivity {
             Log.i("Script", "onQueryTextChange" + newText);
             return false;
         }
-    }
-
-    protected void decrease(ProductViewHolder productViewHolder) {
-        if (isValid(productViewHolder)) {
-            int value = getValue(productViewHolder)-1;
-            productViewHolder.tvUnits.setText(String.valueOf(value));
-        }
-    }
-
-    protected void increase(ProductViewHolder productViewHolder) {
-        int value = getValue(productViewHolder)+1;
-        productViewHolder.tvUnits.setText(String.valueOf(value));
-    }
-
-    private int getValue(ProductViewHolder productViewHolder) {
-        String value = productViewHolder.tvUnits.getText().toString();
-        return (!value.equals("")) ? Integer.valueOf(value) : 0;
-    }
-
-    private boolean isValid(ProductViewHolder productViewHolder) {
-        return (getValue(productViewHolder) > 0);
-    }
-
-    private void refresh(ProductViewHolder productViewHolder, int value) {
-        productViewHolder.tvUnits.setText("0");
-        //productViewHolder.tvItensSale.setText(String.valueOf(value));
     }
 }

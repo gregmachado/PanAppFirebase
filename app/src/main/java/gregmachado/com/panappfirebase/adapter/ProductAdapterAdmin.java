@@ -6,31 +6,39 @@ import android.graphics.BitmapFactory;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.PopupMenu;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
 import java.util.ArrayList;
-import java.util.Iterator;
+
 import gregmachado.com.panappfirebase.R;
-import gregmachado.com.panappfirebase.activity.ProductListActivity;
+import gregmachado.com.panappfirebase.activity.ProductAdminActivity;
 import gregmachado.com.panappfirebase.domain.Product;
-import gregmachado.com.panappfirebase.viewHolder.ProductViewHolderUser;
+import gregmachado.com.panappfirebase.util.AppUtil;
+import gregmachado.com.panappfirebase.util.DialogHandler;
+import gregmachado.com.panappfirebase.viewHolder.ProductViewHolder;
 
 /**
  * Created by gregmachado on 10/11/16.
  */
-public class ProductAdapter extends FirebaseRecyclerAdapter<Product, ProductViewHolderUser> {
-    FirebaseStorage storage = FirebaseStorage.getInstance();
+public class ProductAdapterAdmin extends FirebaseRecyclerAdapter<Product, ProductViewHolder> {
+
     private static final String TAG = ProductAdapter.class.getSimpleName();
     private Context mContext;
     private Handler handler;
@@ -38,20 +46,26 @@ public class ProductAdapter extends FirebaseRecyclerAdapter<Product, ProductView
     private int items, count = 0;
     private double price, parcialPrice;
     private ArrayList<Product> productsToCart = new ArrayList<>();
-    private ProductListActivity productListActivity;
+    private ProductAdminActivity productListActivity;
+    private String bakeryID, productID, productName;
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private DatabaseReference mDatabaseReference = database.getReference();
 
-    public ProductAdapter(Query ref, Context context, ProductListActivity productListActivity) {
-        super(Product.class, R.layout.card_product_user, ProductViewHolderUser.class, ref);
+    public ProductAdapterAdmin(Query ref, Context context, ProductAdminActivity productListActivity, String bakeryID) {
+        super(Product.class, R.layout.card_product, ProductViewHolder.class, ref);
         this.mContext = context;
         this.productListActivity = productListActivity;
+        this.bakeryID = bakeryID;
     }
 
     @Override
-    protected void populateViewHolder(final ProductViewHolderUser viewHolder, final Product model, final int position) {
+    protected void populateViewHolder(final ProductViewHolder viewHolder, final Product model, final int position) {
+
         viewHolder.tvProductName.setText(model.getProductName());
-        viewHolder.tvPrice.setText(String.valueOf(model.getProductPrice()));
-        viewHolder.tvCategory.setText(model.getType());
         viewHolder.tvItensSale.setText(String.valueOf(model.getItensSale()));
+        viewHolder.tvProductType.setText(model.getType());
+        viewHolder.tvProductPrice.setText(String.valueOf(model.getProductPrice()));
         StorageReference mStorage = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com");
         StorageReference imageRef = mStorage.child(model.getId());
         final long ONE_MEGABYTE = 1024 * 1024;
@@ -71,11 +85,17 @@ public class ProductAdapter extends FirebaseRecyclerAdapter<Product, ProductView
         viewHolder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.w(TAG, "You clicked on " + model.getProductPrice());
+                Log.w(TAG, "You clicked on " + model.getProductName());
             }
         });
-
-        viewHolder.btnAddCart.setOnClickListener(new View.OnClickListener() {
+        viewHolder.mView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                //setPosition(productViewHolder.getPosition());
+                return false;
+            }
+        });
+        viewHolder.btnSale.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 View dialoglayout = LayoutInflater.from(mContext).inflate(R.layout.dialog_units, null);
@@ -88,7 +108,7 @@ public class ProductAdapter extends FirebaseRecyclerAdapter<Product, ProductView
                 btnPlus.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        increase(viewHolder, Integer.valueOf(viewHolder.tvItensSale.getText().toString()));
+                        increase(viewHolder);
                     }
                 });
                 btnPlus.setOnTouchListener(new View.OnTouchListener() {
@@ -115,7 +135,7 @@ public class ProductAdapter extends FirebaseRecyclerAdapter<Product, ProductView
 
                         @Override
                         public void run() {
-                            increase(viewHolder, Integer.valueOf(viewHolder.tvItensSale.getText().toString()));
+                            increase(viewHolder);
                             handler.postDelayed(this, 100);
                         }
                     };
@@ -167,27 +187,15 @@ public class ProductAdapter extends FirebaseRecyclerAdapter<Product, ProductView
                 btnAddToCart.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Product product = new Product();
-                        product.setProductName(model.getProductName());
-                        product.setProductPrice(model.getProductPrice());
-                        product.setType(model.getType());
-                        product.setBakeryId(model.getBakeryId());
-                        product.setProductImage(model.getProductImage());
-                        product.setId(model.getId());
-                        items = getValue(viewHolder);
-                        product.setUnit(items);
-                        price = model.getProductPrice() * items;
+                        String productID = model.getId();
+                        int unit = model.getItensSale();
+                        Integer items = getValue(viewHolder);
+                        Log.w(TAG, "id produto: " + productID);
                         if (items > 0) {
-                            productsToCart.add(product);
-                            viewHolder.btnAddCart.setVisibility(View.INVISIBLE);
-                            viewHolder.btnRemoveCart.setVisibility(View.VISIBLE);
-
-                            count++;
-                            parcialPrice = parcialPrice + price;
-                            setValuesToolbarBottom(String.valueOf(count), String.valueOf(parcialPrice));
-
-                            viewHolder.tvUnitInCart.setText(String.valueOf(items));
-                            viewHolder.llCart.setVisibility(View.VISIBLE);
+                            items = items + unit;
+                            mDatabaseReference.child("bakeries").child(bakeryID).child("products")
+                                    .child(productID).child("itensSale").setValue(items);
+                            refresh(viewHolder, items);
                             dialog.dismiss();
                         }
                     }
@@ -195,54 +203,95 @@ public class ProductAdapter extends FirebaseRecyclerAdapter<Product, ProductView
                 dialog.show();
             }
         });
-        viewHolder.btnRemoveCart.setOnClickListener(new View.OnClickListener() {
+        viewHolder.btnMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Iterator<Product> it = productsToCart.iterator();
-                while (it.hasNext()) {
-                    if (it.next().getId().equals(model.getId())) {
-                        it.remove();
-                        items = getValue(viewHolder);
-                        price = model.getProductPrice() * items;
+                PopupMenu popup = new PopupMenu(mContext, viewHolder.btnMore);
+                popup.getMenuInflater().inflate(R.menu.popup_menu_product, popup.getMenu());
+
+                popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    public boolean onMenuItemClick(MenuItem item) {
+                        String action = item.getTitle().toString();
+                        productID = model.getId();
+                        productName = model.getProductName();
+                        makeAction(action, viewHolder);
+                        return true;
                     }
-                }
-                viewHolder.btnAddCart.setVisibility(View.VISIBLE);
-                viewHolder.btnRemoveCart.setVisibility(View.INVISIBLE);
-
-                count--;
-                parcialPrice = parcialPrice - price;
-                setValuesToolbarBottom(String.valueOf(count), String.valueOf(parcialPrice));
-
-                viewHolder.llCart.setVisibility(View.INVISIBLE);
+                });
+                popup.show();
             }
         });
     }
 
-    protected void decrease(ProductViewHolderUser productViewHolder) {
+    private void makeAction(String action, ProductViewHolder viewHolder) {
+        switch (action){
+            case "Editar":
+
+                break;
+            case "Remover Estoque":
+                DialogHandler appdialogRemove = new DialogHandler();
+                appdialogRemove.Confirm(mContext, "Remover?", "Deseja remover todo estoque do item?",
+                        "NÃO", "SIM", yes(1, viewHolder), no());
+                break;
+            case "Excluir":
+                DialogHandler appdialog = new DialogHandler();
+                appdialog.Confirm(mContext, "Excluir?", "Deseja excluir o item?",
+                        "NÃO", "SIM", yes(2, viewHolder), no());
+                break;
+        }
+    }
+
+    public Runnable yes(final Integer answer, final ProductViewHolder viewHolder){
+        return new Runnable() {
+            public void run() {
+                if (answer == 2){
+                    mDatabaseReference.child("bakeries").child(bakeryID).child("products")
+                            .child(productID).removeValue();
+                    AppUtil.showToast(mContext, productName + " excluido!");
+                } else {
+                    if(viewHolder.tvItensSale.getText() != "0"){
+                        mDatabaseReference.child("bakeries").child(bakeryID).child("products")
+                                .child(productID).child("itensSale").setValue(0);
+                        refresh(viewHolder, items);
+                        AppUtil.showToast(mContext, "Estoque de " + productName + " removido!");
+                    } else {
+                        AppUtil.showToast(mContext, "Este produto não possui estoque");
+                    }
+                }
+            }
+        };
+    }
+
+    public Runnable no(){
+        return new Runnable() {
+            public void run() {
+                Log.d("Test", "This from nop proc");
+            }
+        };
+    }
+
+    protected void decrease(ProductViewHolder productViewHolder) {
         if (isValid(productViewHolder)) {
-            int value = getValue(productViewHolder)-1;
+            int value = getValue(productViewHolder) - 1;
             tvUnits.setText(String.valueOf(value));
         }
     }
 
-    protected void increase(ProductViewHolderUser productViewHolder, Integer itensSale) {
-        int value = getValue(productViewHolder)+1;
-        if(value <= itensSale){
-            tvUnits.setText(String.valueOf(value));
-        }
+    protected void increase(ProductViewHolder productViewHolder) {
+        int value = getValue(productViewHolder) + 1;
+        tvUnits.setText(String.valueOf(value));
     }
 
-    private int getValue(ProductViewHolderUser productViewHolder) {
+    private int getValue(ProductViewHolder productViewHolder) {
         String value = tvUnits.getText().toString();
         return (!value.equals("")) ? Integer.valueOf(value) : 0;
     }
 
-    private boolean isValid(ProductViewHolderUser productViewHolder) {
+    private boolean isValid(ProductViewHolder productViewHolder) {
         return (getValue(productViewHolder) > 0);
     }
 
-    public void setValuesToolbarBottom(String items, String price) {
-        productListActivity.tvItens.setText(items);
-        productListActivity.tvPrice.setText(price);
+    private void refresh(ProductViewHolder productViewHolder, int value) {
+        productViewHolder.tvItensSale.setText(String.valueOf(value));
     }
 }

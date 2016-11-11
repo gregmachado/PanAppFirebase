@@ -93,4 +93,10 @@
     <string name="remove">remover</string>
     <string name="cancel">cancelar</string>
     <string name="chose_unit">Escolha a quantidade</string>
+    <string name="add_photo">Adicionar foto</string>
+    <string name="product_name">Nome do produto</string>
+    <string name="product_price">Preço do produto</string>
+    <string name="category">Categoria</string>
+    <string name="add_product">ADICIONAR PRODUTO</string>
+    <string name="control_stock">Controlar Estoque?</string>
 </resources>

@@ -14,11 +14,11 @@ import gregmachado.com.panappfirebase.R;
  */
 public class ProductViewHolder extends RecyclerView.ViewHolder{
 
-    public TextView tvProductName, tvProductPrice, tvProductType, tvItensSale, tvUnits;
+    public TextView tvProductName, tvProductPrice, tvProductType, tvItensSale;
     public ImageView ivProduct;
     public View mView;
     public Button btnSale;
-    public ImageButton btnPlus, btnLess, btnMore;
+    public ImageButton btnMore;
 
     public ProductViewHolder(View v) {
         super(v);
@@ -28,9 +28,6 @@ public class ProductViewHolder extends RecyclerView.ViewHolder{
         tvProductType = (TextView) itemView.findViewById(R.id.tv_type);
         ivProduct = (ImageView) itemView.findViewById(R.id.iv_product);
         tvItensSale = (TextView) itemView.findViewById(R.id.tv_unit);
-        tvUnits = (TextView) itemView.findViewById(R.id.tv_unit_sale);
-        btnPlus = (ImageButton) itemView.findViewById(R.id.btn_plus);
-        btnLess = (ImageButton) itemView.findViewById(R.id.btn_less);
         btnSale = (Button) itemView.findViewById(R.id.btn_sale);
         btnMore = (ImageButton) itemView.findViewById(R.id.btn_more);
     }

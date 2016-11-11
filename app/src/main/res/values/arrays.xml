@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="category">
+        <item>Pães</item>
+        <item>Bolos</item>
+        <item>Cucas</item>
+        <item>Bebidas</item>
+        <item>Salgados</item>
+        <item>Doces</item>
+        <item>Frios</item>
+        <item>Biscoitos</item>
+        <item>Outros</item>
+    </string-array>
+</resources>

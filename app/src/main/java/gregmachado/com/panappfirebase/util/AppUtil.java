@@ -86,7 +86,8 @@ public class AppUtil {
 
     /**
      * Use this method to check if a third part app is istalled or not
-     * @param ctx the app's context
+     *
+     * @param ctx         the app's context
      * @param packageName the third part app's package name. something like: com.example.package
      * @return true if the app is installed.
      */
@@ -103,10 +104,11 @@ public class AppUtil {
     }
 
     /**
-     *  Use this method to open the google play store
-     * @param activity the app which wants to redirect to the google play store
+     * Use this method to open the google play store
+     *
+     * @param activity          the app which wants to redirect to the google play store
      * @param googlePlayStoreId the third part app's package name. something like: com.example.package
-     * @param requestCode the request code to be used in the method onActivityForResult in the app which called this method.
+     * @param requestCode       the request code to be used in the method onActivityForResult in the app which called this method.
      */
     public static void navigateToGooglePlayStore(final Activity activity, final String googlePlayStoreId, final int requestCode) {
         try {
@@ -117,7 +119,7 @@ public class AppUtil {
         }
     }
 
-    public static void showToast ( Context ctx, String msg){
+    public static void showToast(Context ctx, String msg) {
         Toast.makeText(ctx, msg, Toast.LENGTH_SHORT).show();
     }
 }
