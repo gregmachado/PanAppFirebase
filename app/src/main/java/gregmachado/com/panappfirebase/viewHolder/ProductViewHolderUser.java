@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import gregmachado.com.panappfirebase.R;
@@ -19,6 +20,8 @@ public class ProductViewHolderUser extends RecyclerView.ViewHolder {
     public View mView;
     public Button btnAddCart, btnRemoveCart;
     public LinearLayout llCart;
+    public ProgressBar progressBar;
+
 
     public ProductViewHolderUser(View v) {
         super(v);
@@ -32,5 +35,6 @@ public class ProductViewHolderUser extends RecyclerView.ViewHolder {
         tvUnitInCart = (TextView) itemView.findViewById(R.id.tv_unit_in_cart);
         btnRemoveCart = (Button) itemView.findViewById(R.id.btn_remove_cart);
         llCart = (LinearLayout) itemView.findViewById(R.id.ll_cart);
+        progressBar = (ProgressBar) itemView.findViewById(R.id.photo_progressbar);
     }
 }

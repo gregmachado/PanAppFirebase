@@ -70,7 +70,7 @@ public class PagSeguroItem {
         if(weightInGramms<0 || weightInGramms > (1000*30)){
             throw new IllegalArgumentException("Product's weight can not be smaller 0 and the sum of all products can not exceed 30kg!");
         }
-        if (amount.compareTo(BigDecimal.valueOf(1)) == -1 || amount.compareTo(BigDecimal.valueOf(9999999.00)) == 1 ){
+        if (amount.compareTo(BigDecimal.valueOf(0.1)) == -1 || amount.compareTo(BigDecimal.valueOf(9999999.00)) == 1 ){
             throw new IllegalArgumentException("Product's amount can not be smaller then R$1.00 and not greater then R$9999999.00!");
         }
     }

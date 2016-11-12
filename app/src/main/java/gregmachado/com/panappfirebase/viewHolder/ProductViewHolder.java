@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import gregmachado.com.panappfirebase.R;
@@ -19,6 +20,7 @@ public class ProductViewHolder extends RecyclerView.ViewHolder{
     public View mView;
     public Button btnSale;
     public ImageButton btnMore;
+    public ProgressBar progressBar;
 
     public ProductViewHolder(View v) {
         super(v);
@@ -30,5 +32,6 @@ public class ProductViewHolder extends RecyclerView.ViewHolder{
         tvItensSale = (TextView) itemView.findViewById(R.id.tv_unit);
         btnSale = (Button) itemView.findViewById(R.id.btn_sale);
         btnMore = (ImageButton) itemView.findViewById(R.id.btn_more);
+        progressBar = (ProgressBar) itemView.findViewById(R.id.photo_progressbar);
     }
 }

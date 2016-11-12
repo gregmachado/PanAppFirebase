@@ -1,8 +1,10 @@
 package gregmachado.com.panappfirebase.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -28,6 +30,7 @@ import com.google.firebase.storage.StorageReference;
 import java.util.ArrayList;
 
 import gregmachado.com.panappfirebase.R;
+import gregmachado.com.panappfirebase.activity.FormProductActivity;
 import gregmachado.com.panappfirebase.activity.ProductAdminActivity;
 import gregmachado.com.panappfirebase.domain.Product;
 import gregmachado.com.panappfirebase.util.AppUtil;
@@ -51,6 +54,7 @@ public class ProductAdapterAdmin extends FirebaseRecyclerAdapter<Product, Produc
     FirebaseStorage storage = FirebaseStorage.getInstance();
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference mDatabaseReference = database.getReference();
+    private StorageReference mStorageRef;
 
     public ProductAdapterAdmin(Query ref, Context context, ProductAdminActivity productListActivity, String bakeryID) {
         super(Product.class, R.layout.card_product, ProductViewHolder.class, ref);
@@ -61,27 +65,30 @@ public class ProductAdapterAdmin extends FirebaseRecyclerAdapter<Product, Produc
 
     @Override
     protected void populateViewHolder(final ProductViewHolder viewHolder, final Product model, final int position) {
-
+        viewHolder.progressBar.setVisibility(View.VISIBLE);
         viewHolder.tvProductName.setText(model.getProductName());
         viewHolder.tvItensSale.setText(String.valueOf(model.getItensSale()));
         viewHolder.tvProductType.setText(model.getType());
         viewHolder.tvProductPrice.setText(String.valueOf(model.getProductPrice()));
-        StorageReference mStorage = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com");
-        StorageReference imageRef = mStorage.child(model.getId());
-        final long ONE_MEGABYTE = 1024 * 1024;
-        imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                viewHolder.ivProduct.setImageBitmap(bitmap);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle any errors
-            }
-        });
-
+        if(model.getProductImage() == null){
+            viewHolder.ivProduct.setImageResource(R.drawable.img_product);
+        } else {
+            StorageReference mStorage = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com");
+            StorageReference imageRef = mStorage.child(model.getId());
+            final long ONE_MEGABYTE = 1024 * 1024;
+            imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    viewHolder.ivProduct.setImageBitmap(bitmap);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle any errors
+                }
+            });
+        }
         viewHolder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -102,7 +109,6 @@ public class ProductAdapterAdmin extends FirebaseRecyclerAdapter<Product, Produc
                 final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
                 final AlertDialog dialog = builder.create();
                 dialog.setView(dialoglayout);
-
                 tvUnits = (TextView) dialoglayout.findViewById(R.id.tv_unit_sale);
                 ImageButton btnPlus = (ImageButton) dialoglayout.findViewById(R.id.btn_plus);
                 btnPlus.setOnClickListener(new View.OnClickListener() {
@@ -214,19 +220,34 @@ public class ProductAdapterAdmin extends FirebaseRecyclerAdapter<Product, Produc
                         String action = item.getTitle().toString();
                         productID = model.getId();
                         productName = model.getProductName();
-                        makeAction(action, viewHolder);
+                        String imagePath = model.getProductImage();
+                        makeAction(action, viewHolder, imagePath);
                         return true;
                     }
                 });
                 popup.show();
             }
         });
+        viewHolder.progressBar.setVisibility(View.GONE);
     }
 
-    private void makeAction(String action, ProductViewHolder viewHolder) {
+    private void makeAction(String action, ProductViewHolder viewHolder, String productImage) {
         switch (action){
             case "Editar":
-
+                String productType = viewHolder.tvProductType.getText().toString();
+                Double productPrice = Double.parseDouble(viewHolder.tvProductPrice.getText().toString());
+                Bundle params = new Bundle();
+                params.putString("bakeryID", bakeryID);
+                params.putBoolean("update", true);
+                params.putString("productName", productName);
+                params.putString("productType", productType);
+                params.putDouble("productPrice", productPrice);
+                params.putString("productID", productID);
+                params.putString("productImage", productImage);
+                params.putInt("items", items);
+                Intent intentFormProduct = new Intent(mContext, FormProductActivity.class);
+                intentFormProduct.putExtras(params);
+                mContext.startActivity(intentFormProduct);
                 break;
             case "Remover Estoque":
                 DialogHandler appdialogRemove = new DialogHandler();
@@ -247,6 +268,12 @@ public class ProductAdapterAdmin extends FirebaseRecyclerAdapter<Product, Produc
                 if (answer == 2){
                     mDatabaseReference.child("bakeries").child(bakeryID).child("products")
                             .child(productID).removeValue();
+                    FirebaseStorage storage = FirebaseStorage.getInstance();
+                    mStorageRef = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com").child(productID);
+                    mStorageRef.delete().addOnSuccessListener(new OnSuccessListener() {
+                        @Override
+                        public void onSuccess(Object o) {}
+                    });
                     AppUtil.showToast(mContext, productName + " excluido!");
                 } else {
                     if(viewHolder.tvItensSale.getText() != "0"){

@@ -16,6 +16,14 @@
         android:layout_margin="4dp"
         tools:background="#ffffff">
 
+        <ProgressBar
+            android:id="@+id/photo_progressbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginLeft="40dp"
+            android:layout_centerVertical="true" />
+
         <ImageView
             android:id="@+id/iv_product"
             android:layout_width="120sp"
@@ -25,7 +33,6 @@
             android:layout_alignParentTop="true"
             android:layout_marginEnd="16sp"
             android:layout_marginRight="16sp"
-            android:src="@drawable/img_product"
             tools:ignore="ContentDescription"
             android:scaleType="fitCenter"/>
 

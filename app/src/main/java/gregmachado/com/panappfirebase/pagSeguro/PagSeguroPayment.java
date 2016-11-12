@@ -20,13 +20,16 @@ import org.xmlpull.v1.XmlPullParserException;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
 
 import gregmachado.com.panappfirebase.R;
+import gregmachado.com.panappfirebase.domain.Product;
 
 /**
  * Created by gregmachado on 05/10/16.
  */
-public class PagSeguroPayment {
+public class PagSeguroPayment extends Activity{
     private Activity activity;
     private ProgressDialog progressDialog;
 
@@ -35,11 +38,14 @@ public class PagSeguroPayment {
     public static final int PAG_SEGURO_REQUEST_SUCCESS_CODE = 222;
     public static final int PAG_SEGURO_REQUEST_FAILURE_CODE = 333;
     public static final int PAG_SEGURO_REQUEST_CANCELLED_CODE = 444;
+    public ArrayList<Product> list;
+    public String bakeryID;
 
-
-    public PagSeguroPayment(Activity activity) {
+    public PagSeguroPayment(Activity activity, List<Product> list, String bakeryID) {
         this.activity = activity;
-        this.progressDialog =  new ProgressDialog(activity);
+        this.progressDialog = new ProgressDialog(activity);
+        this.list = (ArrayList<Product>) list;
+        this.bakeryID = bakeryID;
     }
 
     public void pay(String checkoutXml) {
@@ -75,18 +81,18 @@ public class PagSeguroPayment {
                     final XmlPullParser parser = Xml.newPullParser();
                     parser.setInput(new StringReader(response));
                     int eventType = parser.getEventType();
-                    String checkoutCode="";
-                    String checkoutDate="";
+                    String checkoutCode = "";
+                    String checkoutDate = "";
                     while (eventType != XmlPullParser.END_DOCUMENT) {
-                        if(eventType == XmlPullParser.START_TAG) {
-                            if(parser.getName().equalsIgnoreCase("code")){
+                        if (eventType == XmlPullParser.START_TAG) {
+                            if (parser.getName().equalsIgnoreCase("code")) {
                                 parser.next();
                                 checkoutCode = parser.getText();
                                 parser.next();
                             }
                         }
-                        if(eventType == XmlPullParser.START_TAG) {
-                            if(parser.getName().equalsIgnoreCase("checkoutDate")){
+                        if (eventType == XmlPullParser.START_TAG) {
+                            if (parser.getName().equalsIgnoreCase("checkoutDate")) {
                                 parser.next();
                                 checkoutDate = parser.getText();
                                 parser.next();
@@ -96,13 +102,14 @@ public class PagSeguroPayment {
                     }
                     final String paymentAddress = activity.getString(R.string.pagseguro_payment_page);
                     final String paymentPage = String.format(paymentAddress, checkoutCode);
-
                     final Intent pagseguro = new Intent(activity, PagSeguroActivity.class);
                     pagseguro.putExtra("uri", paymentPage);
+                    pagseguro.putExtra("list", list);
+                    pagseguro.putExtra("bakeryID", bakeryID);
                     activity.startActivityForResult(pagseguro, PAG_SEGURO_REQUEST_CODE);
                     progressDialog.hide();
 
-                }catch (XmlPullParserException e) {
+                } catch (XmlPullParserException e) {
                     Log.d("PAG_SEGURO", e.getMessage());
                 } catch (IOException e) {
                     Log.d("PAG_SEGURO", e.getMessage());
@@ -114,7 +121,7 @@ public class PagSeguroPayment {
                 progressDialog.hide();
                 StringBuilder errors = new StringBuilder();
                 errors.append("List of errors\n");
-                errors.append("Statuscode: "+ statusCode + "\n");
+                errors.append("Statuscode: " + statusCode + "\n");
                 String response = null;
                 try {
                     response = new String(responseBody, "ISO-8859-1");
@@ -126,10 +133,10 @@ public class PagSeguroPayment {
                     parser.setInput(new StringReader(response));
                     int eventType = parser.getEventType();
                     while (eventType != XmlPullParser.END_DOCUMENT) {
-                        if(eventType == XmlPullParser.START_TAG) {
-                            if(parser.getName().equalsIgnoreCase("error")){
+                        if (eventType == XmlPullParser.START_TAG) {
+                            if (parser.getName().equalsIgnoreCase("error")) {
                                 parser.next();
-                                errors.append(parser.getText()+"\n");
+                                errors.append(parser.getText() + "\n");
                                 parser.next();
                             }
                         }
@@ -137,13 +144,12 @@ public class PagSeguroPayment {
                     }
                     Toast.makeText(activity, errors.toString(), Toast.LENGTH_LONG).show();
 
-                }catch (XmlPullParserException e) {
+                } catch (XmlPullParserException e) {
                     Log.d("PAG_SEGURO", e.getMessage());
                 } catch (IOException e) {
                     Log.d("PAG_SEGURO", e.getMessage());
                 }
             }
         });
-
     }
 }

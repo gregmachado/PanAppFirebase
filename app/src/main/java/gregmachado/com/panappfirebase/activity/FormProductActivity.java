@@ -11,7 +11,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Base64;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -41,12 +40,12 @@ public class FormProductActivity extends CommonActivity {
 
     private MaterialBetterSpinner spTypeProduct;
     private EditText inputNameProduct, inputPriceProduct;
-    private String strPrice, productName, productType, strBakeryId, strImage;
+    private String strPrice, productName, productType, productImage;
     private String productID;
     private Double productPrice;
     private Resources resources;
     private static final String TAG = FormProductActivity.class.getSimpleName();
-    private String bakeryID, id;
+    private String bakeryID;
     private Integer items;
     private Product product;
     private ImageView imageProduct, imageAddPhoto;
@@ -57,6 +56,8 @@ public class FormProductActivity extends CommonActivity {
     private List<Product> products;
     private StorageReference mStorageRef;
     private TextView tvAddPhoto;
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -126,14 +127,14 @@ public class FormProductActivity extends CommonActivity {
             update = params.getBoolean("update");
             if (update) {
                 items = params.getInt("items");
-                id = params.getString("productID");
+                productID = params.getString("productID");
                 productName = params.getString("productName");
                 productType = params.getString("productType");
-                strImage = params.getString("productImage");
                 productPrice = params.getDouble("productPrice");
+                productImage = params.getString("productImage");
                 setTitle("Editar Produto");
                 btnAddProduct.setText("ATUALIZAR PRODUTO");
-                fillLabels(strImage, productName, productPrice, productType);
+                fillLabels(productName, productPrice, productType);
             }
         }
         btnAddProduct.setOnClickListener(new View.OnClickListener() {
@@ -145,11 +146,11 @@ public class FormProductActivity extends CommonActivity {
                     product.setType(productType);
                     product.setItensSale(0);
                     if (update) {
-
+                        openProgressDialog("Aguarde...", "Atualizando Produto");
                     } else {
                         openProgressDialog("Aguarde...", "Salvando Produto");
-                        uploadImageAndSaveProduct();
                     }
+                    uploadImageAndSaveProduct();
                 }
             }
         });
@@ -157,12 +158,22 @@ public class FormProductActivity extends CommonActivity {
 
     private void uploadImageAndSaveProduct() {
         FirebaseStorage storage = FirebaseStorage.getInstance();
-        productID = mDatabaseReference.push().getKey();
-        product.setId(productID);
+        if(update){
+            product.setId(productID);
+        } else {
+            productID = mDatabaseReference.push().getKey();
+            product.setId(productID);
+        }
         if (noPhoto){
             saveProduct();
         } else {
             mStorageRef = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com").child(productID);
+            if(update){
+                mStorageRef.delete().addOnSuccessListener(new OnSuccessListener() {
+                    @Override
+                    public void onSuccess(Object o) {}
+                });
+            }
             imageProduct.setDrawingCacheEnabled(true);
             imageProduct.buildDrawingCache();
             Bitmap bitmap = imageProduct.getDrawingCache();
@@ -193,21 +204,34 @@ public class FormProductActivity extends CommonActivity {
 
     private void saveProduct() {
         closeProgressDialog();
+        if(update){
+            product.setItensSale(items);
+        }
         mDatabaseReference.child("bakeries").child(bakeryID).child("products").child(productID).setValue(product);
         finish();
     }
 
-    private void fillLabels(String strImage, String productName, Double productPrice, String productType) {
+    private void fillLabels(String productName, Double productPrice, String productType) {
         inputNameProduct.setText(productName);
         inputPriceProduct.setText(String.valueOf(productPrice));
-        byte[] imgBytes = Base64.decode(strImage, Base64.DEFAULT);
-        Bitmap bitmap = BitmapFactory.decodeByteArray(imgBytes, 0, imgBytes.length);
-        imageProduct.setImageBitmap(bitmap);
-        if (!(productType == null)) {
-            int spinnerPostion = dataAdapter.getPosition(productType);
-            spTypeProduct.setSelection(spinnerPostion);
-            spinnerPostion = 0;
-        }
+        spTypeProduct.setText(productType);
+        tvAddPhoto.setVisibility(View.INVISIBLE);
+        imageAddPhoto.setVisibility(View.INVISIBLE);
+        StorageReference mStorage = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com");
+        StorageReference imageRef = mStorage.child(productID);
+        final long ONE_MEGABYTE = 1024 * 1024;
+        imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                imageProduct.setImageBitmap(bitmap);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+            }
+        });
     }
 
     private void callClearErrors(Editable s) {
@@ -284,6 +308,7 @@ public class FormProductActivity extends CommonActivity {
                 imageProduct.setImageBitmap(bitmap);
                 tvAddPhoto.setVisibility(View.INVISIBLE);
                 imageAddPhoto.setVisibility(View.INVISIBLE);
+                noPhoto = false;
                 break;
             default:
                 super.onActivityResult(requestCode, resultCode, data);

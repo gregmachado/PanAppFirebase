@@ -23,7 +23,6 @@
             android:id="@+id/sp_adress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_categories"
             android:paddingTop="8dp" />
 
         <com.devspark.robototextview.widget.RobotoTextView

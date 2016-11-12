@@ -16,16 +16,17 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.adapter.ProductAdapter;
 import gregmachado.com.panappfirebase.domain.Product;
-import gregmachado.com.panappfirebase.viewHolder.ProductViewHolderUser;
 
 /**
  * Created by gregmachado on 30/10/16.
@@ -51,7 +52,7 @@ public class ProductListActivity extends CommonActivity {
     private int count = 0;
     private Handler handler;
     private TextView tvUnits;
-    private FirebaseRecyclerAdapter<Product, ProductViewHolderUser> adapter;
+    private ProductAdapter adapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -89,7 +90,7 @@ public class ProductListActivity extends CommonActivity {
                         icProduct.setVisibility(View.GONE);
                     }
                     adapter = new ProductAdapter(mDatabaseReference.child("bakeries").child(bakeryId).child("products").getRef(),
-                            ProductListActivity.this, ProductListActivity.this
+                            ProductListActivity.this, ProductListActivity.this, bakeryId
                     ) {};
                     rvProduct.setAdapter(adapter);
                 } else {
@@ -140,11 +141,9 @@ public class ProductListActivity extends CommonActivity {
             bakeryId = params.getString("bakeryID");
             name = params.getString("name");
         }
-
         setTitle("Produtos - " + name);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
         tvNoProducts = (TextView) findViewById(R.id.tv_no_products);
         icProduct = (ImageView) findViewById(R.id.ic_product);
         tvItens = (TextView) findViewById(R.id.tv_units);
@@ -157,6 +156,7 @@ public class ProductListActivity extends CommonActivity {
         Intent i = new Intent(ProductListActivity.this, ProductCartActivity.class);
         params.putString("bakeryID", bakeryId);
         params.putDouble("total", parcialPrice);
+        productsToCart = adapter.getProductsToCart();
         i.putExtra("cart", productsToCart);
         i.putExtras(params);
         startActivity(i);

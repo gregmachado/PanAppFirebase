@@ -25,7 +25,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
@@ -40,9 +39,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.List;
 
 import gregmachado.com.panappfirebase.R;
+import gregmachado.com.panappfirebase.adapter.BakeryAdapter;
 import gregmachado.com.panappfirebase.domain.Bakery;
-import gregmachado.com.panappfirebase.util.GeoLocation;
-import gregmachado.com.panappfirebase.viewHolder.BakeryViewHolder;
 
 /**
  * Created by gregmachado on 29/10/16.
@@ -66,7 +64,7 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
     private DatabaseReference mDatabaseReference = database.getReference();
     private FirebaseAuth firebaseAuth;
     private ImageView icBakery;
-    private FirebaseRecyclerAdapter<Bakery, BakeryViewHolder> adapter;
+    private BakeryAdapter adapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -106,44 +104,15 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
             public void onDataChange(DataSnapshot dataSnapshot) {
                 closeProgressBar();
                 if (dataSnapshot.getChildrenCount() > 0) {
-                    adapter = new FirebaseRecyclerAdapter<Bakery, BakeryViewHolder>(
-                            Bakery.class,
-                            R.layout.card_bakery,
-                            BakeryViewHolder.class,
-                            //referencing the node where we want the database to store the data from our Object
-                            mDatabaseReference.child("bakeries").getRef()
+                    if (tvNoBakeries.getVisibility() == View.VISIBLE) {
+                        tvNoBakeries.setVisibility(View.GONE);
+                    }
+                    if (icBakery.getVisibility() == View.VISIBLE) {
+                        icBakery.setVisibility(View.GONE);
+                    }
+                    adapter = new BakeryAdapter(mDatabaseReference.child("bakeries").getRef(),
+                            BakeryListActivity.this, userLatitude, userLongitude
                     ) {
-                        @Override
-                        protected void populateViewHolder(BakeryViewHolder viewHolder, final Bakery model, final int position) {
-                            if (tvNoBakeries.getVisibility() == View.VISIBLE) {
-                                tvNoBakeries.setVisibility(View.GONE);
-                            }
-                            if (icBakery.getVisibility() == View.VISIBLE) {
-                                icBakery.setVisibility(View.GONE);
-                            }
-                            viewHolder.tvBakeryName.setText(model.getFantasyName());
-                            distance = GeoLocation.distanceCalculate(userLatitude, userLongitude,
-                                    model.getAdress().getLatitude(), model.getAdress().getLongitude());
-                            viewHolder.tvDistance.setText(String.valueOf(distance));
-                            if(model.isFavorite()){
-                                viewHolder.ibtnFavoriteOn.setVisibility(View.VISIBLE);
-                            } else {
-                                viewHolder.ibtnFavoriteOff.setVisibility(View.VISIBLE);
-                            }
-                            viewHolder.mView.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    Log.w(TAG, "You clicked on " + model.getId());
-                                    bakeryID = model.getId();
-                                    String name = model.getFantasyName();
-                                    params.putString("bakeryID", bakeryID);
-                                    params.putString("name", name);
-                                    Intent intentProductList = new Intent(BakeryListActivity.this, ProductListActivity.class);
-                                    intentProductList.putExtras(params);
-                                    startActivity(intentProductList);
-                                }
-                            });
-                        }
                     };
                     rvBakery.setAdapter(adapter);
                 } else {

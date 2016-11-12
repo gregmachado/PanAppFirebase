@@ -129,8 +129,7 @@
             android:layout_below="@id/tv_unit_tag_cart"
             android:layout_alignParentRight="true"
             android:layout_alignParentEnd="true"
-            android:background="@android:color/transparent"
-            android:elevation="8dp" />
+            android:background="@android:color/transparent" />
 
     </RelativeLayout>
 </android.support.v7.widget.CardView>

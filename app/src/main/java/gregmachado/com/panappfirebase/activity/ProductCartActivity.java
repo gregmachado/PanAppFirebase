@@ -10,10 +10,15 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -49,22 +54,19 @@ public class ProductCartActivity extends CommonActivity implements ItemClickList
     private TextView tvItens, tvPrice;
     private Double priceTotal = 0.00, price;
     private Bundle params;
-    private String bakeryId;
+    private String bakeryId, productID;
+    private int items;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //getLayoutInflater().inflate(R.layout.activity_product_admin, frameLayout);
         setContentView(R.layout.activity_cart);
-        initViews();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (_list != null) {
-            _list.clear();
-        }
+        initViews();
         Intent it = getIntent();
         params = it.getExtras();
         if (params != null) {
@@ -177,37 +179,75 @@ public class ProductCartActivity extends CommonActivity implements ItemClickList
         // before stating the pagseguro checkout process.(it will need internet connection)
 
         // simulating an user buying
-        final PagSeguroFactory pagseguro = PagSeguroFactory.instance();
-        List<PagSeguroItem> shoppingCart = new ArrayList<>();
-        for (Iterator<Product> iterator = _list.iterator(); iterator.hasNext(); ) {
-            Product product = iterator.next();
-            shoppingCart.add(pagseguro.item(product.getId(), product.getProductName(), BigDecimal.valueOf(product.getProductPrice()), product.getUnit(), 300));
+        if(!(_list.isEmpty())&!(_list==null)){
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Finalizar?");
+            builder.setMessage("Deseja finalizar a compra?");
+            builder.setPositiveButton("SIM", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface arg0, int arg1) {
+                    for (Product productAux : _list) {
+                        productID = productAux.getId();
+                        items = productAux.getUnit();
+                        mDatabaseReference.child("bakeries").child(bakeryId).child("products").child(productID).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                int itemsSale = Integer.parseInt(dataSnapshot.child("itensSale").getValue().toString());
+                                items = itemsSale - items;
+                                mDatabaseReference.child("bakeries").child(bakeryId).child("products").child(productID).child("itensSale").setValue(items);
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Log.w(TAG, "getUser:onCancelled", databaseError.toException());
+                            }
+                        });
+                    }
+                    final PagSeguroFactory pagseguro = PagSeguroFactory.instance();
+                    List<PagSeguroItem> shoppingCart = new ArrayList<>();
+                    for (Iterator<Product> iterator = _list.iterator(); iterator.hasNext(); ) {
+                        Product product = iterator.next();
+                        shoppingCart.add(pagseguro.item(product.getId(), product.getProductName(), BigDecimal.valueOf(product.getProductPrice()), product.getUnit(), 300));
+                    }
+                    PagSeguroPhone buyerPhone = pagseguro.phone(PagSeguroAreaCode.DDD81, "998187427");
+                    PagSeguroBuyer buyer = pagseguro.buyer("Ricardo Ferreira", "14/02/1978", "15061112000", "test@email.com.br", buyerPhone);
+                    PagSeguroAddress buyerAddress = pagseguro.address("Av. Boa Viagem", "51", "Apt201", "Boa Viagem", "51030330", "Recife", PagSeguroBrazilianStates.PERNAMBUCO);
+                    PagSeguroShipping buyerShippingOption = pagseguro.shipping(PagSeguroShippingType.NOT_DEFINED, buyerAddress);
+                    PagSeguroCheckout checkout = pagseguro.checkout("Ref0001", shoppingCart, buyer, buyerShippingOption);
+                    // starting payment process
+                    new PagSeguroPayment(ProductCartActivity.this, _list, bakeryId).pay(checkout.buildCheckoutXml());
+                }
+            });
+            builder.setNegativeButton("NÃO", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface arg0, int arg1) {
+                }
+            });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        } else {
+            showToast("Carrinho vazio!");
         }
-        PagSeguroPhone buyerPhone = pagseguro.phone(PagSeguroAreaCode.DDD81, "998187427");
-        PagSeguroBuyer buyer = pagseguro.buyer("Ricardo Ferreira", "14/02/1978", "15061112000", "test@email.com.br", buyerPhone);
-        PagSeguroAddress buyerAddress = pagseguro.address("Av. Boa Viagem", "51", "Apt201", "Boa Viagem", "51030330", "Recife", PagSeguroBrazilianStates.PERNAMBUCO);
-        PagSeguroShipping buyerShippingOption = pagseguro.shipping(PagSeguroShippingType.NOT_DEFINED, buyerAddress);
-        PagSeguroCheckout checkout = pagseguro.checkout("Ref0001", shoppingCart, buyer, buyerShippingOption);
-        // starting payment process
-        new PagSeguroPayment(ProductCartActivity.this).pay(checkout.buildCheckoutXml());
     }
 
     @Override
     public void onBackPressed() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Sair?");
-        builder.setMessage("Se você voltar agora perderá seus itens. Deseja realmente sair?");
-        builder.setPositiveButton("SIM", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface arg0, int arg1) {
-                finish();
-            }
-        });
-        builder.setNegativeButton("NÃO", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface arg0, int arg1) {
-            }
-        });
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+        if(_list.isEmpty()||_list==null){
+            finish();
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Sair?");
+            builder.setMessage("Se você voltar agora perderá seus itens. Deseja realmente sair?");
+            builder.setPositiveButton("SIM", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface arg0, int arg1) {
+                    finish();
+                }
+            });
+            builder.setNegativeButton("NÃO", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface arg0, int arg1) {
+                }
+            });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        }
     }
 
 }

@@ -13,14 +13,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+
 import java.util.ArrayList;
 import java.util.Iterator;
+
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.activity.ProductListActivity;
 import gregmachado.com.panappfirebase.domain.Product;
@@ -39,39 +42,45 @@ public class ProductAdapter extends FirebaseRecyclerAdapter<Product, ProductView
     private double price, parcialPrice;
     private ArrayList<Product> productsToCart = new ArrayList<>();
     private ProductListActivity productListActivity;
+    private String bakeryID;
 
-    public ProductAdapter(Query ref, Context context, ProductListActivity productListActivity) {
+    public ProductAdapter(Query ref, Context context, ProductListActivity productListActivity, String bakeryID) {
         super(Product.class, R.layout.card_product_user, ProductViewHolderUser.class, ref);
         this.mContext = context;
         this.productListActivity = productListActivity;
+        this.bakeryID = bakeryID;
     }
 
     @Override
     protected void populateViewHolder(final ProductViewHolderUser viewHolder, final Product model, final int position) {
+        viewHolder.progressBar.setVisibility(View.VISIBLE);
         viewHolder.tvProductName.setText(model.getProductName());
         viewHolder.tvPrice.setText(String.valueOf(model.getProductPrice()));
         viewHolder.tvCategory.setText(model.getType());
         viewHolder.tvItensSale.setText(String.valueOf(model.getItensSale()));
-        StorageReference mStorage = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com");
-        StorageReference imageRef = mStorage.child(model.getId());
-        final long ONE_MEGABYTE = 1024 * 1024;
-        imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-            @Override
-            public void onSuccess(byte[] bytes) {
-                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                viewHolder.ivProduct.setImageBitmap(bitmap);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                // Handle any errors
-            }
-        });
-
+        if(model.getProductImage() == null){
+            viewHolder.ivProduct.setImageResource(R.drawable.img_product);
+        } else {
+            StorageReference mStorage = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com");
+            StorageReference imageRef = mStorage.child(model.getId());
+            final long ONE_MEGABYTE = 1024 * 1024;
+            imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    viewHolder.ivProduct.setImageBitmap(bitmap);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle any errors
+                }
+            });
+        }
         viewHolder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.w(TAG, "You clicked on " + model.getProductPrice());
+                Log.w(TAG, "You clicked on " + model.getBakeryId() + " / " + model.getId());
             }
         });
 
@@ -176,16 +185,15 @@ public class ProductAdapter extends FirebaseRecyclerAdapter<Product, ProductView
                         product.setId(model.getId());
                         items = getValue(viewHolder);
                         product.setUnit(items);
+                        Log.w(TAG, "Items " + items);
                         price = model.getProductPrice() * items;
                         if (items > 0) {
                             productsToCart.add(product);
                             viewHolder.btnAddCart.setVisibility(View.INVISIBLE);
                             viewHolder.btnRemoveCart.setVisibility(View.VISIBLE);
-
                             count++;
                             parcialPrice = parcialPrice + price;
                             setValuesToolbarBottom(String.valueOf(count), String.valueOf(parcialPrice));
-
                             viewHolder.tvUnitInCart.setText(String.valueOf(items));
                             viewHolder.llCart.setVisibility(View.VISIBLE);
                             dialog.dismiss();
@@ -208,14 +216,13 @@ public class ProductAdapter extends FirebaseRecyclerAdapter<Product, ProductView
                 }
                 viewHolder.btnAddCart.setVisibility(View.VISIBLE);
                 viewHolder.btnRemoveCart.setVisibility(View.INVISIBLE);
-
                 count--;
                 parcialPrice = parcialPrice - price;
                 setValuesToolbarBottom(String.valueOf(count), String.valueOf(parcialPrice));
-
                 viewHolder.llCart.setVisibility(View.INVISIBLE);
             }
         });
+        viewHolder.progressBar.setVisibility(View.GONE);
     }
 
     protected void decrease(ProductViewHolderUser productViewHolder) {
@@ -244,5 +251,9 @@ public class ProductAdapter extends FirebaseRecyclerAdapter<Product, ProductView
     public void setValuesToolbarBottom(String items, String price) {
         productListActivity.tvItens.setText(items);
         productListActivity.tvPrice.setText(price);
+    }
+
+    public ArrayList<Product> getProductsToCart(){
+        return productsToCart;
     }
 }

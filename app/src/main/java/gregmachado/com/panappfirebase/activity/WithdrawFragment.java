@@ -54,14 +54,17 @@ public class WithdrawFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         method = "withdraw";
+        bakeryId = getArguments().getString("bakeryID");
+        userId = getArguments().getString("userID");
+        products = getArguments().getParcelableArrayList("products");
+        Log.w(TAG, "bakeryID: " + bakeryId);
+        Log.w(TAG, "userID: " + userId);
+        Log.w(TAG, "listSize: " + products.size());
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        bakeryId = getArguments().getString("bakeryID");
-        userId = getArguments().getString("userID");
-        products = getArguments().getParcelableArrayList("products");
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_withdraw, container, false);
         rbToday = (RadioButton) v.findViewById(R.id.rb_today_withdraw);
@@ -97,7 +100,6 @@ public class WithdrawFragment extends Fragment {
     private void loadTime() {
         //user test
         //bakeryId = "-KVuZ4G7BewSuHBfNB7x";
-        Log.w(TAG, bakeryId);
         mDatabaseReference.child("bakeries").child(bakeryId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

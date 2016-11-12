@@ -14,14 +14,13 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.adapter.ProductAdapterAdmin;
-import gregmachado.com.panappfirebase.domain.Product;
-import gregmachado.com.panappfirebase.viewHolder.ProductViewHolder;
 
 /**
  * Created by gregmachado on 30/10/16.
@@ -33,7 +32,7 @@ public class ProductAdminActivity extends CommonActivity {
     private String bakeryId;
     private TextView tvNoProducts;
     private ImageView icProduct;
-    private FirebaseRecyclerAdapter<Product, ProductViewHolder> adapter;
+    private ProductAdapterAdmin adapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

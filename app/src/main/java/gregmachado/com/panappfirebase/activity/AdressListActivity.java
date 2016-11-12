@@ -12,7 +12,6 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -24,8 +23,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.List;
 
 import gregmachado.com.panappfirebase.R;
+import gregmachado.com.panappfirebase.adapter.AdressAdapter;
 import gregmachado.com.panappfirebase.domain.Adress;
-import gregmachado.com.panappfirebase.viewHolder.MyAdressViewHolder;
 
 /**
  * Created by gregmachado on 09/10/16.
@@ -38,7 +37,6 @@ public class AdressListActivity extends CommonActivity {
     private DatabaseReference mDatabaseReference = database.getReference();;
     private TextView tvNoAdress;
     private List<Adress> list, _list;
-    private Bundle params;
     private String userId;
 
     @Override
@@ -72,32 +70,9 @@ public class AdressListActivity extends CommonActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 closeProgressBar();
                 if (dataSnapshot.hasChild("adress")) {
-                    FirebaseRecyclerAdapter<Adress, MyAdressViewHolder> adapter = new FirebaseRecyclerAdapter<Adress, MyAdressViewHolder>(
-                            Adress.class,
-                            R.layout.card_my_adress,
-                            MyAdressViewHolder.class,
-                            //referencing the node where we want the database to store the data from our Object
-                            mDatabaseReference.child("users").child(userId).child("adress").getRef()
-                    ) {
-                        @Override
-                        protected void populateViewHolder(final MyAdressViewHolder viewHolder, final Adress model, final int position) {
-
-                            viewHolder.tvStreet.setText(model.getStreet());
-                            viewHolder.tvComplement.setText(model.getComplement());
-                            viewHolder.tvDistrict.setText(model.getDistrict());
-                            viewHolder.tvCityState.setText(String.format("%s/%s", model.getCity(), model.getState()));
-                            viewHolder.tvNumber.setText(String.valueOf(model.getNumber()));
-                            viewHolder.tvReference.setText(model.getReference());
-                            viewHolder.tvCep.setText(model.getCep());
-                            viewHolder.tvName.setText(model.getAdressName());
-                            viewHolder.mView.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-
-                                }
-                            });
-                        }
-                    };
+                    AdressAdapter adapter = new AdressAdapter(mDatabaseReference.child("users").child(userId).child("adress").getRef(),
+                            AdressListActivity.this
+                    ) {};
                     rvAdress.setAdapter(adapter);
                 } else {
                     tvNoAdress.setVisibility(View.VISIBLE);
