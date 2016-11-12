@@ -117,9 +117,9 @@ public class UserMainActivity extends CommonActivity
             intentBakeryList.putExtras(params);
             startActivity(intentBakeryList);
         } else if (id == R.id.nav_favorites) {
-            //Intent intentFavoriteBakeryList = new Intent(UserMainActivity.this, FavoriteBakeryListActivity.class);
-            //intentFavoriteBakeryList.putExtras(params);
-            //startActivity(intentFavoriteBakeryList);
+            Intent intentFavoriteBakeryList = new Intent(UserMainActivity.this, FavoriteListActivity.class);
+            intentFavoriteBakeryList.putExtras(params);
+            startActivity(intentFavoriteBakeryList);
         } else if (id == R.id.nav_notification) {
 
         } else if (id == R.id.nav_follow_orders) {
@@ -132,7 +132,9 @@ public class UserMainActivity extends CommonActivity
             intentRequest.putExtras(params);
             startActivity(intentRequest);
         } else if (id == R.id.nav_home) {
-
+            Intent intentHome = new Intent(UserMainActivity.this, UserMainActivity.class);
+            intentHome.putExtras(params);
+            startActivity(intentHome);
         } else if (id == R.id.nav_my_adrees) {
             Intent intentAdressList = new Intent(UserMainActivity.this, AdressListActivity.class);
             intentAdressList.putExtras(params);

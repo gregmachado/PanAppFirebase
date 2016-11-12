@@ -123,6 +123,7 @@ public class PagSeguroActivity extends AppCompatActivity {
                     Intent data = new Intent();
                     data.putExtra(PagSeguroPayment.PAG_SEGURO_EXTRA, PagSeguroPayment.PAG_SEGURO_REQUEST_CANCELLED_CODE);
                     setResult(PagSeguroPayment.PAG_SEGURO_REQUEST_CODE, data);
+                    cancelRequest();
                     finish();
                 }
             }, new AppUtil.AlertAction() {
@@ -142,6 +143,9 @@ public class PagSeguroActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+    }
+
+    private void cancelRequest(){
         for (Product productAux : list) {
             productID = productAux.getId();
             items = productAux.getUnit();

@@ -20,27 +20,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.adapter.CartAdapter;
 import gregmachado.com.panappfirebase.domain.Product;
 import gregmachado.com.panappfirebase.interfaces.ItemClickListener;
-import gregmachado.com.panappfirebase.pagSeguro.PagSeguroAddress;
-import gregmachado.com.panappfirebase.pagSeguro.PagSeguroAreaCode;
-import gregmachado.com.panappfirebase.pagSeguro.PagSeguroBrazilianStates;
-import gregmachado.com.panappfirebase.pagSeguro.PagSeguroBuyer;
-import gregmachado.com.panappfirebase.pagSeguro.PagSeguroCheckout;
-import gregmachado.com.panappfirebase.pagSeguro.PagSeguroFactory;
-import gregmachado.com.panappfirebase.pagSeguro.PagSeguroItem;
-import gregmachado.com.panappfirebase.pagSeguro.PagSeguroPayment;
-import gregmachado.com.panappfirebase.pagSeguro.PagSeguroPhone;
-import gregmachado.com.panappfirebase.pagSeguro.PagSeguroShipping;
-import gregmachado.com.panappfirebase.pagSeguro.PagSeguroShippingType;
-import gregmachado.com.panappfirebase.util.AppUtil;
 
 /**
  * Created by gregmachado on 02/10/16.
@@ -112,45 +98,6 @@ public class ProductCartActivity extends CommonActivity implements ItemClickList
         return price;
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_CANCELED) {
-            // se foi uma tentativa de pagamento
-            if (requestCode == PagSeguroPayment.PAG_SEGURO_REQUEST_CODE) {
-                // exibir confirmação de cancelamento
-                final String msg = getString(R.string.transaction_cancelled);
-                AppUtil.showConfirmDialog(this, msg, null);
-            }
-        } else if (resultCode == RESULT_OK) {
-            // se foi uma tentativa de pagamento
-            if (requestCode == PagSeguroPayment.PAG_SEGURO_REQUEST_CODE) {
-                // exibir confirmação de sucesso
-                final String msg = getString(R.string.transaction_succeded);
-                AppUtil.showConfirmDialog(this, msg, null);
-
-            }
-        } else if (resultCode == PagSeguroPayment.PAG_SEGURO_REQUEST_CODE) {
-            switch (data.getIntExtra(PagSeguroPayment.PAG_SEGURO_EXTRA, 0)) {
-                case PagSeguroPayment.PAG_SEGURO_REQUEST_SUCCESS_CODE: {
-                    final String msg = getString(R.string.transaction_succeded);
-                    AppUtil.showConfirmDialog(this, msg, null);
-                    callScheduleActivity();
-                    break;
-                }
-                case PagSeguroPayment.PAG_SEGURO_REQUEST_FAILURE_CODE: {
-                    final String msg = getString(R.string.transaction_error);
-                    AppUtil.showConfirmDialog(this, msg, null);
-                    break;
-                }
-                case PagSeguroPayment.PAG_SEGURO_REQUEST_CANCELLED_CODE: {
-                    final String msg = getString(R.string.transaction_cancelled);
-                    AppUtil.showConfirmDialog(this, msg, null);
-                    break;
-                }
-            }
-        }
-    }
-
     private void callScheduleActivity() {
         Intent intentSchedule = new Intent(ProductCartActivity.this, ScheduleActivity.class);
         ArrayList<Product> requestItems = cartAdapter.getProducts();
@@ -202,19 +149,7 @@ public class ProductCartActivity extends CommonActivity implements ItemClickList
                             }
                         });
                     }
-                    final PagSeguroFactory pagseguro = PagSeguroFactory.instance();
-                    List<PagSeguroItem> shoppingCart = new ArrayList<>();
-                    for (Iterator<Product> iterator = _list.iterator(); iterator.hasNext(); ) {
-                        Product product = iterator.next();
-                        shoppingCart.add(pagseguro.item(product.getId(), product.getProductName(), BigDecimal.valueOf(product.getProductPrice()), product.getUnit(), 300));
-                    }
-                    PagSeguroPhone buyerPhone = pagseguro.phone(PagSeguroAreaCode.DDD81, "998187427");
-                    PagSeguroBuyer buyer = pagseguro.buyer("Ricardo Ferreira", "14/02/1978", "15061112000", "test@email.com.br", buyerPhone);
-                    PagSeguroAddress buyerAddress = pagseguro.address("Av. Boa Viagem", "51", "Apt201", "Boa Viagem", "51030330", "Recife", PagSeguroBrazilianStates.PERNAMBUCO);
-                    PagSeguroShipping buyerShippingOption = pagseguro.shipping(PagSeguroShippingType.NOT_DEFINED, buyerAddress);
-                    PagSeguroCheckout checkout = pagseguro.checkout("Ref0001", shoppingCart, buyer, buyerShippingOption);
-                    // starting payment process
-                    new PagSeguroPayment(ProductCartActivity.this, _list, bakeryId).pay(checkout.buildCheckoutXml());
+                    callScheduleActivity();
                 }
             });
             builder.setNegativeButton("NÃO", new DialogInterface.OnClickListener() {
@@ -249,5 +184,4 @@ public class ProductCartActivity extends CommonActivity implements ItemClickList
             alertDialog.show();
         }
     }
-
 }

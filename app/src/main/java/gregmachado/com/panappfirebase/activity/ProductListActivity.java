@@ -59,7 +59,6 @@ public class ProductListActivity extends CommonActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_list);
         initViews();
-
         if (rvProduct != null) {
             //to enable optimization of recyclerview
             rvProduct.setHasFixedSize(true);
@@ -150,6 +149,7 @@ public class ProductListActivity extends CommonActivity {
         tvPrice = (TextView) findViewById(R.id.tv_total_price);
         progressBar = (ProgressBar) findViewById(R.id.simpleProgressBar);
         rvProduct = (RecyclerView) findViewById(R.id.rv_product);
+        btnCart = (FloatingActionButton) findViewById(R.id.btn_cart);
     }
 
     public void openBasket(View view) {

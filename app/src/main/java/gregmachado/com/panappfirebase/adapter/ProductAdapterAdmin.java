@@ -51,10 +51,10 @@ public class ProductAdapterAdmin extends FirebaseRecyclerAdapter<Product, Produc
     private ArrayList<Product> productsToCart = new ArrayList<>();
     private ProductAdminActivity productListActivity;
     private String bakeryID, productID, productName;
-    FirebaseStorage storage = FirebaseStorage.getInstance();
+    private FirebaseStorage storage = FirebaseStorage.getInstance();
+    private StorageReference mStorageRef;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference mDatabaseReference = database.getReference();
-    private StorageReference mStorageRef;
 
     public ProductAdapterAdmin(Query ref, Context context, ProductAdminActivity productListActivity, String bakeryID) {
         super(Product.class, R.layout.card_product, ProductViewHolder.class, ref);

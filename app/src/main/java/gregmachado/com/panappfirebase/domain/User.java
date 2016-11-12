@@ -2,6 +2,8 @@ package gregmachado.com.panappfirebase.domain;
 
 import com.google.firebase.database.DatabaseReference;
 
+import java.util.ArrayList;
+
 import gregmachado.com.panappfirebase.util.LibraryClass;
 
 /**
@@ -18,6 +20,9 @@ public class User {
     private boolean sendNotification;
     private String image;
     private String bakeryID;
+    private ArrayList<String> favorites;
+    private double lastLatitude;
+    private double lastLongitude;
 
     public User() {
     }
@@ -104,6 +109,30 @@ public class User {
 
     public void setBakeryID(String bakeryID) {
         this.bakeryID = bakeryID;
+    }
+
+    public ArrayList<String> getFavorites() {
+        return favorites;
+    }
+
+    public void setFavorites(ArrayList<String> favorites) {
+        this.favorites = favorites;
+    }
+
+    public double getLastLatitude() {
+        return lastLatitude;
+    }
+
+    public void setLastLatitude(double lastLatitude) {
+        this.lastLatitude = lastLatitude;
+    }
+
+    public double getLastLongitude() {
+        return lastLongitude;
+    }
+
+    public void setLastLongitude(double lastLongitude) {
+        this.lastLongitude = lastLongitude;
     }
 
     public void saveDB(DatabaseReference.CompletionListener... completionListener) {

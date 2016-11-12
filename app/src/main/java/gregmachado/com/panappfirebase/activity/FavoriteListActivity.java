@@ -40,13 +40,12 @@ import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.adapter.BakeryAdapter;
 
 /**
- * Created by gregmachado on 29/10/16.
+ * Created by gregmachado on 12/11/16.
  */
-
-public class BakeryListActivity extends CommonActivity implements GoogleApiClient.ConnectionCallbacks,
+public class FavoriteListActivity extends CommonActivity implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener {
 
-    private static final String TAG = BakeryListActivity.class.getSimpleName();
+    private static final String TAG = FavoriteListActivity.class.getSimpleName();
     private static final int PERMISSION_REQUEST_CODE = 555;
     private RecyclerView rvBakery;
     private String userID;
@@ -56,7 +55,7 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
     private Context context;
     private Double userLatitude, userLongitude;
     private FirebaseAuth firebaseAuth;
-    private ImageView icBakery;
+    private ImageView icFavorite;
     private BakeryAdapter adapter;
     private ArrayList<String> favorites;
 
@@ -64,12 +63,23 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = getApplicationContext();
-        setContentView(R.layout.activity_bakery_list);
+        setContentView(R.layout.activity_favorite_bakery_list);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_bakery);
         setSupportActionBar(toolbar);
-        setTitle("Padarias");
+        setTitle("Padarias Favoritas");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
+        initViews();
+        firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        assert firebaseUser != null;
+        userID = firebaseUser.getUid();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        openProgressBar();
         LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
         boolean enabled = service
                 .isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -81,49 +91,36 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
             startActivity(intent);
         }
         callConnection();
-        initViews();
-        firebaseAuth = FirebaseAuth.getInstance();
-        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-        assert firebaseUser != null;
-        userID = firebaseUser.getUid();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();;
-        openProgressBar();
         mDatabaseReference.child("users").child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild("favorites")){
+                if (dataSnapshot.hasChild("favorites")) {
                     favorites = (ArrayList<String>) dataSnapshot.child("favorites").getValue();
-                }
-            }
+                    mDatabaseReference.child("bakeries").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            closeProgressBar();
+                            if (dataSnapshot.getChildrenCount() > 0) {
+                                adapter = new BakeryAdapter(mDatabaseReference.child("bakeries").getRef(),
+                                        FavoriteListActivity.this, userLatitude, userLongitude, favorites, userID, true
+                                ) {
+                                };
+                                rvBakery.setAdapter(adapter);
+                            } else {
+                                tvNoBakeries.setVisibility(View.VISIBLE);
+                                icFavorite.setVisibility(View.VISIBLE);
+                            }
+                        }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "getUser:onCancelled", databaseError.toException());
-            }
-        });
-        mDatabaseReference.child("bakeries").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                closeProgressBar();
-                if (dataSnapshot.getChildrenCount() > 0) {
-                    if (tvNoBakeries.getVisibility() == View.VISIBLE) {
-                        tvNoBakeries.setVisibility(View.GONE);
-                    }
-                    if (icBakery.getVisibility() == View.VISIBLE) {
-                        icBakery.setVisibility(View.GONE);
-                    }
-                    adapter = new BakeryAdapter(mDatabaseReference.child("bakeries").getRef(),
-                            BakeryListActivity.this, userLatitude, userLongitude, favorites, userID, false
-                    ) {
-                    };
-                    rvBakery.setAdapter(adapter);
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            Log.w(TAG, "getUser:onCancelled", databaseError.toException());
+                        }
+                    });
                 } else {
                     tvNoBakeries.setVisibility(View.VISIBLE);
-                    icBakery.setVisibility(View.VISIBLE);
+                    icFavorite.setVisibility(View.VISIBLE);
+                    closeProgressBar();
                 }
             }
 
@@ -152,7 +149,6 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
             } else {
                 l = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
             }
-
         } else {
             l = LocationServices.FusedLocationApi.getLastLocation(googleApiClient);
         }
@@ -217,15 +213,10 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
-    @Override
     protected void initViews() {
-        tvNoBakeries = (TextView) findViewById(R.id.tv_no_bakeries);
-        rvBakery = (RecyclerView) findViewById(R.id.rv_bakery);
-        icBakery = (ImageView) findViewById(R.id.ic_bakery);
+        tvNoBakeries = (TextView) findViewById(R.id.tv_no_favorites);
+        rvBakery = (RecyclerView) findViewById(R.id.rv_favorite);
+        icFavorite = (ImageView) findViewById(R.id.ic_favorite);
         progressBar = (ProgressBar) findViewById(R.id.simpleProgressBar);
         if (rvBakery != null) {
             //to enable optimization of recyclerview
@@ -233,6 +224,6 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
         }
         rvBakery.setItemAnimator(new DefaultItemAnimator());
         //registerForContextMenu(rvBakery);
-        rvBakery.setLayoutManager(new LinearLayoutManager(BakeryListActivity.this));
+        rvBakery.setLayoutManager(new LinearLayoutManager(FavoriteListActivity.this));
     }
 }

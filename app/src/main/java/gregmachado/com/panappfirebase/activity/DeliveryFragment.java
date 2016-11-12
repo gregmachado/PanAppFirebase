@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.domain.Bakery;
@@ -55,6 +56,8 @@ public class DeliveryFragment extends Fragment {
     private ProgressBar simpleProgressBar;
     private Button btnFinish;
     private Spinner spinner;
+    private boolean isToday = true;
+    private ScheduleActivity activity;
 
     public DeliveryFragment() {
     }
@@ -103,13 +106,8 @@ public class DeliveryFragment extends Fragment {
             public void onClick(View v) {
                 getValues();
                 if (compareTime()) {
-                    request = initRequest();
-                    mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-                    String requestID = mDatabaseReference.push().getKey();
-                    request.setRequestID(requestID);
-                    mDatabaseReference.child("users").child(userId).child("requests").child(requestID).setValue(request);
-                    Toast.makeText(getContext(), "Pedido realizado com sucesso!", Toast.LENGTH_SHORT).show();
-                    getActivity().finish();
+                    activity = (ScheduleActivity) getActivity();
+                    activity.callPayment(true);
                 } else {
                     Toast.makeText(getContext(), "Horário do pedido inválido!", Toast.LENGTH_SHORT).show();
                     tvTime.setTextColor(getResources().getColor(R.color.errorColor));
@@ -122,12 +120,20 @@ public class DeliveryFragment extends Fragment {
     }
 
     private boolean compareTime() {
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm", Locale.US);
+        Calendar now = Calendar.getInstance();
+        int hour = now.get(Calendar.HOUR_OF_DAY);
+        int minute = now.get(Calendar.MINUTE);
         try {
+            Date dataA = format.parse(hour + ":" + minute);
             Date dataS = format.parse(tvStartTime.getText().toString().trim());
             Date dataF = format.parse(tvFinishTime.getText().toString().trim());
             Date data = format.parse(tvTime.getText().toString().trim());
-            return !(data.after(dataF) || (data.before(dataS)));
+            if (isToday) {
+                return !(data.after(dataF) || (data.before(dataS)) || (data.before(dataA)));
+            } else {
+                return !(data.after(dataF) || (data.before(dataS)));
+            }
         } catch (ParseException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -194,7 +200,7 @@ public class DeliveryFragment extends Fragment {
         });
     }
 
-    private Request initRequest() {
+    public Request initRequest() {
         Request request = new Request();
         request.setBakeryID(bakeryId);
         request.setUserID(userId);
@@ -234,8 +240,10 @@ public class DeliveryFragment extends Fragment {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (checkedId == R.id.rb_today) {
                     scheduleDay = today;
+                    isToday = true;
                 } else if (checkedId == R.id.rb_tomorrow) {
                     scheduleDay = tomorrow;
+                    isToday = false;
                 }
             }
         });

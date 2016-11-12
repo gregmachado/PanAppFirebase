@@ -99,4 +99,5 @@
     <string name="category">Categoria</string>
     <string name="add_product">ADICIONAR PRODUTO</string>
     <string name="control_stock">Controlar Estoque?</string>
+    <string name="no_bakeries_favorites">Não há padarias favoritas!</string>
 </resources>

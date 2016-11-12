@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.domain.Bakery;
@@ -47,8 +48,11 @@ public class WithdrawFragment extends Fragment {
     private List<Product> products;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference mDatabaseReference = database.getReference();
+    private boolean isToday = true;
+    private ScheduleActivity activity;
 
-    public WithdrawFragment(){}
+    public WithdrawFragment() {
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,7 +63,7 @@ public class WithdrawFragment extends Fragment {
         products = getArguments().getParcelableArrayList("products");
         Log.w(TAG, "bakeryID: " + bakeryId);
         Log.w(TAG, "userID: " + userId);
-        Log.w(TAG, "listSize: " + products.size());
+        Log.w(TAG, "listSize: " + String.valueOf(products.size()));
     }
 
     @Override
@@ -79,14 +83,9 @@ public class WithdrawFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 getValues();
-                if(compareTime()){
-                    request = initRequest();
-                    mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-                    String requestID = mDatabaseReference.push().getKey();
-                    request.setRequestID(requestID);
-                    mDatabaseReference.child("users").child(userId).child("requests").child(requestID).setValue(request);
-                    Toast.makeText(getContext(), "Pedido realizado com sucesso!", Toast.LENGTH_SHORT).show();
-                    getActivity().finish();
+                if (compareTime()) {
+                    activity = (ScheduleActivity) getActivity();
+                    activity.callPayment(false);
                 } else {
                     Toast.makeText(getContext(), "Horário do pedido inválido!", Toast.LENGTH_SHORT).show();
                     tvTime.setTextColor(getResources().getColor(R.color.errorColor));
@@ -116,12 +115,24 @@ public class WithdrawFragment extends Fragment {
     }
 
     private boolean compareTime() {
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm", Locale.US);
+        Calendar now = Calendar.getInstance();
+        int hour = now.get(Calendar.HOUR_OF_DAY);
+        int minute = now.get(Calendar.MINUTE);
         try {
-            Date dataS = format.parse(tvStartTime.getText().toString().trim());
-            Date dataF = format.parse(tvFinishTime.getText().toString().trim());
-            Date data = format.parse(tvTime.getText().toString().trim());
-            return !(data.after(dataF) || (data.before(dataS)));
+            Date dataA = format.parse(hour + ":" + minute);
+            Date dataS = format.parse(tvStartTime.getText().toString());
+            Date dataF = format.parse(tvFinishTime.getText().toString());
+            Date data = format.parse(tvTime.getText().toString());
+            Log.w(TAG, "Data Atual: " + String.valueOf(dataA));
+            Log.w(TAG, "Data: " + String.valueOf(data));
+            Log.w(TAG, "Data Inicial: " + String.valueOf(dataS));
+            Log.w(TAG, "Data Final: " + String.valueOf(dataF));
+            if (isToday) {
+                return !(data.after(dataF) || (data.before(dataS)) || (data.before(dataA)));
+            } else {
+                return !(data.after(dataF) || (data.before(dataS)));
+            }
         } catch (ParseException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -129,7 +140,7 @@ public class WithdrawFragment extends Fragment {
         }
     }
 
-    private Request initRequest() {
+    public Request initRequest() {
         Request request = new Request();
         request.setBakeryID(bakeryId);
         request.setUserID(userId);
@@ -166,10 +177,12 @@ public class WithdrawFragment extends Fragment {
         radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if(checkedId == R.id.rb_today_withdraw) {
+                if (checkedId == R.id.rb_today_withdraw) {
                     scheduleDay = today;
-                } else if(checkedId == R.id.rb_tomorrow_withdraw) {
+                    isToday = true;
+                } else if (checkedId == R.id.rb_tomorrow_withdraw) {
                     scheduleDay = tomorrow;
+                    isToday = false;
                 }
             }
         });
@@ -178,7 +191,7 @@ public class WithdrawFragment extends Fragment {
     private CustomTimePickerDialog.OnTimeSetListener timeSetListener = new CustomTimePickerDialog.OnTimeSetListener() {
         @Override
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            tvTime.setText(String.format("%02d", hourOfDay) + ":" +String.format("%02d", minute));
+            tvTime.setText(String.format("%02d", hourOfDay) + ":" + String.format("%02d", minute));
         }
     };
 }
