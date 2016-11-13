@@ -196,7 +196,6 @@ public class RegisterActivity extends CommonActivity implements DatabaseReferenc
 
     }
 
-
     protected void initViews() {
         inputName = (EditText) findViewById(R.id.et_cadastre_name);
         inputEmail = (EditText) findViewById(R.id.et_cadastre_email);

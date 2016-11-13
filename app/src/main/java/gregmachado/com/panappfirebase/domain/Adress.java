@@ -12,7 +12,7 @@ public class Adress {
     private String id;
     private String userID;
     private String adressName;
-    private String Cep;
+    private String cep;
     private String state;
     private String reference;
     private String complement, country;
@@ -20,17 +20,17 @@ public class Adress {
     private String district;
     private String city;
     private int number;
-    private Double latitude, longitude, distance;
+    private double latitude, longitude, distance;
 
     public Adress() {}
 
     public Adress(String id, String userID, String adressName, String cep, String state, String reference,
                   String complement, String country, String street, String district, String city, int number,
-                  Double latitude, Double longitude, Double distance) {
+                  double latitude, double longitude, double distance) {
         this.id = id;
         this.userID = userID;
         this.adressName = adressName;
-        Cep = cep;
+        this.cep = cep;
         this.state = state;
         this.reference = reference;
         this.complement = complement;
@@ -119,7 +119,7 @@ public class Adress {
         this.number = number;
     }
 
-    public Double getLatitude() {
+    public double getLatitude() {
         return latitude;
     }
 
@@ -127,7 +127,7 @@ public class Adress {
         this.latitude = latitude;
     }
 
-    public Double getLongitude() {
+    public double getLongitude() {
         return longitude;
     }
 
@@ -135,7 +135,7 @@ public class Adress {
         this.longitude = longitude;
     }
 
-    public Double getDistance() {
+    public double getDistance() {
         return distance;
     }
 
@@ -152,11 +152,11 @@ public class Adress {
     }
 
     public String getCep() {
-        return Cep;
+        return cep;
     }
 
     public void setCep(String cep) {
-        Cep = cep;
+        cep = cep;
     }
 
     public String getState() {

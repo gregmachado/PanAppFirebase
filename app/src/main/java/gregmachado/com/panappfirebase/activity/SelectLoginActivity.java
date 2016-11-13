@@ -110,7 +110,7 @@ public class SelectLoginActivity extends CommonActivity {
     public void selectSignInFaceBook(View view) {
     }
 
-    public void registerBakery(View view) {
+    public void callRegisterBakery(View view) {
         Intent intentRegisterBakery = new Intent(SelectLoginActivity.this, RegisterBakeryActivity.class);
         startActivity(intentRegisterBakery);
     }

@@ -136,7 +136,6 @@ public class ImagePicker {
         return bm;
     }
 
-
     private static int getRotation(Context context, Uri imageUri, boolean isCamera) {
         int rotation;
         if (isCamera) {

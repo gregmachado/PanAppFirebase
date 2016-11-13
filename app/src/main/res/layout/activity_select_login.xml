@@ -78,7 +78,7 @@
             android:elevation="8dp"
             android:layout_marginTop="10dp"
             android:text="@string/register_bakery_label"
-            android:onClick="registerBakery"
+            android:onClick="callRegisterBakery"
             android:textColor="#ffffff" />
 
     </LinearLayout>

@@ -9,6 +9,7 @@ public class Request {
 
     private String requestID;
     private String bakeryID, userID;
+    private String requestCode;
     private String creationDate, scheduleDate;
     private String method, scheduleHour;
     private String  adress;
@@ -108,5 +109,13 @@ public class Request {
 
     public void setProductList(List<Product> productList) {
         this.productList = productList;
+    }
+
+    public String getRequestCode() {
+        return requestCode;
+    }
+
+    public void setRequestCode(String requestCode) {
+        this.requestCode = requestCode;
     }
 }
