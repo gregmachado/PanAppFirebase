@@ -55,6 +55,7 @@
         <activity android:name=".activity.FormEditBakeryActivity" />
         <activity android:name=".activity.RequestActivity" />
         <activity android:name=".activity.FavoriteListActivity" />
+        <activity android:name=".activity.RequestDetailActivity" />
     </application>
 
 </manifest>

@@ -19,35 +19,47 @@ import gregmachado.com.panappfirebase.R;
  */
 public class RequestActivity extends CommonActivity {
 
-    private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
+    private String id;
+    private boolean typeUser;
+    private PendentRequestFragment pendentRequestFragment;
+    private DeliveredRequestFragment deliveredRequestFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_request);
+        if (params != null) {
+            id = params.getString("id");
+            typeUser = params.getBoolean("type");
+        }
         initViews();
     }
 
     private void setupViewPager(ViewPager viewPager) {
+        pendentRequestFragment = new PendentRequestFragment();
+        deliveredRequestFragment = new DeliveredRequestFragment();
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        adapter.addFragment(new PendentRequestFragment(), "PENDENTES");
-        adapter.addFragment(new DeliveredRequestFragment(), "ENTREGUES");
+        adapter.addFragment(pendentRequestFragment, "PENDENTES");
+        adapter.addFragment(deliveredRequestFragment, "ENTREGUES");
         viewPager.setAdapter(adapter);
     }
 
     @Override
     protected void initViews() {
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar_request);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_request);
         setSupportActionBar(toolbar);
+        setTitle("Pedidos");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         setupViewPager(viewPager);
+        sendParamsToFragment(id, typeUser, pendentRequestFragment);
+        sendParamsToFragment(id, typeUser, deliveredRequestFragment);
         tabLayout = (TabLayout) findViewById(R.id.tabs_request);
         tabLayout.setupWithViewPager(viewPager);
-
     }
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
@@ -77,6 +89,13 @@ public class RequestActivity extends CommonActivity {
         public CharSequence getPageTitle(int position) {
             return mFragmentTitleList.get(position);
         }
+    }
+
+    public void sendParamsToFragment(String id, boolean typeUser, Fragment fragment) {
+        Bundle bundle = new Bundle();
+        bundle.putString("id", id);
+        bundle.putBoolean("type", typeUser);
+        fragment.setArguments(bundle);
     }
 
     @Override

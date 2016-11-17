@@ -17,6 +17,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 
 import gregmachado.com.panappfirebase.R;
@@ -31,7 +32,7 @@ public class UserMainActivity extends CommonActivity
 
     private static final String TAG = "MainActivity";
     protected FrameLayout frameLayout;
-    private String userName, userEmail;
+    private String userName, userEmail,userID;
     private TextView tvUserName, tvUserEmail;
     private DatabaseReference databaseReference;
     private FirebaseAuth firebaseAuth;
@@ -49,13 +50,10 @@ public class UserMainActivity extends CommonActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
         Intent it = getIntent();
         params = it.getExtras();
-
         if (params != null) {
             userName = params.getString("name");
             userEmail = params.getString("email");
@@ -72,6 +70,9 @@ public class UserMainActivity extends CommonActivity
             }
         };
         firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        assert firebaseUser != null;
+        userID = firebaseUser.getUid();
         firebaseAuth.addAuthStateListener(authStateListener);
         databaseReference = LibraryClass.getFirebase();
         databaseReference.getRef();
@@ -111,6 +112,8 @@ public class UserMainActivity extends CommonActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        params.putString("id", userID);
+        params.putBoolean("type", true);
 
         if (id == R.id.nav_bakerys) {
             Intent intentBakeryList = new Intent(UserMainActivity.this, BakeryListActivity.class);
@@ -120,21 +123,16 @@ public class UserMainActivity extends CommonActivity
             Intent intentFavoriteBakeryList = new Intent(UserMainActivity.this, FavoriteListActivity.class);
             intentFavoriteBakeryList.putExtras(params);
             startActivity(intentFavoriteBakeryList);
-        } else if (id == R.id.nav_notification) {
+        } else if (id == R.id.nav_configuration) {
 
         } else if (id == R.id.nav_follow_orders) {
             Intent intentRequest = new Intent(UserMainActivity.this, RequestActivity.class);
-            //params.putBoolean("isAdmin", false);
             intentRequest.putExtras(params);
             startActivity(intentRequest);
         } else if (id == R.id.nav_history) {
             Intent intentRequest = new Intent(UserMainActivity.this, ScheduleActivity.class);
             intentRequest.putExtras(params);
             startActivity(intentRequest);
-        } else if (id == R.id.nav_home) {
-            Intent intentHome = new Intent(UserMainActivity.this, UserMainActivity.class);
-            intentHome.putExtras(params);
-            startActivity(intentHome);
         } else if (id == R.id.nav_my_adrees) {
             Intent intentAdressList = new Intent(UserMainActivity.this, AdressListActivity.class);
             intentAdressList.putExtras(params);

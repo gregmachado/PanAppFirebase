@@ -25,6 +25,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.domain.Product;
@@ -48,13 +49,14 @@ import gregmachado.com.panappfirebase.util.AppUtil;
 public class ScheduleActivity extends CommonActivity {
 
     private static final String TAG = ScheduleActivity.class.getSimpleName();
-    private String bakeryId, userId, productID;
+    private String bakeryId, userId, productID, userName, bakeryName;
     private ArrayList<Product> itemsCart;
     private WithdrawFragment withdrawFragment;
     private DeliveryFragment deliveryFragment;
     private int items;
     private boolean isDelivery;
     private Request request;
+    private double total;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +65,10 @@ public class ScheduleActivity extends CommonActivity {
         Intent it = getIntent();
         params = it.getExtras();
         if (params != null) {
+            userName = params.getString("userName");
+            bakeryName = params.getString("bakeryName");
             bakeryId = params.getString("bakeryID");
+            total = params.getDouble("total");
             itemsCart = (ArrayList<Product>)
                     getIntent().getSerializableExtra("items");
         }
@@ -130,6 +135,8 @@ public class ScheduleActivity extends CommonActivity {
         Bundle bundle = new Bundle();
         bundle.putString("bakeryID", bakeryId);
         bundle.putString("userID", userId);
+        bundle.putString("userName", userName);
+        bundle.putString("bakeryName", bakeryName);
         bundle.putParcelableArrayList("products", products);
         fragment.setArguments(bundle);
     }
@@ -228,10 +235,38 @@ public class ScheduleActivity extends CommonActivity {
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
         String requestID = mDatabaseReference.push().getKey();
         request.setRequestID(requestID);
-        mDatabaseReference.child("users").child(userId).child("requests").child(requestID).setValue(request);
+        String code = generateRandomCode();
+        request.setRequestCode(code);
+        request.setTotal(total);
+        mDatabaseReference.child("requests").child(userId).child(requestID).setValue(request);
+        mDatabaseReference.child("requests").child(bakeryId).child(requestID).setValue(request);
         Toast.makeText(ScheduleActivity.this, "Pedido realizado com sucesso!", Toast.LENGTH_SHORT).show();
         Intent intentHome = new Intent(ScheduleActivity.this, UserMainActivity.class);
         startActivity(intentHome);
+    }
+
+    private String generateRandomCode() {
+
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVYWXZ0123456789";
+
+        Random random = new Random();
+
+        String code = "";
+        int index = -1;
+        for (int i = 0; i < 2; i++) {
+            index = random.nextInt(chars.length());
+            code += chars.substring(index, index + 1);
+        }
+
+        String code2 = "";
+        int index2 = -1;
+        for (int j = 0; j < 3; j++) {
+            index2 = random.nextInt(chars.length());
+            code2 += chars.substring(index2, index2 + 1);
+        }
+
+        code = code + "-" + code2;
+        return code;
     }
 
     @Override

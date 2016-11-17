@@ -14,12 +14,11 @@
             android:id="@+id/simpleProgressBar"
             android:layout_width="60sp"
             android:layout_height="60sp"
-            android:visibility="invisible"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"/>
 
         <ImageView
-            android:id="@+id/ic_favorite"
+            android:id="@+id/ic_delivered_request"
             android:layout_marginTop="40dp"
             android:layout_centerInParent="true"
             android:layout_alignParentTop="true"
@@ -29,7 +28,7 @@
             android:layout_height="wrap_content" />
 
         <com.devspark.robototextview.widget.RobotoTextView
-            android:id="@+id/tv_answer"
+            android:id="@+id/tv_no_delivered_request"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/no_delivered_requests"
@@ -42,7 +41,7 @@
             app:typeface="roboto_light_italic"/>
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/request_list"
+            android:id="@+id/rv_delivered_request"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </RelativeLayout>

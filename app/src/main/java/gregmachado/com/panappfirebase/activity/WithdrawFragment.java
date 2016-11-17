@@ -44,7 +44,7 @@ public class WithdrawFragment extends Fragment {
     private RadioGroup radioGroup;
     private String today, tomorrow, scheduleDay, scheduleHour, method, creatonDate;
     private Request request;
-    private String bakeryId, userId;
+    private String bakeryId, userId, userName, bakeryName;
     private List<Product> products;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference mDatabaseReference = database.getReference();
@@ -60,6 +60,8 @@ public class WithdrawFragment extends Fragment {
         method = "withdraw";
         bakeryId = getArguments().getString("bakeryID");
         userId = getArguments().getString("userID");
+        userName = getArguments().getString("userName");
+        bakeryName = getArguments().getString("bakeryName");
         products = getArguments().getParcelableArrayList("products");
         Log.w(TAG, "bakeryID: " + bakeryId);
         Log.w(TAG, "userID: " + userId);
@@ -150,6 +152,9 @@ public class WithdrawFragment extends Fragment {
         request.setMethod(method);
         request.setDelivered(false);
         request.setProductList(products);
+        request.setStatus("Pendente");
+        request.setUserName(userName);
+        request.setBakeryName(bakeryName);
         return request;
     }
 

@@ -49,7 +49,7 @@ public class DeliveryFragment extends Fragment {
     private RadioGroup radioGroup;
     private String today, tomorrow, scheduleDay, scheduleHour, adress, method, creatonDate;
     private Request request;
-    private String bakeryId, userId;
+    private String bakeryId, userId, userName, bakeryName;
     private List<Product> products;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference mDatabaseReference = database.getReference();
@@ -73,6 +73,8 @@ public class DeliveryFragment extends Fragment {
                              Bundle savedInstanceState) {
         bakeryId = getArguments().getString("bakeryID");
         userId = getArguments().getString("userID");
+        userName = getArguments().getString("userName");
+        bakeryName = getArguments().getString("bakeryName");
         products = getArguments().getParcelableArrayList("products");
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_delivery, container, false);
@@ -211,6 +213,9 @@ public class DeliveryFragment extends Fragment {
         request.setDelivered(false);
         request.setProductList(products);
         request.setAdress(adress);
+        request.setStatus("Pendente");
+        request.setUserName(userName);
+        request.setBakeryName(bakeryName);
         return request;
     }
 

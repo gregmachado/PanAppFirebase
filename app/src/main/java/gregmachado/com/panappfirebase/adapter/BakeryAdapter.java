@@ -32,7 +32,7 @@ public class BakeryAdapter extends FirebaseRecyclerAdapter<Bakery, BakeryViewHol
     private static final String TAG = BakeryAdapter.class.getSimpleName();
     private Context mContext;
     private Double userLatitude, userLongitude;
-    private String bakeryID, userID;
+    private String bakeryID, userID, userName;
     private Bundle params;
     private ArrayList<String> favorites;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -40,7 +40,7 @@ public class BakeryAdapter extends FirebaseRecyclerAdapter<Bakery, BakeryViewHol
     private boolean isFavoriteList;
 
     public BakeryAdapter(Query ref, Context context, Double latitude, Double longitude, ArrayList<String> favorites,
-                         String userID, boolean isFavoriteList){
+                         String userID, boolean isFavoriteList, String userName){
         super(Bakery.class, R.layout.card_bakery, BakeryViewHolder.class, ref);
         this.mContext = context;
         this.userLatitude = latitude;
@@ -48,6 +48,7 @@ public class BakeryAdapter extends FirebaseRecyclerAdapter<Bakery, BakeryViewHol
         this.favorites = favorites;
         this.userID = userID;
         this.isFavoriteList = isFavoriteList;
+        this.userName = userName;
     }
 
     @Override
@@ -84,6 +85,7 @@ public class BakeryAdapter extends FirebaseRecyclerAdapter<Bakery, BakeryViewHol
                 params = new Bundle();
                 params.putString("bakeryID", bakeryID);
                 params.putString("name", name);
+                params.putString("userName", userName);
                 Intent intentProductList = new Intent(mContext, ProductListActivity.class);
                 intentProductList.putExtras(params);
                 mContext.startActivity(intentProductList);

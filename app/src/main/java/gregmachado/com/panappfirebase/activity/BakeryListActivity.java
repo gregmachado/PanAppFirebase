@@ -49,7 +49,7 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
     private static final String TAG = BakeryListActivity.class.getSimpleName();
     private static final int PERMISSION_REQUEST_CODE = 555;
     private RecyclerView rvBakery;
-    private String userID;
+    private String userID, userName;
     private TextView tvNoBakeries;
     private GoogleApiClient googleApiClient;
     private Location l;
@@ -86,6 +86,7 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         assert firebaseUser != null;
         userID = firebaseUser.getUid();
+        userName = firebaseUser.getDisplayName();
     }
 
     @Override
@@ -117,7 +118,7 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
                         icBakery.setVisibility(View.GONE);
                     }
                     adapter = new BakeryAdapter(mDatabaseReference.child("bakeries").getRef(),
-                            BakeryListActivity.this, userLatitude, userLongitude, favorites, userID, false
+                            BakeryListActivity.this, userLatitude, userLongitude, favorites, userID, false, userName
                     ) {
                     };
                     rvBakery.setAdapter(adapter);

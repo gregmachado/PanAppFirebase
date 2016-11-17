@@ -35,7 +35,7 @@ public class ProductListActivity extends CommonActivity {
 
     private static final String TAG = ProductListActivity.class.getSimpleName();
     private RecyclerView rvProduct;
-    private String bakeryId, id;
+    private String bakeryId, id, userName;
     private Bundle params;
     private TextView tvNoProducts;
     private List<Product> list;
@@ -75,13 +75,13 @@ public class ProductListActivity extends CommonActivity {
         if (productsToCart != null) {
             productsToCart.clear();
         }
-        setValuesToolbarBottom("00", "00,00");
-        parcialPrice = 0.00;
+        //setValuesToolbarBottom("00", "00,00");
+        //parcialPrice = 0.00;
         mDatabaseReference.child("bakeries").child(bakeryId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                closeProgressBar();
                 if (dataSnapshot.hasChild("products")) {
+                    closeProgressBar();
                     if (tvNoProducts.getVisibility() == View.VISIBLE) {
                         tvNoProducts.setVisibility(View.GONE);
                     }
@@ -93,6 +93,7 @@ public class ProductListActivity extends CommonActivity {
                     ) {};
                     rvProduct.setAdapter(adapter);
                 } else {
+                    closeProgressBar();
                     tvNoProducts.setVisibility(View.VISIBLE);
                     icProduct.setVisibility(View.VISIBLE);
                     btnCart.setVisibility(View.GONE);
@@ -104,7 +105,6 @@ public class ProductListActivity extends CommonActivity {
                 Log.w(TAG, "getUser:onCancelled", databaseError.toException());
             }
         });
-        progressBar.setVisibility(View.GONE);
     }
 
     @Override
@@ -138,6 +138,7 @@ public class ProductListActivity extends CommonActivity {
         params = it.getExtras();
         if (params != null) {
             bakeryId = params.getString("bakeryID");
+            userName = params.getString("userName");
             name = params.getString("name");
         }
         setTitle("Produtos - " + name);
@@ -156,6 +157,8 @@ public class ProductListActivity extends CommonActivity {
         Intent i = new Intent(ProductListActivity.this, ProductCartActivity.class);
         params.putString("bakeryID", bakeryId);
         params.putDouble("total", parcialPrice);
+        params.putString("userName", userName);
+        params.putString("bakeryName", name);
         productsToCart = adapter.getProductsToCart();
         i.putExtra("cart", productsToCart);
         i.putExtras(params);

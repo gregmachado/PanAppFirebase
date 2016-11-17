@@ -9,11 +9,11 @@ import gregmachado.com.panappfirebase.R;
 /**
  * Created by gregmachado on 06/11/16.
  */
-public class RequestViewHolderUser extends RecyclerView.ViewHolder{
+public class RequestViewHolder extends RecyclerView.ViewHolder{
     public TextView tvRequestCode, tvBakeryName, tvDate, tvHour, tvUnits, tvMethod, tvStatus;
     public View mView;
 
-    public RequestViewHolderUser(View v) {
+    public RequestViewHolder(View v) {
         super(v);
         mView = v;
         tvRequestCode = (TextView) itemView.findViewById(R.id.tv_request_code);

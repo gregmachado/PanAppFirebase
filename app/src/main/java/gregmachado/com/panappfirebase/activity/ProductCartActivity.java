@@ -40,7 +40,7 @@ public class ProductCartActivity extends CommonActivity implements ItemClickList
     private TextView tvItens, tvPrice;
     private Double priceTotal = 0.00, price;
     private Bundle params;
-    private String bakeryId, productID;
+    private String bakeryId, productID, userName, bakeryName;
     private int items;
 
     @Override
@@ -57,6 +57,8 @@ public class ProductCartActivity extends CommonActivity implements ItemClickList
         params = it.getExtras();
         if (params != null) {
             bakeryId = params.getString("bakeryID");
+            userName = params.getString("userName");
+            bakeryName = params.getString("bakeryName");
             priceTotal = params.getDouble("total");
             _list = (ArrayList<Product>)
                     getIntent().getSerializableExtra("cart");
@@ -101,7 +103,10 @@ public class ProductCartActivity extends CommonActivity implements ItemClickList
     private void callScheduleActivity() {
         Intent intentSchedule = new Intent(ProductCartActivity.this, ScheduleActivity.class);
         ArrayList<Product> requestItems = cartAdapter.getProducts();
+        params.putString("userName", userName);
+        params.putString("bakeryName", bakeryName);
         params.putString("bakeryID", bakeryId);
+        params.putDouble("total", priceTotal);
         intentSchedule.putExtras(params);
         intentSchedule.putExtra("items", requestItems);
         startActivity(intentSchedule);

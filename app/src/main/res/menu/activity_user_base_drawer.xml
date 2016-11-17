@@ -3,10 +3,6 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_home"
-            android:icon="@drawable/ic_home_black_24dp"
-            android:title="Home" />
-        <item
             android:id="@+id/nav_bakerys"
             android:icon="@drawable/ic_store_black_24dp"
             android:title="Padarias" />
@@ -35,9 +31,9 @@
             android:icon="@drawable/ic_talk_whit_us_black_24dp"
             android:title="Fale Conosco" />
         <item
-            android:id="@+id/nav_notification"
-            android:icon="@drawable/ic_notification_black_24dp"
-            android:title="Notificações" />
+            android:id="@+id/nav_configuration"
+            android:icon="@drawable/ic_settings_black_24dp"
+            android:title="Configurações" />
         <item
             android:id="@+id/nav_exit"
             android:icon="@drawable/ic_exit_to_app_black_24dp"

@@ -15,21 +15,11 @@ public class Request {
     private String  adress;
     private Boolean delivered;
     private List<Product> productList;
+    private String status;
+    private String userName, bakeryName;
+    private double total;
 
     public Request() {}
-
-    public Request(String bakeryID, String userID, String creationDate, String scheduleDate,
-                   String method, String scheduleHour, String adress, Boolean delivered, List<Product> productList) {
-        this.bakeryID = bakeryID;
-        this.userID = userID;
-        this.creationDate = creationDate;
-        this.scheduleDate = scheduleDate;
-        this.method = method;
-        this.scheduleHour = scheduleHour;
-        this.adress = adress;
-        this.delivered = delivered;
-        this.productList = productList;
-    }
 
     public String getRequestID() {
         return requestID;
@@ -117,5 +107,37 @@ public class Request {
 
     public void setRequestCode(String requestCode) {
         this.requestCode = requestCode;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getBakeryName() {
+        return bakeryName;
+    }
+
+    public void setBakeryName(String bakeryName) {
+        this.bakeryName = bakeryName;
+    }
+
+    public double getTotal() {
+        return total;
+    }
+
+    public void setTotal(double total) {
+        this.total = total;
     }
 }

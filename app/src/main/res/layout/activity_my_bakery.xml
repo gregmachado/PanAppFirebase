@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#dcdbdb"
+    android:background="#ffffff"
     android:orientation="vertical"
     tools:context=".activity.ProductListActivity">
 
@@ -21,7 +21,8 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    <android.support.v7.widget.CardView
+        xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/cv_my_bakery"
@@ -35,7 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            tools:background="#22000000">
+            tools:background="#ffffff">
 
             <ProgressBar
                 android:id="@+id/simpleProgressBar"

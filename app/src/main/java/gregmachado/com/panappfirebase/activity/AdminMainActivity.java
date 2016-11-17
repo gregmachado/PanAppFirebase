@@ -104,17 +104,18 @@ public class AdminMainActivity extends CommonActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-        params.putString("bakeryID", bakeryID);
+        params.putString("id", bakeryID);
+        params.putBoolean("type", true);
 
         if (id == R.id.nav_products) {
             Intent intentProductAdmin = new Intent(AdminMainActivity.this, ProductAdminActivity.class);
             intentProductAdmin.putExtras(params);
             startActivity(intentProductAdmin);
         } else if (id == R.id.nav_follow_orders_admin) {
-
+            Intent intentRequest = new Intent(AdminMainActivity.this, RequestActivity.class);
+            intentRequest.putExtras(params);
+            startActivity(intentRequest);
         } else if (id == R.id.nav_history_admin) {
-
-        } else if (id == R.id.nav_home_admin) {
 
         } else if (id == R.id.nav_my_bakery) {
             Intent intentMyBakery = new Intent(AdminMainActivity.this, MyBakeryActivity.class);
