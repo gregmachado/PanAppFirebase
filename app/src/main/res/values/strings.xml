@@ -102,4 +102,5 @@
     <string name="no_bakeries_favorites">Não há padarias favoritas!</string>
     <string name="change_status">Alterar status</string>
     <string name="x">x</string>
+    <string name="empty_cart">Carrinho vazio!</string>
 </resources>

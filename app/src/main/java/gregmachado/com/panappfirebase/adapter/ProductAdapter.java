@@ -21,6 +21,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -43,6 +44,7 @@ public class ProductAdapter extends FirebaseRecyclerAdapter<Product, ProductView
     private ArrayList<Product> productsToCart = new ArrayList<>();
     private ProductListActivity productListActivity;
     private String bakeryID;
+    private DecimalFormat precision = new DecimalFormat("#0.00");
 
     public ProductAdapter(Query ref, Context context, ProductListActivity productListActivity, String bakeryID) {
         super(Product.class, R.layout.card_product_user, ProductViewHolderUser.class, ref);
@@ -55,7 +57,7 @@ public class ProductAdapter extends FirebaseRecyclerAdapter<Product, ProductView
     protected void populateViewHolder(final ProductViewHolderUser viewHolder, final Product model, final int position) {
         viewHolder.progressBar.setVisibility(View.VISIBLE);
         viewHolder.tvProductName.setText(model.getProductName());
-        viewHolder.tvPrice.setText(String.valueOf(model.getProductPrice()));
+        viewHolder.tvPrice.setText(precision.format(model.getProductPrice()));
         viewHolder.tvCategory.setText(model.getType());
         viewHolder.tvItensSale.setText(String.valueOf(model.getItensSale()));
         if(model.getProductImage() == null){
@@ -193,7 +195,7 @@ public class ProductAdapter extends FirebaseRecyclerAdapter<Product, ProductView
                             viewHolder.btnRemoveCart.setVisibility(View.VISIBLE);
                             count++;
                             parcialPrice = parcialPrice + price;
-                            setValuesToolbarBottom(String.valueOf(count), String.valueOf(parcialPrice));
+                            setValuesToolbarBottom(String.valueOf(count), precision.format(parcialPrice));
                             viewHolder.tvUnitInCart.setText(String.valueOf(items));
                             viewHolder.llCart.setVisibility(View.VISIBLE);
                             dialog.dismiss();
@@ -209,16 +211,16 @@ public class ProductAdapter extends FirebaseRecyclerAdapter<Product, ProductView
                 Iterator<Product> it = productsToCart.iterator();
                 while (it.hasNext()) {
                     if (it.next().getId().equals(model.getId())) {
-                        it.remove();
-                        items = getValue(viewHolder);
+                        items = Integer.parseInt(viewHolder.tvUnitInCart.getText().toString());
                         price = model.getProductPrice() * items;
+                        it.remove();
                     }
                 }
                 viewHolder.btnAddCart.setVisibility(View.VISIBLE);
                 viewHolder.btnRemoveCart.setVisibility(View.INVISIBLE);
                 count--;
                 parcialPrice = parcialPrice - price;
-                setValuesToolbarBottom(String.valueOf(count), String.valueOf(parcialPrice));
+                setValuesToolbarBottom(String.valueOf(count), precision.format(parcialPrice));
                 viewHolder.llCart.setVisibility(View.INVISIBLE);
             }
         });
@@ -255,5 +257,9 @@ public class ProductAdapter extends FirebaseRecyclerAdapter<Product, ProductView
 
     public ArrayList<Product> getProductsToCart(){
         return productsToCart;
+    }
+
+    public double getPrice(){
+        return parcialPrice;
     }
 }

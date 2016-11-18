@@ -42,16 +42,11 @@ public class UserMainActivity extends CommonActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_base);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        setTitle("Home");
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         Intent it = getIntent();
         params = it.getExtras();
         if (params != null) {
@@ -69,20 +64,15 @@ public class UserMainActivity extends CommonActivity
                 }
             }
         };
+        databaseReference = LibraryClass.getFirebase();
+        databaseReference.getRef();
+        frameLayout = (FrameLayout)findViewById(R.id.content_frame);
+        initViews();
         firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         assert firebaseUser != null;
         userID = firebaseUser.getUid();
         firebaseAuth.addAuthStateListener(authStateListener);
-        databaseReference = LibraryClass.getFirebase();
-        databaseReference.getRef();
-        frameLayout = (FrameLayout)findViewById(R.id.content_frame);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        initViews();
     }
 
     @Override
@@ -113,7 +103,8 @@ public class UserMainActivity extends CommonActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         params.putString("id", userID);
-        params.putBoolean("type", true);
+        params.putBoolean("type", false);
+        params.putString("name", userName);
 
         if (id == R.id.nav_bakerys) {
             Intent intentBakeryList = new Intent(UserMainActivity.this, BakeryListActivity.class);
@@ -164,6 +155,14 @@ public class UserMainActivity extends CommonActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         View header = navigationView.getHeaderView(0);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        setTitle("Home");
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
         tvUserName = (TextView) header.findViewById(R.id.tv_user_name);
         tvUserEmail = (TextView) header.findViewById(R.id.tv_user_email);
         tvUserName.setText(userName);

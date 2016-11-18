@@ -65,11 +65,11 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
         super.onCreate(savedInstanceState);
         context = getApplicationContext();
         setContentView(R.layout.activity_bakery_list);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_bakery);
-        setSupportActionBar(toolbar);
-        setTitle("Padarias");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
         boolean enabled = service
                 .isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -82,17 +82,16 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
         }
         callConnection();
         initViews();
+        openProgressBar();
+        Intent it = getIntent();
+        params = it.getExtras();
+        if (params != null) {
+            userName = params.getString("name");
+        }
         firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         assert firebaseUser != null;
         userID = firebaseUser.getUid();
-        userName = firebaseUser.getDisplayName();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();;
-        openProgressBar();
         mDatabaseReference.child("users").child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -224,6 +223,11 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
 
     @Override
     protected void initViews() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_bakery);
+        setSupportActionBar(toolbar);
+        setTitle("Padarias");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         tvNoBakeries = (TextView) findViewById(R.id.tv_no_bakeries);
         rvBakery = (RecyclerView) findViewById(R.id.rv_bakery);
         icBakery = (ImageView) findViewById(R.id.ic_bakery);

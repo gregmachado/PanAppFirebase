@@ -27,6 +27,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import gregmachado.com.panappfirebase.R;
@@ -55,6 +56,7 @@ public class ProductAdapterAdmin extends FirebaseRecyclerAdapter<Product, Produc
     private StorageReference mStorageRef;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference mDatabaseReference = database.getReference();
+    private DecimalFormat precision = new DecimalFormat("#0.00");
 
     public ProductAdapterAdmin(Query ref, Context context, ProductAdminActivity productListActivity, String bakeryID) {
         super(Product.class, R.layout.card_product, ProductViewHolder.class, ref);
@@ -69,7 +71,7 @@ public class ProductAdapterAdmin extends FirebaseRecyclerAdapter<Product, Produc
         viewHolder.tvProductName.setText(model.getProductName());
         viewHolder.tvItensSale.setText(String.valueOf(model.getItensSale()));
         viewHolder.tvProductType.setText(model.getType());
-        viewHolder.tvProductPrice.setText(String.valueOf(model.getProductPrice()));
+        viewHolder.tvProductPrice.setText(precision.format(model.getProductPrice()));
         if(model.getProductImage() == null){
             viewHolder.ivProduct.setImageResource(R.drawable.img_product);
         } else {

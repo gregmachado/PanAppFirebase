@@ -57,7 +57,7 @@ public class WithdrawFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        method = "withdraw";
+        method = "Retirada";
         bakeryId = getArguments().getString("bakeryID");
         userId = getArguments().getString("userID");
         userName = getArguments().getString("userName");

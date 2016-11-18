@@ -1,5 +1,6 @@
 package gregmachado.com.panappfirebase.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -19,6 +20,7 @@ import gregmachado.com.panappfirebase.R;
  */
 public class RequestActivity extends CommonActivity {
 
+    private static final String TAG = RequestActivity.class.getSimpleName();
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private String id;
@@ -30,10 +32,17 @@ public class RequestActivity extends CommonActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_request);
+        Intent it = getIntent();
+        params = it.getExtras();
         if (params != null) {
             id = params.getString("id");
             typeUser = params.getBoolean("type");
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         initViews();
     }
 
@@ -48,7 +57,6 @@ public class RequestActivity extends CommonActivity {
 
     @Override
     protected void initViews() {
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_request);
         setSupportActionBar(toolbar);
         setTitle("Pedidos");

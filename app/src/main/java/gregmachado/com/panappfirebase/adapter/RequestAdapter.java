@@ -25,7 +25,7 @@ public class RequestAdapter extends FirebaseRecyclerAdapter<Request, RequestView
     private boolean type;
 
     public RequestAdapter(Query ref, Context context, String id, boolean type) {
-        super(Request.class, R.layout.card_product_user, RequestViewHolder.class, ref);
+        super(Request.class, R.layout.card_request, RequestViewHolder.class, ref);
         this.mContext = context;
         this.id = id;
         this.type = type;
@@ -33,12 +33,16 @@ public class RequestAdapter extends FirebaseRecyclerAdapter<Request, RequestView
 
     @Override
     protected void populateViewHolder(final RequestViewHolder viewHolder, final Request model, final int position) {
-        viewHolder.tvRequestCode.setText(model.getRequestID());
+        viewHolder.tvRequestCode.setText(model.getRequestCode());
         viewHolder.tvMethod.setText(model.getMethod());
         viewHolder.tvHour.setText(model.getScheduleHour());
-        viewHolder.tvBakeryName.setText(model.getBakeryID());
+        if(type){
+            viewHolder.tvBakeryName.setText(model.getUserName());
+        } else {
+            viewHolder.tvBakeryName.setText(model.getBakeryName());
+        }
         viewHolder.tvDate.setText(model.getScheduleDate());
-        viewHolder.tvUnits.setText(model.getProductList().size());
+        viewHolder.tvUnits.setText(String.valueOf(model.getProductList().size()));
         viewHolder.tvStatus.setText(model.getStatus());
 
         viewHolder.mView.setOnClickListener(new View.OnClickListener() {

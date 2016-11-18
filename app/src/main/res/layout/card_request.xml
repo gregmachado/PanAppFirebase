@@ -139,7 +139,7 @@
             android:layout_below="@+id/tv_request_date_tag"
             android:paddingTop="4dp"
             android:text="Status"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/black_50_opacity"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:textSize="14sp"

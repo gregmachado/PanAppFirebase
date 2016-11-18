@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,13 +14,15 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,11 +40,15 @@ public class ProductCartActivity extends CommonActivity implements ItemClickList
     private RecyclerView rvProduct;
     private CartAdapter cartAdapter;
     private List<Product> _list;
-    private TextView tvItens, tvPrice;
-    private Double priceTotal = 0.00, price;
+    private TextView tvItens, tvPrice, tvEmptyCart;
+    private Double priceTotal, price;
     private Bundle params;
     private String bakeryId, productID, userName, bakeryName;
     private int items;
+    private ImageView icCart;
+    private CardView cardView;
+    private Button btnFinish;
+    private DecimalFormat precision = new DecimalFormat("#0.00");
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,21 +71,27 @@ public class ProductCartActivity extends CommonActivity implements ItemClickList
                     getIntent().getSerializableExtra("cart");
         }
         loadCartList();
-        setValuesToolbarBottom(String.valueOf(priceTotal));
     }
 
     @Override
     public void onClick(View view, int position) {
         final Product product = _list.get(position);
-        Toast.makeText(this, "Produto: " + product.getProductPrice(), Toast.LENGTH_SHORT).show();
+        Log.w(TAG, "Produto: " + product.getProductName());
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public void loadCartList() {
-        setValuesToolbarBottom(String.valueOf(priceTotal));
-        rvProduct.setLayoutManager(new LinearLayoutManager(this));
-        cartAdapter = new CartAdapter(this, this, _list, this);
-        rvProduct.setAdapter(cartAdapter);
+        if(!(_list.isEmpty())&!(_list==null)){
+            setValuesToolbarBottom(priceTotal);
+            rvProduct.setLayoutManager(new LinearLayoutManager(this));
+            cartAdapter = new CartAdapter(this, this, _list, this, priceTotal);
+            rvProduct.setAdapter(cartAdapter);
+        } else {
+            tvEmptyCart.setVisibility(View.VISIBLE);
+            icCart.setVisibility(View.VISIBLE);
+            cardView.setVisibility(View.INVISIBLE);
+            btnFinish.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -91,12 +104,12 @@ public class ProductCartActivity extends CommonActivity implements ItemClickList
         return super.onOptionsItemSelected(item);
     }
 
-    public void setValuesToolbarBottom(String price) {
-        tvPrice.setText(price);
+    public void setValuesToolbarBottom(double price) {
+        tvPrice.setText(precision.format(price));
     }
 
-    public Double getValuesToolbarBottom() {
-        price = Double.parseDouble(String.valueOf(tvPrice.getText()));
+    public double getValuesToolbarBottom() {
+        price = Double.valueOf(String.valueOf(tvPrice.getText()));
         return price;
     }
 
@@ -124,6 +137,10 @@ public class ProductCartActivity extends CommonActivity implements ItemClickList
         rvProduct = (RecyclerView) findViewById(R.id.product_cart_list);
         rvProduct.setItemAnimator(new DefaultItemAnimator());
         registerForContextMenu(rvProduct);
+        tvEmptyCart = (TextView) findViewById(R.id.tv_empty_cart);
+        icCart = (ImageView) findViewById(R.id.ic_cart);
+        cardView = (CardView) findViewById(R.id.card_total);
+        btnFinish = (Button) findViewById(R.id.btn_finish);
     }
 
     public void finishBuy(View view) {

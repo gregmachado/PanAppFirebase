@@ -21,6 +21,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +54,7 @@ public class ProductListActivity extends CommonActivity {
     private Handler handler;
     private TextView tvUnits;
     private ProductAdapter adapter;
+    private DecimalFormat precision = new DecimalFormat("#0.00");
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,8 +77,7 @@ public class ProductListActivity extends CommonActivity {
         if (productsToCart != null) {
             productsToCart.clear();
         }
-        //setValuesToolbarBottom("00", "00,00");
-        //parcialPrice = 0.00;
+        setValuesToolbarBottom("0", "00,00");
         mDatabaseReference.child("bakeries").child(bakeryId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -156,6 +157,7 @@ public class ProductListActivity extends CommonActivity {
     public void openBasket(View view) {
         Intent i = new Intent(ProductListActivity.this, ProductCartActivity.class);
         params.putString("bakeryID", bakeryId);
+        parcialPrice = adapter.getPrice();
         params.putDouble("total", parcialPrice);
         params.putString("userName", userName);
         params.putString("bakeryName", name);

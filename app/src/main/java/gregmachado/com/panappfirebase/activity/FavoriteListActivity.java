@@ -48,7 +48,7 @@ public class FavoriteListActivity extends CommonActivity implements GoogleApiCli
     private static final String TAG = FavoriteListActivity.class.getSimpleName();
     private static final int PERMISSION_REQUEST_CODE = 555;
     private RecyclerView rvBakery;
-    private String userID;
+    private String userID, userName;
     private TextView tvNoBakeries;
     private GoogleApiClient googleApiClient;
     private Location l;
@@ -64,22 +64,18 @@ public class FavoriteListActivity extends CommonActivity implements GoogleApiCli
         super.onCreate(savedInstanceState);
         context = getApplicationContext();
         setContentView(R.layout.activity_favorite_bakery_list);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_bakery);
-        setSupportActionBar(toolbar);
-        setTitle("Padarias Favoritas");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        initViews();
-        firebaseAuth = FirebaseAuth.getInstance();
-        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-        assert firebaseUser != null;
-        userID = firebaseUser.getUid();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        initViews();
         openProgressBar();
+        firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        assert firebaseUser != null;
+        userID = firebaseUser.getUid();
+        userName = firebaseUser.getDisplayName();
         LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
         boolean enabled = service
                 .isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -102,7 +98,7 @@ public class FavoriteListActivity extends CommonActivity implements GoogleApiCli
                             closeProgressBar();
                             if (dataSnapshot.getChildrenCount() > 0) {
                                 adapter = new BakeryAdapter(mDatabaseReference.child("bakeries").getRef(),
-                                        FavoriteListActivity.this, userLatitude, userLongitude, favorites, userID, true
+                                        FavoriteListActivity.this, userLatitude, userLongitude, favorites, userID, true, userName
                                 ) {
                                 };
                                 rvBakery.setAdapter(adapter);
@@ -214,6 +210,11 @@ public class FavoriteListActivity extends CommonActivity implements GoogleApiCli
 
     @Override
     protected void initViews() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_bakery);
+        setSupportActionBar(toolbar);
+        setTitle("Padarias Favoritas");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         tvNoBakeries = (TextView) findViewById(R.id.tv_no_favorites);
         rvBakery = (RecyclerView) findViewById(R.id.rv_favorite);
         icFavorite = (ImageView) findViewById(R.id.ic_favorite);

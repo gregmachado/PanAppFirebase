@@ -65,7 +65,7 @@ public class DeliveryFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        method = "delivery";
+        method = "Delivery";
     }
 
     @Override

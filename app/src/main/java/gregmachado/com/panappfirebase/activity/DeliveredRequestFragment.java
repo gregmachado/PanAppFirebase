@@ -79,7 +79,7 @@ public class DeliveredRequestFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChild("requests")) {
-                    if(dataSnapshot.child("requests").hasChild(id)){
+                    if (dataSnapshot.child("requests").hasChild(id)) {
                         if (tvNoDeliveredRequest.getVisibility() == View.VISIBLE) {
                             tvNoDeliveredRequest.setVisibility(View.GONE);
                         }
@@ -87,8 +87,9 @@ public class DeliveredRequestFragment extends Fragment {
                             ic_request.setVisibility(View.GONE);
                         }
                         adapter = new RequestAdapter(mDatabaseReference.child("requests").child(id).
-                                orderByChild("delivered").equalTo(true).getRef(), getContext(), id, type
-                        ) {};
+                                orderByChild("delivered").equalTo(true), getContext(), id, type
+                        ) {
+                        };
                         simpleProgressBar.setVisibility(View.GONE);
                         rvRequest.setAdapter(adapter);
                     } else {
@@ -112,3 +113,5 @@ public class DeliveredRequestFragment extends Fragment {
         ic_request.setVisibility(View.VISIBLE);
     }
 }
+
+

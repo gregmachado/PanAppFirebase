@@ -22,7 +22,6 @@ public class ProductViewHolderUser extends RecyclerView.ViewHolder {
     public LinearLayout llCart;
     public ProgressBar progressBar;
 
-
     public ProductViewHolderUser(View v) {
         super(v);
         mView = v;

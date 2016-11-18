@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,18 +26,19 @@ public class CartAdapter extends RecyclerView.Adapter<CartViewHolder> {
 
     private Context mContext;
     private final List<Product> products;
-    private Double price, parcialPrice = 0.00;
-    private int unit, items;
+    private Double price, parcialPrice;
+    private int items;
     private ItemClickListener clickListener;
-    private int position;
     private ProductCartActivity productCartActivity;
-    private int count = 0;
+    private DecimalFormat precision = new DecimalFormat("#0.00");
 
-    public CartAdapter(ProductCartActivity productCartActivity, Context contexts, List<Product> products, ItemClickListener listener) {
+    public CartAdapter(ProductCartActivity productCartActivity, Context contexts, List<Product> products,
+                       ItemClickListener listener, double parcialPrice) {
         this.products = products;
         this.mContext = contexts;
         this.clickListener = listener;
         this.productCartActivity = productCartActivity;
+        this.parcialPrice = parcialPrice;
     }
 
     @Override
@@ -49,10 +51,10 @@ public class CartAdapter extends RecyclerView.Adapter<CartViewHolder> {
     @Override
     public void onBindViewHolder(final CartViewHolder productViewHolder, final int i) {
         productViewHolder.tvProductName.setText(products.get(i).getProductName());
-        productViewHolder.tvPrice.setText(String.valueOf(products.get(i).getProductPrice()));
+        productViewHolder.tvPrice.setText(precision.format(products.get(i).getProductPrice()));
         productViewHolder.tvUnits.setText(String.valueOf(products.get(i).getUnit()));
         Double subTotal = products.get(i).getProductPrice() * products.get(i).getUnit();
-        productViewHolder.tvSubTotal.setText(String.valueOf(subTotal));
+        productViewHolder.tvSubTotal.setText(precision.format(subTotal));
 
         productViewHolder.btnRemoveCart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,15 +64,14 @@ public class CartAdapter extends RecyclerView.Adapter<CartViewHolder> {
                 builder.setMessage("Deseja realmente excluir o item?");
                 builder.setPositiveButton("SIM", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface arg0, int arg1) {
-                        items = getValue(productViewHolder);
+                        items = products.get(i).getUnit();
                         price = products.get(i).getProductPrice() * items;
-                        String itemLabel = products.get(position).getProductName();
-                        products.remove(position);
-                        notifyItemRemoved(position);
-                        notifyItemRangeChanged(position, products.size());
-                        parcialPrice = productCartActivity.getValuesToolbarBottom();
+                        String itemLabel = products.get(i).getProductName();
+                        products.remove(i);
+                        notifyItemRemoved(i);
+                        notifyItemRangeChanged(i, products.size());
                         parcialPrice = parcialPrice - price;
-                        productCartActivity.setValuesToolbarBottom(String.valueOf(parcialPrice));
+                        productCartActivity.setValuesToolbarBottom(parcialPrice);
                         Toast.makeText(mContext, "Removed : " + itemLabel, Toast.LENGTH_SHORT).show();
                     }
                 });

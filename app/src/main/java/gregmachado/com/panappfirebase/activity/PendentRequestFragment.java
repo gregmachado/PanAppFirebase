@@ -80,7 +80,7 @@ public class PendentRequestFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChild("requests")) {
-                    if(dataSnapshot.child("requests").hasChild(id)){
+                    if (dataSnapshot.child("requests").hasChild(id)) {
                         if (tvNoPendentRequest.getVisibility() == View.VISIBLE) {
                             tvNoPendentRequest.setVisibility(View.GONE);
                         }
@@ -89,8 +89,9 @@ public class PendentRequestFragment extends Fragment {
                         }
                         simpleProgressBar.setVisibility(View.GONE);
                         adapter = new RequestAdapter(mDatabaseReference.child("requests").child(id).
-                                orderByChild("delivered").equalTo(false).getRef(), getContext(), id, type
-                        ) {};
+                                orderByChild("delivered").equalTo(false), getContext(), id, type
+                        ) {
+                        };
                         rvRequest.setAdapter(adapter);
                     } else {
                         showNoRequestScreen();
