@@ -9,18 +9,28 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import gregmachado.com.panappfirebase.R;
+import gregmachado.com.panappfirebase.adapter.FeedAdapter;
 import gregmachado.com.panappfirebase.domain.Bakery;
 import gregmachado.com.panappfirebase.util.ImagePicker;
 import gregmachado.com.panappfirebase.util.LibraryClass;
@@ -32,23 +42,34 @@ import gregmachado.com.panappfirebase.util.LibraryClass;
 public class AdminMainActivity extends CommonActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    protected FrameLayout frameLayout;
+    private static String TAG = AdminMainActivity.class.getSimpleName();
     private String bakeryID;
     private String adminName, adminEmail;
     private TextView tvAdminName, tvAdminEmail;
     private ImageView ivBakery;
-    private static String TAG = AdminMainActivity.class.getSimpleName();
     private Bakery bakery;
     private static final int PICK_IMAGE_ID = 234;
     private DatabaseReference databaseReference;
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
     private String id;
+    private RecyclerView rvFeed;
+    private TextView tvNoFeed;
+    private FeedAdapter adapter;
+    private ImageView icFeed;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_base);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initViews();
+        rvFeed.setItemAnimator(new DefaultItemAnimator());
+        rvFeed.setLayoutManager(new LinearLayoutManager(AdminMainActivity.this));
         Intent it = getIntent();
         params = it.getExtras();
         if (params != null) {
@@ -67,16 +88,47 @@ public class AdminMainActivity extends CommonActivity
             }
         };
         firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        assert firebaseUser != null;
+        id = firebaseUser.getUid();
         firebaseAuth.addAuthStateListener(authStateListener);
         databaseReference = LibraryClass.getFirebase();
         databaseReference.getRef();
-        frameLayout = (FrameLayout) findViewById(R.id.content_frame);
+        String token = FirebaseInstanceId.getInstance().getToken();
+        mDatabaseReference.child("users").child(id).child("token").setValue(token);
+        loadFeed();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        initViews();
+    private void loadFeed() {
+        openProgressBar();
+        mDatabaseReference.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild("feed")) {
+                    closeProgressBar();
+                    if (tvNoFeed.getVisibility() == View.VISIBLE) {
+                        tvNoFeed.setVisibility(View.GONE);
+                    }
+                    if (icFeed.getVisibility() == View.VISIBLE) {
+                        icFeed.setVisibility(View.GONE);
+                    }
+                    adapter = new FeedAdapter(mDatabaseReference.child(id).child("feed").getRef(),
+                            AdminMainActivity.this, true
+                    ) {
+                    };
+                    rvFeed.setAdapter(adapter);
+                } else {
+                    closeProgressBar();
+                    tvNoFeed.setVisibility(View.VISIBLE);
+                    icFeed.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "getUser:onCancelled", databaseError.toException());
+            }
+        });
     }
 
     @Override
@@ -116,15 +168,21 @@ public class AdminMainActivity extends CommonActivity
             intentRequest.putExtras(params);
             startActivity(intentRequest);
         } else if (id == R.id.nav_history_admin) {
-
+            Intent intentFeed = new Intent(AdminMainActivity.this, AdminMainActivity.class);
+            intentFeed.putExtras(params);
+            startActivity(intentFeed);
         } else if (id == R.id.nav_my_bakery) {
             Intent intentMyBakery = new Intent(AdminMainActivity.this, MyBakeryActivity.class);
             intentMyBakery.putExtras(params);
             startActivity(intentMyBakery);
         } else if (id == R.id.nav_talk_whit_us_admin) {
 
+        } else if (id == R.id.nav_offers) {
+            Intent intentOffers = new Intent(AdminMainActivity.this, OfferActivity.class);
+            intentOffers.putExtras(params);
+            startActivity(intentOffers);
         } else if (id == R.id.nav_exit_admin) {
-           onBackPressed();
+            onBackPressed();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -146,7 +204,6 @@ public class AdminMainActivity extends CommonActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setTitle("Home");
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -167,6 +224,10 @@ public class AdminMainActivity extends CommonActivity
                 startActivityForResult(chooseImageIntent, PICK_IMAGE_ID);
             }
         });
+        tvNoFeed = (TextView) findViewById(R.id.tv_no_feed);
+        icFeed = (ImageView) findViewById(R.id.ic_feed);
+        progressBar = (ProgressBar) findViewById(R.id.simpleProgressBar);
+        rvFeed = (RecyclerView) findViewById(R.id.rv_feed);
     }
 
     @Override

@@ -12,26 +12,16 @@ public class Product implements Serializable, Parcelable{
 
     private String id;
     private String productName;
-    private Double productPrice;
+    private double productPrice;
+    private double oldPrice;
     private String productImage;
     private String type;
     private String bakeryId;
     private int itensSale;
     private int unit;
+    private boolean inOffer;
 
     public Product() {}
-
-    public Product(String id, String productName, Double productPrice, String productImage,
-                   String type, String bakeryId, int itensSale, int unit) {
-        this.id = id;
-        this.productName = productName;
-        this.productPrice = productPrice;
-        this.productImage = productImage;
-        this.type = type;
-        this.bakeryId = bakeryId;
-        this.itensSale = itensSale;
-        this.unit = unit;
-    }
 
     protected Product(Parcel in) {
         id = in.readString();
@@ -42,6 +32,8 @@ public class Product implements Serializable, Parcelable{
         itensSale = in.readInt();
         unit = in.readInt();
         productPrice = in.readDouble();
+        oldPrice = in.readDouble();
+        inOffer = in.readByte() != 0;
     }
 
     public static final Creator<Product> CREATOR = new Creator<Product>() {
@@ -72,11 +64,11 @@ public class Product implements Serializable, Parcelable{
         this.productName = productName;
     }
 
-    public Double getProductPrice() {
+    public double getProductPrice() {
         return productPrice;
     }
 
-    public void setProductPrice(Double productPrice) {
+    public void setProductPrice(double productPrice) {
         this.productPrice = productPrice;
     }
 
@@ -120,6 +112,22 @@ public class Product implements Serializable, Parcelable{
         this.unit = unit;
     }
 
+    public double getOldPrice() {
+        return oldPrice;
+    }
+
+    public void setOldPrice(double oldPrice) {
+        this.oldPrice = oldPrice;
+    }
+
+    public boolean isInOffer() {
+        return inOffer;
+    }
+
+    public void setInOffer(boolean inOffer) {
+        this.inOffer = inOffer;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -135,5 +143,7 @@ public class Product implements Serializable, Parcelable{
         dest.writeInt(itensSale);
         dest.writeInt(unit);
         dest.writeDouble(productPrice);
+        dest.writeDouble(oldPrice);
+        dest.writeByte((byte) (inOffer ? 1 : 0));
     }
 }

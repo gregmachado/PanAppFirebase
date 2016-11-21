@@ -104,7 +104,6 @@ public class LoginEmailActivity extends CommonActivity {
                 }
 
                 if (user.getId() == null && isNameOk(user, userFirebase)) {
-
                     user.setId(userFirebase.getUid());
                     user.setNameIfNull(userFirebase.getDisplayName());
                     user.setEmailIfNull(userFirebase.getEmail());
@@ -225,10 +224,12 @@ public class LoginEmailActivity extends CommonActivity {
                 String name = user.getName();
                 String email = user.getEmail();
                 String bakeryID = user.getBakeryID();
+                boolean type = user.isType();
                 params = new Bundle();
                 params.putString("name", name);
                 params.putString("email", email);
                 params.putString("bakeryID", bakeryID);
+                params.putBoolean("type", type);
                 closeProgressDialog();
                 if(!user.isType()){
                     Intent intentHomeUser = new Intent(LoginEmailActivity.this, UserMainActivity.class);

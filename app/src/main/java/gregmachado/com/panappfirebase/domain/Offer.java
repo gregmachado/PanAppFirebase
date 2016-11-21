@@ -6,6 +6,7 @@ package gregmachado.com.panappfirebase.domain;
 public class Offer {
 
     private String id;
+    private String productID;
     private String productName;
     private Double productPrice;
     private Double priceInOffer;
@@ -13,8 +14,8 @@ public class Offer {
     private String type;
     private String bakeryId;
     private int itensSale;
-    private int unit;
     private int discount;
+    private String bakeryName;
 
     public Offer() {
     }
@@ -83,19 +84,27 @@ public class Offer {
         this.itensSale = itensSale;
     }
 
-    public int getUnit() {
-        return unit;
-    }
-
-    public void setUnit(int unit) {
-        this.unit = unit;
-    }
-
     public int getDiscount() {
         return discount;
     }
 
     public void setDiscount(int discount) {
         this.discount = discount;
+    }
+
+    public String getBakeryName() {
+        return bakeryName;
+    }
+
+    public void setBakeryName(String bakeryName) {
+        this.bakeryName = bakeryName;
+    }
+
+    public String getProductID() {
+        return productID;
+    }
+
+    public void setProductID(String productID) {
+        this.productID = productID;
     }
 }

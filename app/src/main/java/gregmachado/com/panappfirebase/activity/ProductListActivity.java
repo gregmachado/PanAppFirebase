@@ -23,7 +23,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.List;
 
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.adapter.ProductAdapter;
@@ -37,10 +36,7 @@ public class ProductListActivity extends CommonActivity {
     private static final String TAG = ProductListActivity.class.getSimpleName();
     private RecyclerView rvProduct;
     private String bakeryId, id, userName;
-    private Bundle params;
     private TextView tvNoProducts;
-    private List<Product> list;
-    private ArrayList<Product> listCart;
     private Product product;
     private String name;
     public TextView tvItens, tvPrice;
@@ -60,13 +56,21 @@ public class ProductListActivity extends CommonActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_list);
+        Intent it = getIntent();
+        params = it.getExtras();
+        if (params != null) {
+            bakeryId = params.getString("bakeryID");
+            userName = params.getString("userName");
+            name = params.getString("name");
+            productsToCart = (ArrayList<Product>)
+                    getIntent().getSerializableExtra("list");
+        }
         initViews();
         if (rvProduct != null) {
             //to enable optimization of recyclerview
             rvProduct.setHasFixedSize(true);
         }
         rvProduct.setItemAnimator(new DefaultItemAnimator());
-        //registerForContextMenu(rvProduct);
         rvProduct.setLayoutManager(new LinearLayoutManager(ProductListActivity.this));
     }
 
@@ -74,9 +78,9 @@ public class ProductListActivity extends CommonActivity {
     protected void onResume() {
         super.onResume();
         openProgressBar();
-        if (productsToCart != null) {
+        /*if (productsToCart != null) {
             productsToCart.clear();
-        }
+        }*/
         setValuesToolbarBottom("0", "00,00");
         mDatabaseReference.child("bakeries").child(bakeryId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -90,7 +94,7 @@ public class ProductListActivity extends CommonActivity {
                         icProduct.setVisibility(View.GONE);
                     }
                     adapter = new ProductAdapter(mDatabaseReference.child("bakeries").child(bakeryId).child("products").getRef(),
-                            ProductListActivity.this, ProductListActivity.this, bakeryId
+                            ProductListActivity.this, ProductListActivity.this, bakeryId, productsToCart
                     ) {};
                     rvProduct.setAdapter(adapter);
                 } else {
@@ -135,13 +139,6 @@ public class ProductListActivity extends CommonActivity {
     protected void initViews() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_product);
         setSupportActionBar(toolbar);
-        Intent it = getIntent();
-        params = it.getExtras();
-        if (params != null) {
-            bakeryId = params.getString("bakeryID");
-            userName = params.getString("userName");
-            name = params.getString("name");
-        }
         setTitle("Produtos - " + name);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);

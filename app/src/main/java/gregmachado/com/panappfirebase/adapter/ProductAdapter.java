@@ -41,16 +41,18 @@ public class ProductAdapter extends FirebaseRecyclerAdapter<Product, ProductView
     private TextView tvUnits;
     private int items, count = 0;
     private double price, parcialPrice;
-    private ArrayList<Product> productsToCart = new ArrayList<>();
+    private ArrayList<Product> productsToCart;
     private ProductListActivity productListActivity;
     private String bakeryID;
     private DecimalFormat precision = new DecimalFormat("#0.00");
 
-    public ProductAdapter(Query ref, Context context, ProductListActivity productListActivity, String bakeryID) {
+    public ProductAdapter(Query ref, Context context, ProductListActivity productListActivity, String bakeryID,
+                          ArrayList<Product> list) {
         super(Product.class, R.layout.card_product_user, ProductViewHolderUser.class, ref);
         this.mContext = context;
         this.productListActivity = productListActivity;
         this.bakeryID = bakeryID;
+        this.productsToCart = list;
     }
 
     @Override
@@ -78,6 +80,22 @@ public class ProductAdapter extends FirebaseRecyclerAdapter<Product, ProductView
                     // Handle any errors
                 }
             });
+        }
+        if (model.getId().equals(productsToCart.get(0).getId())){
+            viewHolder.tvPrice.setTextColor(mContext.getResources().getColor(R.color.black_50_opacity));
+
+            viewHolder.tvPriceInOffer.setVisibility(View.VISIBLE);
+            viewHolder.tvPriceInOffer.setText(precision.format(productsToCart.get(0).getProductPrice()));
+            items = productsToCart.get(0).getUnit();
+            price = productsToCart.get(0).getProductPrice();
+            price = price * items;
+            viewHolder.btnAddCart.setVisibility(View.INVISIBLE);
+            viewHolder.btnRemoveCart.setVisibility(View.VISIBLE);
+            count++;
+            parcialPrice = parcialPrice + price;
+            setValuesToolbarBottom(String.valueOf(count), precision.format(parcialPrice));
+            viewHolder.tvUnitInCart.setText(String.valueOf(items));
+            viewHolder.llCart.setVisibility(View.VISIBLE);
         }
         viewHolder.mView.setOnClickListener(new View.OnClickListener() {
             @Override

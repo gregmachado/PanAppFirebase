@@ -9,18 +9,28 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import gregmachado.com.panappfirebase.R;
+import gregmachado.com.panappfirebase.adapter.FeedAdapter;
 import gregmachado.com.panappfirebase.util.LibraryClass;
 
 /**
@@ -30,13 +40,16 @@ import gregmachado.com.panappfirebase.util.LibraryClass;
 public class UserMainActivity extends CommonActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final String TAG = "MainActivity";
-    protected FrameLayout frameLayout;
-    private String userName, userEmail,userID;
+    private static final String TAG = "UserMainActivity";
     private TextView tvUserName, tvUserEmail;
     private DatabaseReference databaseReference;
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
+    private RecyclerView rvFeed;
+    private TextView tvNoFeed;
+    private FeedAdapter adapter;
+    private ImageView icFeed;
+    private String bakeryName, userName, userID, userEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,13 +79,49 @@ public class UserMainActivity extends CommonActivity
         };
         databaseReference = LibraryClass.getFirebase();
         databaseReference.getRef();
-        frameLayout = (FrameLayout)findViewById(R.id.content_frame);
+        //frameLayout = (FrameLayout)findViewById(R.id.content_frame);
         initViews();
+        rvFeed.setItemAnimator(new DefaultItemAnimator());
+        rvFeed.setLayoutManager(new LinearLayoutManager(UserMainActivity.this));
         firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         assert firebaseUser != null;
         userID = firebaseUser.getUid();
         firebaseAuth.addAuthStateListener(authStateListener);
+        String token = FirebaseInstanceId.getInstance().getToken();
+        mDatabaseReference.child("users").child(userID).child("token").setValue(token);
+        loadFeed();
+    }
+
+    private void loadFeed() {
+        openProgressBar();
+        mDatabaseReference.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.hasChild("feed")) {
+                    closeProgressBar();
+                    if (tvNoFeed.getVisibility() == View.VISIBLE) {
+                        tvNoFeed.setVisibility(View.GONE);
+                    }
+                    if (icFeed.getVisibility() == View.VISIBLE) {
+                        icFeed.setVisibility(View.GONE);
+                    }
+                    adapter = new FeedAdapter(mDatabaseReference.child(userID).child("feed").getRef(),
+                            UserMainActivity.this, true
+                    ) {};
+                    rvFeed.setAdapter(adapter);
+                } else {
+                    closeProgressBar();
+                    tvNoFeed.setVisibility(View.VISIBLE);
+                    icFeed.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "getUser:onCancelled", databaseError.toException());
+            }
+        });
     }
 
     @Override
@@ -103,7 +152,7 @@ public class UserMainActivity extends CommonActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         params.putString("id", userID);
-        params.putBoolean("type", false);
+        params.putBoolean("type", true);
         params.putString("name", userName);
 
         if (id == R.id.nav_bakerys) {
@@ -121,15 +170,17 @@ public class UserMainActivity extends CommonActivity
             intentRequest.putExtras(params);
             startActivity(intentRequest);
         } else if (id == R.id.nav_history) {
-            Intent intentRequest = new Intent(UserMainActivity.this, ScheduleActivity.class);
-            intentRequest.putExtras(params);
-            startActivity(intentRequest);
+            Intent intentFeed = new Intent(UserMainActivity.this, UserMainActivity.class);
+            intentFeed.putExtras(params);
+            startActivity(intentFeed);
         } else if (id == R.id.nav_my_adrees) {
             Intent intentAdressList = new Intent(UserMainActivity.this, AdressListActivity.class);
             intentAdressList.putExtras(params);
             startActivity(intentAdressList);
         } else if (id == R.id.nav_offers) {
-
+            Intent intentOffers = new Intent(UserMainActivity.this, OfferActivity.class);
+            intentOffers.putExtras(params);
+            startActivity(intentOffers);
         } else if (id == R.id.nav_talk_whit_us) {
 
         } else if (id == R.id.nav_exit) {
@@ -152,12 +203,14 @@ public class UserMainActivity extends CommonActivity
 
     @Override
     protected void initViews() {
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        View header = navigationView.getHeaderView(0);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setTitle("Home");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        View header = navigationView.getHeaderView(0);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -167,6 +220,10 @@ public class UserMainActivity extends CommonActivity
         tvUserEmail = (TextView) header.findViewById(R.id.tv_user_email);
         tvUserName.setText(userName);
         tvUserEmail.setText(userEmail);
+        tvNoFeed = (TextView) findViewById(R.id.tv_no_feed);
+        icFeed = (ImageView) findViewById(R.id.ic_feed);
+        progressBar = (ProgressBar) findViewById(R.id.simpleProgressBar);
+        rvFeed = (RecyclerView) findViewById(R.id.rv_feed);
     }
 
     @Override

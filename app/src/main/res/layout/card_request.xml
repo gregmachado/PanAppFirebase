@@ -1,4 +1,5 @@
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -89,15 +90,25 @@
             android:textStyle="bold"
             tools:ignore="HardcodedText" />
 
+        <ImageView
+            android:id="@+id/ic_new_request"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:src="@drawable/ic_new_releases_red_400_18dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
         <TextView
             android:id="@+id/tv_request_itens"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="4sp"
-            android:paddingRight="4sp"
-            android:paddingTop="4dp"
+            android:layout_marginLeft="4sp"
+            android:layout_marginRight="4sp"
+            android:layout_marginTop="8dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
+            android:layout_below="@id/ic_new_request"
             android:text="xx"
             android:textColor="#696969"
             android:textSize="14sp"
@@ -110,8 +121,8 @@
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@id/tv_request_itens"
             android:layout_toStartOf="@id/tv_request_itens"
-            android:paddingBottom="12sp"
-            android:paddingTop="4dp"
+            android:layout_below="@id/ic_new_request"
+            android:layout_marginTop="8dp"
             android:text="Itens: "
             android:textColor="#696969"
             android:textSize="14sp"

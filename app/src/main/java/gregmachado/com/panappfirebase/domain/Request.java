@@ -18,6 +18,7 @@ public class Request {
     private String status;
     private String userName, bakeryName;
     private double total;
+    private boolean open;
 
     public Request() {}
 
@@ -139,5 +140,13 @@ public class Request {
 
     public void setTotal(double total) {
         this.total = total;
+    }
+
+    public boolean isOpen() {
+        return open;
+    }
+
+    public void setOpen(boolean open) {
+        this.open = open;
     }
 }

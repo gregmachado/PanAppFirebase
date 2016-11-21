@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.View;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 
 import gregmachado.com.panappfirebase.R;
@@ -23,6 +25,8 @@ public class RequestAdapter extends FirebaseRecyclerAdapter<Request, RequestView
     private Context mContext;
     private String id, name;
     private boolean type;
+    private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private DatabaseReference mDatabaseReference = database.getReference();
 
     public RequestAdapter(Query ref, Context context, String id, boolean type) {
         super(Request.class, R.layout.card_request, RequestViewHolder.class, ref);
@@ -49,8 +53,14 @@ public class RequestAdapter extends FirebaseRecyclerAdapter<Request, RequestView
             @Override
             public void onClick(View view) {
                 Log.w(TAG, "You clicked on " + model.getRequestID());
-                String bakeryID = model.getBakeryID();
                 String requestID = model.getRequestID();
+                boolean open = model.isOpen();
+                if(!open){
+                    viewHolder.icNewRequest.setVisibility(View.INVISIBLE);
+                    mDatabaseReference.child("requests").child(id).child(requestID)
+                            .child("open").setValue(true);
+                }
+                String bakeryID = model.getBakeryID();
                 Bundle params = new Bundle();
                 params.putString("bakeryID", bakeryID);
                 params.putString("requestID", requestID);

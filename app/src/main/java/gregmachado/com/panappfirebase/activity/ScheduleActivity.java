@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Random;
 
 import gregmachado.com.panappfirebase.R;
+import gregmachado.com.panappfirebase.domain.Feed;
 import gregmachado.com.panappfirebase.domain.Product;
 import gregmachado.com.panappfirebase.domain.Request;
 import gregmachado.com.panappfirebase.pagSeguro.PagSeguroAddress;
@@ -42,6 +43,7 @@ import gregmachado.com.panappfirebase.pagSeguro.PagSeguroPhone;
 import gregmachado.com.panappfirebase.pagSeguro.PagSeguroShipping;
 import gregmachado.com.panappfirebase.pagSeguro.PagSeguroShippingType;
 import gregmachado.com.panappfirebase.util.AppUtil;
+import gregmachado.com.panappfirebase.util.DateUtil;
 
 /**
  * Created by gregmachado on 02/11/16.
@@ -240,31 +242,43 @@ public class ScheduleActivity extends CommonActivity {
         request.setTotal(total);
         mDatabaseReference.child("requests").child(userId).child(requestID).setValue(request);
         mDatabaseReference.child("requests").child(bakeryId).child(requestID).setValue(request);
+        newFeed();
+        sendNotification();
         Toast.makeText(ScheduleActivity.this, "Pedido realizado com sucesso!", Toast.LENGTH_SHORT).show();
         Intent intentHome = new Intent(ScheduleActivity.this, UserMainActivity.class);
         startActivity(intentHome);
     }
 
+    private void newFeed() {
+        String feedID = mDatabaseReference.push().getKey();
+        String time = DateUtil.getTime();
+        String date = DateUtil.getToday();
+        String msgUser = "Seu pedido foi enviado!";
+        Feed feedUser = new Feed(feedID, bakeryId, userId, date, time, userName, bakeryName, msgUser, false, 1);
+        //save user feed
+        mDatabaseReference.child(userId).child("feed").child(feedID).setValue(feedUser);
+        String msgBakery = "Você possui um novo pedido!";
+        Feed feedBakery = new Feed(feedID, bakeryId, userId, date, time, userName, bakeryName, msgBakery, false, 1);
+        //save bakery feed
+        mDatabaseReference.child(bakeryId).child("feed").child(feedID).setValue(feedBakery);
+    }
+
     private String generateRandomCode() {
 
         String chars = "ABCDEFGHIJKLMNOPQRSTUVYWXZ0123456789";
-
         Random random = new Random();
-
         String code = "";
         int index = -1;
         for (int i = 0; i < 2; i++) {
             index = random.nextInt(chars.length());
             code += chars.substring(index, index + 1);
         }
-
         String code2 = "";
         int index2 = -1;
         for (int j = 0; j < 3; j++) {
             index2 = random.nextInt(chars.length());
             code2 += chars.substring(index2, index2 + 1);
         }
-
         code = code + "-" + code2;
         return code;
     }
@@ -291,5 +305,9 @@ public class ScheduleActivity extends CommonActivity {
                 }
             });
         }
+    }
+
+    private void sendNotification() {
+
     }
 }

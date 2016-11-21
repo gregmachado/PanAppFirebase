@@ -2,6 +2,7 @@ package gregmachado.com.panappfirebase.viewHolder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import gregmachado.com.panappfirebase.R;
@@ -12,6 +13,7 @@ import gregmachado.com.panappfirebase.R;
 public class RequestViewHolder extends RecyclerView.ViewHolder{
     public TextView tvRequestCode, tvBakeryName, tvDate, tvHour, tvUnits, tvMethod, tvStatus;
     public View mView;
+    public ImageView icNewRequest;
 
     public RequestViewHolder(View v) {
         super(v);
@@ -23,5 +25,6 @@ public class RequestViewHolder extends RecyclerView.ViewHolder{
         tvUnits = (TextView) itemView.findViewById(R.id.tv_request_itens);
         tvMethod = (TextView) itemView.findViewById(R.id.tv_request_method);
         tvStatus = (TextView) itemView.findViewById(R.id.tv_request_status);
+        icNewRequest = (ImageView) itemView.findViewById(R.id.ic_new_request);
     }
 }

@@ -58,7 +58,6 @@ public class FormProductActivity extends CommonActivity {
     private TextView tvAddPhoto;
     FirebaseStorage storage = FirebaseStorage.getInstance();
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

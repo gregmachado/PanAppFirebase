@@ -7,6 +7,10 @@
             android:icon="@drawable/ic_products_black_24dp"
             android:title="Produtos" />
         <item
+            android:id="@+id/nav_offers"
+            android:icon="@drawable/ic_offers_black_24dp"
+            android:title="Ofertas" />
+        <item
             android:id="@+id/nav_my_bakery"
             android:icon="@drawable/ic_store_black_24dp"
             android:title="Minha Padaria" />
