@@ -67,9 +67,6 @@ public class AdminMainActivity extends CommonActivity
     @Override
     protected void onResume() {
         super.onResume();
-        initViews();
-        rvFeed.setItemAnimator(new DefaultItemAnimator());
-        rvFeed.setLayoutManager(new LinearLayoutManager(AdminMainActivity.this));
         Intent it = getIntent();
         params = it.getExtras();
         if (params != null) {
@@ -77,6 +74,9 @@ public class AdminMainActivity extends CommonActivity
             bakeryID = params.getString("bakeryID");
             adminEmail = params.getString("email");
         }
+        initViews();
+        rvFeed.setItemAnimator(new DefaultItemAnimator());
+        rvFeed.setLayoutManager(new LinearLayoutManager(AdminMainActivity.this));
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -158,6 +158,7 @@ public class AdminMainActivity extends CommonActivity
         int id = item.getItemId();
         params.putString("id", bakeryID);
         params.putBoolean("type", true);
+        params.putString("bakeryName", adminName);
 
         if (id == R.id.nav_products) {
             Intent intentProductAdmin = new Intent(AdminMainActivity.this, ProductAdminActivity.class);

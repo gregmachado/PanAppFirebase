@@ -115,4 +115,6 @@
     <string name="price_in_offer">Preço em Oferta</string>
     <string name="update_offer">ATUALIZAR OFERTA</string>
     <string name="percent">%</string>
+    <string name="choose_product">Escolha o produto:</string>
+    <string name="five">5</string>
 </resources>

@@ -123,6 +123,7 @@ public class OfferActivity extends CommonActivity {
     public void newOffer(View view) {
         Bundle params = new Bundle();
         params.putString("bakeryID", bakeryID);
+        params.putString("bakeryName", bakeryName);
         params.putBoolean("update", false);
         Intent intentFormProduct = new Intent(OfferActivity.this, FormOffer.class);
         intentFormProduct.putExtras(params);

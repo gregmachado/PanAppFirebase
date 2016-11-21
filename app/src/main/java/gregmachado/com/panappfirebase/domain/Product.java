@@ -20,6 +20,7 @@ public class Product implements Serializable, Parcelable{
     private int itensSale;
     private int unit;
     private boolean inOffer;
+    private int discount;
 
     public Product() {}
 
@@ -34,6 +35,7 @@ public class Product implements Serializable, Parcelable{
         productPrice = in.readDouble();
         oldPrice = in.readDouble();
         inOffer = in.readByte() != 0;
+        discount = in.readInt();
     }
 
     public static final Creator<Product> CREATOR = new Creator<Product>() {
@@ -128,6 +130,18 @@ public class Product implements Serializable, Parcelable{
         this.inOffer = inOffer;
     }
 
+    public int getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(int discount) {
+        this.discount = discount;
+    }
+
+    public static Creator<Product> getCREATOR() {
+        return CREATOR;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -145,5 +159,6 @@ public class Product implements Serializable, Parcelable{
         dest.writeDouble(productPrice);
         dest.writeDouble(oldPrice);
         dest.writeByte((byte) (inOffer ? 1 : 0));
+        dest.writeInt(discount);
     }
 }

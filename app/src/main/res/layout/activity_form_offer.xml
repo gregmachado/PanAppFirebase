@@ -22,6 +22,18 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_form_offer"/>
+    <ScrollView
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <include layout="@layout/content_form_offer"/>
+
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

@@ -71,11 +71,15 @@ public class OfferAdapter extends FirebaseRecyclerAdapter<Offer, OfferViewHolder
         viewHolder.tvOldPrice.setText(precision.format(model.getProductPrice()));
         viewHolder.tvDiscount.setText(String.valueOf(model.getDiscount()));
         viewHolder.tvItensSale.setText(String.valueOf(model.getItensSale()));
+        if (!type){
+            viewHolder.tvBakeryName.setText(model.getBakeryName());
+            viewHolder.tvBakeryName.setVisibility(View.VISIBLE);
+        }
         if (model.getProductImage() == null) {
             viewHolder.ivProduct.setImageResource(R.drawable.img_product);
         } else {
             StorageReference mStorage = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com");
-            StorageReference imageRef = mStorage.child(model.getId());
+            StorageReference imageRef = mStorage.child(model.getProductID());
             final long ONE_MEGABYTE = 1024 * 1024;
             imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                 @Override
@@ -104,8 +108,10 @@ public class OfferAdapter extends FirebaseRecyclerAdapter<Offer, OfferViewHolder
                             offerID = model.getId();
                             productID = model.getProductID();
                             productName = model.getProductName();
+                            bakeryID = model.getBakeryId();
+                            double price = model.getProductPrice();
                             String imagePath = model.getProductImage();
-                            makeAction(action, viewHolder, imagePath);
+                            makeAction(action, viewHolder, imagePath, price);
                             return true;
                         }
                     });
@@ -235,7 +241,7 @@ public class OfferAdapter extends FirebaseRecyclerAdapter<Offer, OfferViewHolder
         viewHolder.progressBar.setVisibility(View.GONE);
     }
 
-    private void makeAction(String action, OfferViewHolder viewHolder, String productImage) {
+    private void makeAction(String action, OfferViewHolder viewHolder, String productImage, double price) {
         switch (action) {
             case "Editar":
                 Double productPrice = Double.parseDouble(viewHolder.tvPrice.getText().toString());
@@ -260,15 +266,19 @@ public class OfferAdapter extends FirebaseRecyclerAdapter<Offer, OfferViewHolder
             case "Excluir":
                 DialogHandler appdialog = new DialogHandler();
                 appdialog.Confirm(mContext, "Excluir?", "Deseja excluir a oferta?",
-                        "NÃO", "SIM", yes(viewHolder), no());
+                        "NÃO", "SIM", yes(viewHolder, price), no());
                 break;
         }
     }
 
-    public Runnable yes(final OfferViewHolder viewHolder) {
+    public Runnable yes(final OfferViewHolder viewHolder, final double price) {
         return new Runnable() {
             public void run() {
                 mDatabaseReference.child("offers").child(offerID).removeValue();
+                mDatabaseReference.child("bakeries").child(bakeryID).child("products").child(productID).
+                        child("inOffer").setValue(false);
+                mDatabaseReference.child("bakeries").child(bakeryID).child("products").child(productID).
+                        child("productPrice").setValue(price);
                 AppUtil.showToast(mContext, productName + " excluido!");
             }
         };

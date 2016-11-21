@@ -13,7 +13,7 @@ import gregmachado.com.panappfirebase.R;
  */
 public class OfferViewHolder extends RecyclerView.ViewHolder {
 
-    public TextView tvProductName, tvPrice, tvOldPrice, tvItensSale, tvDiscount;
+    public TextView tvProductName, tvPrice, tvOldPrice, tvItensSale, tvDiscount, tvBakeryName;
     public ImageView ivProduct;
     public View mView;
     public ProgressBar progressBar;
@@ -28,5 +28,6 @@ public class OfferViewHolder extends RecyclerView.ViewHolder {
         ivProduct = (ImageView) itemView.findViewById(R.id.iv_product);
         tvDiscount = (TextView) itemView.findViewById(R.id.tv_discount);
         progressBar = (ProgressBar) itemView.findViewById(R.id.photo_progressbar);
+        tvBakeryName = (TextView) itemView.findViewById(R.id.tv_bakery);
     }
 }

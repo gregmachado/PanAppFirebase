@@ -38,6 +38,7 @@ import java.util.ArrayList;
 
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.adapter.BakeryAdapter;
+import gregmachado.com.panappfirebase.domain.User;
 
 /**
  * Created by gregmachado on 29/10/16.
@@ -95,7 +96,7 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
         mDatabaseReference.child("users").child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild("favorites")){
+                if (dataSnapshot.hasChild("favorites")) {
                     favorites = (ArrayList<String>) dataSnapshot.child("favorites").getValue();
                 }
             }
@@ -163,6 +164,24 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
             Log.i("Log", "longitude: " + l.getLongitude());
             userLatitude = l.getLatitude();
             userLongitude = l.getLongitude();
+            if (userLatitude != null) {
+                mDatabaseReference.child("users").child(userID).child("lastLatitude").setValue(userLatitude);
+                mDatabaseReference.child("users").child(userID).child("lastLongitude").setValue(userLongitude);
+            } else {
+                mDatabaseReference.child("users").child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        User user = dataSnapshot.getValue(User.class);
+                        userLatitude = user.getLastLatitude();
+                        userLongitude = user.getLastLongitude();
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.w(TAG, "getUser:onCancelled", databaseError.toException());
+                    }
+                });
+            }
         }
     }
 

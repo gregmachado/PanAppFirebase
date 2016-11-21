@@ -91,6 +91,16 @@ public class ProductAdapterAdmin extends FirebaseRecyclerAdapter<Product, Produc
                 }
             });
         }
+        if (model.isInOffer()){
+            viewHolder.tvProductPrice.setTextColor(mContext.getResources().getColor(R.color.black_50_opacity));
+            viewHolder.tvProductPrice.setText(precision.format(model.getOldPrice()));
+            viewHolder.tvPriceInOffer.setVisibility(View.VISIBLE);
+            viewHolder.tvPriceInOffer.setText(precision.format(model.getProductPrice()));
+            viewHolder.tvDiscount.setText(String.valueOf(model.getDiscount()));
+            viewHolder.tvDiscount.setVisibility(View.VISIBLE);
+            viewHolder.icOffer.setVisibility(View.VISIBLE);
+            viewHolder.lblPercent.setVisibility(View.VISIBLE);
+        }
         viewHolder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

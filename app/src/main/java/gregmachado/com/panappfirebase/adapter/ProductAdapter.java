@@ -52,7 +52,12 @@ public class ProductAdapter extends FirebaseRecyclerAdapter<Product, ProductView
         this.mContext = context;
         this.productListActivity = productListActivity;
         this.bakeryID = bakeryID;
-        this.productsToCart = list;
+        if (list != null && !list.isEmpty()){
+            this.productsToCart = list;
+        } else {
+            productsToCart = new ArrayList<>();
+        }
+
     }
 
     @Override
@@ -81,21 +86,29 @@ public class ProductAdapter extends FirebaseRecyclerAdapter<Product, ProductView
                 }
             });
         }
-        if (model.getId().equals(productsToCart.get(0).getId())){
+        if (model.isInOffer()){
             viewHolder.tvPrice.setTextColor(mContext.getResources().getColor(R.color.black_50_opacity));
-
+            viewHolder.tvPrice.setText(precision.format(model.getOldPrice()));
             viewHolder.tvPriceInOffer.setVisibility(View.VISIBLE);
-            viewHolder.tvPriceInOffer.setText(precision.format(productsToCart.get(0).getProductPrice()));
-            items = productsToCart.get(0).getUnit();
-            price = productsToCart.get(0).getProductPrice();
-            price = price * items;
-            viewHolder.btnAddCart.setVisibility(View.INVISIBLE);
-            viewHolder.btnRemoveCart.setVisibility(View.VISIBLE);
-            count++;
-            parcialPrice = parcialPrice + price;
-            setValuesToolbarBottom(String.valueOf(count), precision.format(parcialPrice));
-            viewHolder.tvUnitInCart.setText(String.valueOf(items));
-            viewHolder.llCart.setVisibility(View.VISIBLE);
+            viewHolder.tvPriceInOffer.setText(precision.format(model.getProductPrice()));
+            viewHolder.tvDiscount.setText(String.valueOf(model.getDiscount()));
+            viewHolder.tvDiscount.setVisibility(View.VISIBLE);
+            viewHolder.icOffer.setVisibility(View.VISIBLE);
+            viewHolder.lblPercent.setVisibility(View.VISIBLE);
+        }
+        if (!productsToCart.isEmpty()){
+            if (model.getId().equals(productsToCart.get(0).getId())){
+                items = productsToCart.get(0).getUnit();
+                price = productsToCart.get(0).getProductPrice();
+                price = price * items;
+                viewHolder.btnAddCart.setVisibility(View.INVISIBLE);
+                viewHolder.btnRemoveCart.setVisibility(View.VISIBLE);
+                count++;
+                parcialPrice = parcialPrice + price;
+                setValuesToolbarBottom(String.valueOf(count), precision.format(parcialPrice));
+                viewHolder.tvUnitInCart.setText(String.valueOf(items));
+                viewHolder.llCart.setVisibility(View.VISIBLE);
+            }
         }
         viewHolder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -205,7 +218,6 @@ public class ProductAdapter extends FirebaseRecyclerAdapter<Product, ProductView
                         product.setId(model.getId());
                         items = getValue(viewHolder);
                         product.setUnit(items);
-                        Log.w(TAG, "Items " + items);
                         price = model.getProductPrice() * items;
                         if (items > 0) {
                             productsToCart.add(product);

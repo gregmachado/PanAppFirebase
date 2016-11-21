@@ -20,46 +20,55 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <RelativeLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ProgressBar
-            android:id="@+id/simpleProgressBar"
-            android:layout_width="60sp"
-            android:layout_height="60sp"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:visibility="invisible" />
-
-        <ImageView
-            android:id="@+id/ic_feed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerInParent="true"
-            android:layout_marginTop="40dp"
-            android:visibility="invisible"
-            android:src="@drawable/ic_new_releases_black_36dp" />
-
-        <com.devspark.robototextview.widget.RobotoTextView
-            android:id="@+id/tv_no_feed"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerInParent="true"
-            android:layout_marginTop="100dp"
-            android:text="@string/no_feed"
-            android:visibility="invisible"
-            android:textColor="@color/black_50_opacity"
-            android:textSize="15sp"
-            app:typeface="roboto_light_italic" />
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_feed"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
 
-    </RelativeLayout>
+            <ProgressBar
+                android:id="@+id/simpleProgressBar"
+                android:layout_width="60sp"
+                android:layout_height="60sp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:visibility="invisible" />
 
+            <ImageView
+                android:id="@+id/ic_feed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="40dp"
+                android:visibility="invisible"
+                android:src="@drawable/ic_new_releases_black_36dp" />
+
+            <com.devspark.robototextview.widget.RobotoTextView
+                android:id="@+id/tv_no_feed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="100dp"
+                android:text="@string/no_feed"
+                android:visibility="invisible"
+                android:textColor="@color/black_50_opacity"
+                android:textSize="15sp"
+                app:typeface="roboto_light_italic" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_feed"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <Space
+                android:layout_below="@+id/rv_feed"
+                android:layout_width="match_parent"
+                android:layout_height="50dp" />
+
+        </RelativeLayout>
+    </ScrollView>
 </LinearLayout>

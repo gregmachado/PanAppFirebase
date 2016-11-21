@@ -152,7 +152,7 @@ public class UserMainActivity extends CommonActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         params.putString("id", userID);
-        params.putBoolean("type", true);
+        params.putBoolean("type", false);
         params.putString("name", userName);
 
         if (id == R.id.nav_bakerys) {

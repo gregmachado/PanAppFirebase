@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#ffffff"
+    android:background="#CFCFCF"
     android:orientation="vertical">
 
     <android.support.design.widget.AppBarLayout
@@ -20,45 +20,54 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <RelativeLayout
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ProgressBar
-            android:id="@+id/simpleProgressBar"
-            android:layout_width="60sp"
-            android:layout_height="60sp"
-            android:visibility="invisible"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"/>
-
-        <ImageView
-            android:id="@+id/ic_favorite"
-            android:layout_marginTop="40dp"
-            android:layout_centerInParent="true"
-            android:layout_alignParentTop="true"
-            android:src="@drawable/ic_favorite_border_black_36dp"
-            android:visibility="invisible"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <com.devspark.robototextview.widget.RobotoTextView
-            android:id="@+id/tv_no_favorites"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="100dp"
-            android:text="@string/no_bakeries_favorites"
-            android:visibility="invisible"
-            android:layout_centerInParent="true"
-            android:layout_alignParentTop="true"
-            android:textColor="@color/black_50_opacity"
-            android:textSize="15sp"
-            app:typeface="roboto_light_italic"/>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_favorite"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </RelativeLayout>
+            android:layout_height="match_parent">
 
+            <ProgressBar
+                android:id="@+id/simpleProgressBar"
+                android:layout_width="60sp"
+                android:layout_height="60sp"
+                android:visibility="invisible"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"/>
+
+            <ImageView
+                android:id="@+id/ic_favorite"
+                android:layout_marginTop="40dp"
+                android:layout_centerInParent="true"
+                android:layout_alignParentTop="true"
+                android:src="@drawable/ic_favorite_border_black_36dp"
+                android:visibility="invisible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <com.devspark.robototextview.widget.RobotoTextView
+                android:id="@+id/tv_no_favorites"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="100dp"
+                android:text="@string/no_bakeries_favorites"
+                android:visibility="invisible"
+                android:layout_centerInParent="true"
+                android:layout_alignParentTop="true"
+                android:textColor="@color/black_50_opacity"
+                android:textSize="15sp"
+                app:typeface="roboto_light_italic"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_favorite"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <Space
+                android:layout_below="@+id/rv_favorite"
+                android:layout_width="match_parent"
+                android:layout_height="50dp" />
+        </RelativeLayout>
+    </ScrollView>
 </LinearLayout>
