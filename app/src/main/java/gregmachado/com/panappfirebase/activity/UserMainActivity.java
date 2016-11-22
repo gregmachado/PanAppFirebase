@@ -95,7 +95,7 @@ public class UserMainActivity extends CommonActivity
 
     private void loadFeed() {
         openProgressBar();
-        mDatabaseReference.child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabaseReference.child("users").child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChild("feed")) {
@@ -106,8 +106,8 @@ public class UserMainActivity extends CommonActivity
                     if (icFeed.getVisibility() == View.VISIBLE) {
                         icFeed.setVisibility(View.GONE);
                     }
-                    adapter = new FeedAdapter(mDatabaseReference.child(userID).child("feed").getRef(),
-                            UserMainActivity.this, true
+                    adapter = new FeedAdapter(mDatabaseReference.child("users").child(userID).child("feed").getRef(),
+                            UserMainActivity.this, false
                     ) {};
                     rvFeed.setAdapter(adapter);
                 } else {

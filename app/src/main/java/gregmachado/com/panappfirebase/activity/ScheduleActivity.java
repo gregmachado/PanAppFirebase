@@ -256,11 +256,11 @@ public class ScheduleActivity extends CommonActivity {
         String msgUser = "Seu pedido foi enviado!";
         Feed feedUser = new Feed(feedID, bakeryId, userId, date, time, userName, bakeryName, msgUser, false, 1);
         //save user feed
-        mDatabaseReference.child(userId).child("feed").child(feedID).setValue(feedUser);
+        mDatabaseReference.child("users").child(userId).child("feed").child(feedID).setValue(feedUser);
         String msgBakery = "Você possui um novo pedido!";
         Feed feedBakery = new Feed(feedID, bakeryId, userId, date, time, userName, bakeryName, msgBakery, false, 1);
         //save bakery feed
-        mDatabaseReference.child(bakeryId).child("feed").child(feedID).setValue(feedBakery);
+        mDatabaseReference.child("bakeries").child(bakeryId).child("feed").child(feedID).setValue(feedBakery);
     }
 
     private String generateRandomCode() {

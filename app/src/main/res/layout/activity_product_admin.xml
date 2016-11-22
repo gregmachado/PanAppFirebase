@@ -25,73 +25,67 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <ScrollView
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
-            <RelativeLayout
+            <ProgressBar
+                android:id="@+id/simpleProgressBar"
+                android:layout_width="60sp"
+                android:layout_height="60sp"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:visibility="invisible" />
+
+            <ImageView
+                android:id="@+id/ic_product"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="40dp"
+                android:src="@drawable/ic_shopping_basket_black_36dp"
+                android:visibility="invisible" />
+
+            <com.devspark.robototextview.widget.RobotoTextView
+                android:id="@+id/tv_no_products_admin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_centerInParent="true"
+                android:layout_marginTop="100dp"
+                android:text="@string/no_products"
+                android:textColor="@color/black_50_opacity"
+                android:textSize="15sp"
+                android:visibility="invisible"
+                app:typeface="roboto_light_italic" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_product_admin"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent" />
 
-                <ProgressBar
-                    android:id="@+id/simpleProgressBar"
-                    android:layout_width="60sp"
-                    android:layout_height="60sp"
-                    android:layout_centerHorizontal="true"
-                    android:layout_centerVertical="true"
-                    android:visibility="invisible" />
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_below="@+id/rv_product_admin" />
 
-                <ImageView
-                    android:id="@+id/ic_product"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerInParent="true"
-                    android:visibility="invisible"
-                    android:layout_marginTop="40dp"
-                    android:src="@drawable/ic_shopping_basket_black_36dp" />
-
-                <com.devspark.robototextview.widget.RobotoTextView
-                    android:id="@+id/tv_no_products_admin"
-                    android:visibility="invisible"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_centerInParent="true"
-                    android:layout_marginTop="100dp"
-                    android:text="@string/no_products"
-                    android:textColor="@color/black_50_opacity"
-                    android:textSize="15sp"
-                    app:typeface="roboto_light_italic" />
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rv_product_admin"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-
-                <Space
-                    android:layout_below="@+id/rv_product_admin"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp" />
-
-            </RelativeLayout>
-
-        </ScrollView>
+        </RelativeLayout>
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/btn_add_product"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:elevation="4dp"
-            android:src="@drawable/ic_add_white_18dp"
-            android:background="@color/colorPrimaryDark"
-            android:layout_marginBottom="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginEnd="16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@color/colorPrimaryDark"
+            android:elevation="4dp"
             android:onClick="newProduct"
+            android:src="@drawable/ic_add_white_18dp"
             tools:ignore="RelativeOverlap" />
 
     </RelativeLayout>

@@ -38,7 +38,6 @@ import java.util.ArrayList;
 
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.adapter.BakeryAdapter;
-import gregmachado.com.panappfirebase.domain.User;
 
 /**
  * Created by gregmachado on 29/10/16.
@@ -164,7 +163,7 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
             Log.i("Log", "longitude: " + l.getLongitude());
             userLatitude = l.getLatitude();
             userLongitude = l.getLongitude();
-            if (userLatitude != null) {
+            /*if (userLatitude != null) {
                 mDatabaseReference.child("users").child(userID).child("lastLatitude").setValue(userLatitude);
                 mDatabaseReference.child("users").child(userID).child("lastLongitude").setValue(userLongitude);
             } else {
@@ -181,7 +180,7 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
                         Log.w(TAG, "getUser:onCancelled", databaseError.toException());
                     }
                 });
-            }
+            }*/
         }
     }
 

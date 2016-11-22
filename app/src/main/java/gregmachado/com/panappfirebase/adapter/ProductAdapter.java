@@ -57,7 +57,6 @@ public class ProductAdapter extends FirebaseRecyclerAdapter<Product, ProductView
         } else {
             productsToCart = new ArrayList<>();
         }
-
     }
 
     @Override

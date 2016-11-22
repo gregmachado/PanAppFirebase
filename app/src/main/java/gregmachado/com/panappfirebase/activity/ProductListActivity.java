@@ -66,21 +66,16 @@ public class ProductListActivity extends CommonActivity {
                     getIntent().getSerializableExtra("list");
         }
         initViews();
-        if (rvProduct != null) {
-            //to enable optimization of recyclerview
-            rvProduct.setHasFixedSize(true);
-        }
-        rvProduct.setItemAnimator(new DefaultItemAnimator());
-        rvProduct.setLayoutManager(new LinearLayoutManager(ProductListActivity.this));
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        loadProducts();
+    }
+
+    private void loadProducts() {
         openProgressBar();
-        /*if (productsToCart != null) {
-            productsToCart.clear();
-        }*/
         setValuesToolbarBottom("0", "00,00");
         mDatabaseReference.child("bakeries").child(bakeryId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -93,6 +88,10 @@ public class ProductListActivity extends CommonActivity {
                     if (icProduct.getVisibility() == View.VISIBLE) {
                         icProduct.setVisibility(View.GONE);
                     }
+                    rvProduct = (RecyclerView) findViewById(R.id.rv_product);
+                    rvProduct.setHasFixedSize(true);
+                    rvProduct.setItemAnimator(new DefaultItemAnimator());
+                    rvProduct.setLayoutManager(new LinearLayoutManager(ProductListActivity.this));
                     adapter = new ProductAdapter(mDatabaseReference.child("bakeries").child(bakeryId).child("products").getRef(),
                             ProductListActivity.this, ProductListActivity.this, bakeryId, productsToCart
                     ) {};
@@ -147,7 +146,6 @@ public class ProductListActivity extends CommonActivity {
         tvItens = (TextView) findViewById(R.id.tv_units);
         tvPrice = (TextView) findViewById(R.id.tv_total_price);
         progressBar = (ProgressBar) findViewById(R.id.simpleProgressBar);
-        rvProduct = (RecyclerView) findViewById(R.id.rv_product);
         btnCart = (FloatingActionButton) findViewById(R.id.btn_cart);
     }
 
@@ -180,5 +178,12 @@ public class ProductListActivity extends CommonActivity {
     public void setValuesToolbarBottom(String items, String price) {
         tvItens.setText(items);
         tvPrice.setText(price);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        adapter.cleanup();
+        Log.i(TAG, "onDestroy");
     }
 }
