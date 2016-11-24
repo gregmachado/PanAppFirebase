@@ -1,0 +1,79 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="240sp"
+    android:layout_height="wrap_content">
+
+    <com.devspark.robototextview.widget.RobotoCheckBox
+        android:layout_marginTop="8dp"
+        android:id="@+id/cb_received"
+        android:layout_centerHorizontal="true"
+        android:checked="false"
+        android:text="@string/request_received"
+        android:textSize="16sp"
+        android:layout_alignLeft="@id/cb_ready"
+        android:layout_alignStart="@id/cb_ready"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <com.devspark.robototextview.widget.RobotoCheckBox
+        android:id="@+id/cb_ready"
+        android:layout_below="@id/cb_received"
+        android:layout_centerHorizontal="true"
+        android:checked="false"
+        android:text="@string/ready_for_send"
+        android:textSize="16sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <com.devspark.robototextview.widget.RobotoCheckBox
+        android:id="@+id/cb_in_transit"
+        android:layout_below="@id/cb_ready"
+        android:layout_centerHorizontal="true"
+        android:checked="false"
+        android:text="@string/in_transit"
+        android:layout_alignLeft="@id/cb_ready"
+        android:layout_alignStart="@id/cb_ready"
+        android:textSize="16sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <com.devspark.robototextview.widget.RobotoCheckBox
+        android:id="@+id/cb_delivered"
+        android:layout_below="@id/cb_in_transit"
+        android:layout_centerHorizontal="true"
+        android:checked="false"
+        android:text="@string/product_delivered"
+        android:layout_alignLeft="@id/cb_ready"
+        android:layout_alignStart="@id/cb_ready"
+        android:textSize="16sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/btn_update"
+        android:layout_width="160sp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12sp"
+        android:background="@drawable/btn_radius_28dp_primary_color"
+        android:layout_below="@+id/cb_delivered"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/white"
+        android:text="@string/update"
+        android:elevation="4dp"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/btn_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8sp"
+        android:background="@android:color/transparent"
+        android:layout_below="@+id/btn_update"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/colorPrimaryDark"
+        android:text="@string/cancel"
+        android:textSize="16sp" />
+
+</RelativeLayout>

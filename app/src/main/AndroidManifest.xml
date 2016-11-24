@@ -70,6 +70,7 @@
         <activity android:name=".activity.RequestDetailActivity" />
         <activity android:name=".activity.OfferActivity" />
         <activity android:name=".activity.FormOffer" />
+        <activity android:name=".activity.HistoricActivity" />
         <!-- [START firebase_service] -->
         <service
             android:name=".services.MyFirebaseMessagingService">

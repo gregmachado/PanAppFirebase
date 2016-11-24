@@ -63,6 +63,12 @@ public class FormProductActivity extends CommonActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form_product);
+        Intent it = getIntent();
+        params = it.getExtras();
+        if (params != null) {
+            bakeryID = params.getString("bakeryID");
+            update = params.getBoolean("update");
+        }
         initViews();
         product = new Product();
         resources = getResources();
@@ -120,22 +126,16 @@ public class FormProductActivity extends CommonActivity {
 
             }
         });
-        Intent it = getIntent();
-        params = it.getExtras();
-        if (params != null) {
-            bakeryID = params.getString("bakeryID");
-            update = params.getBoolean("update");
-            if (update) {
-                items = params.getInt("items");
-                productID = params.getString("productID");
-                productName = params.getString("productName");
-                productType = params.getString("productType");
-                productPrice = params.getDouble("productPrice");
-                productImage = params.getString("productImage");
-                setTitle("Editar Produto");
-                btnAddProduct.setText("ATUALIZAR PRODUTO");
-                fillLabels(productName, productPrice, productType);
-            }
+        if (update) {
+            items = params.getInt("items");
+            productID = params.getString("productID");
+            productName = params.getString("productName");
+            productType = params.getString("productType");
+            productPrice = params.getDouble("productPrice");
+            productImage = params.getString("productImage");
+            setTitle("Editar Produto");
+            btnAddProduct.setText("ATUALIZAR PRODUTO");
+            fillLabels(productName, productPrice, productType);
         }
         btnAddProduct.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,6 +145,7 @@ public class FormProductActivity extends CommonActivity {
                     product.setProductPrice(productPrice);
                     product.setType(productType);
                     product.setItensSale(0);
+                    product.setBakeryId(bakeryID);
                     if (update) {
                         openProgressDialog("Aguarde...", "Atualizando Produto");
                     } else {

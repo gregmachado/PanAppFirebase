@@ -2,16 +2,23 @@ package gregmachado.com.panappfirebase.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
+
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.Query;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
 import gregmachado.com.panappfirebase.R;
+import gregmachado.com.panappfirebase.activity.RequestActivity;
 import gregmachado.com.panappfirebase.domain.Feed;
-import gregmachado.com.panappfirebase.domain.Request;
 import gregmachado.com.panappfirebase.viewHolder.FeedViewHolder;
 
 /**
@@ -22,8 +29,8 @@ public class FeedAdapter extends FirebaseRecyclerAdapter<Feed, FeedViewHolder> {
     private static final String TAG = FeedAdapter.class.getSimpleName();
     private Context mContext;
     private boolean type;
-    private FirebaseDatabase database = FirebaseDatabase.getInstance();
-    private DatabaseReference mDatabaseReference = database.getReference();
+    FirebaseStorage storage = FirebaseStorage.getInstance();
+    private StorageReference imageRef;
 
     public FeedAdapter(Query ref, Context context, boolean type) {
         super(Feed.class, R.layout.card_feed, FeedViewHolder.class, ref);
@@ -33,7 +40,29 @@ public class FeedAdapter extends FirebaseRecyclerAdapter<Feed, FeedViewHolder> {
 
     @Override
     protected void populateViewHolder(final FeedViewHolder viewHolder, final Feed model, final int position) {
-        viewHolder.tvHour.setText(model.getHour());
+        if(model.getImage() == null){
+            viewHolder.ivSender.setImageResource(R.drawable.img_product);
+        } else {
+            StorageReference mStorage = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com");
+            if (type){
+                imageRef = mStorage.child(model.getUserID());
+            } else {
+                imageRef = mStorage.child(model.getBakeryID());
+            }
+            final long ONE_MEGABYTE = 1024 * 1024;
+            imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                @Override
+                public void onSuccess(byte[] bytes) {
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    viewHolder.ivSender.setImageBitmap(bitmap);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    // Handle any errors
+                }
+            });
+        }
         viewHolder.tvDate.setText(model.getDate());
         if(type){
             viewHolder.tvName.setText(model.getUserName());
@@ -48,17 +77,11 @@ public class FeedAdapter extends FirebaseRecyclerAdapter<Feed, FeedViewHolder> {
                 Log.w(TAG, "You clicked on " + model.getFeedID());
                 String feedID = model.getFeedID();
                 int action = model.getAction();
-                boolean open = model.isOpen();
                 String id;
                 if (type){
                     id = model.getBakeryID();
                 } else {
                     id = model.getUserID();
-                }
-                if(!open){
-                    viewHolder.ivNewFeed.setVisibility(View.INVISIBLE);
-                    mDatabaseReference.child(id).child("feed").child(feedID)
-                            .child("open").setValue(true);
                 }
                 switch (action){
                     case 1:
@@ -66,7 +89,7 @@ public class FeedAdapter extends FirebaseRecyclerAdapter<Feed, FeedViewHolder> {
                         Bundle params = new Bundle();
                         params.putString("id", bakeryID);
                         params.putBoolean("type", type);
-                        Intent intentRequest = new Intent(mContext, Request.class);
+                        Intent intentRequest = new Intent(mContext, RequestActivity.class);
                         intentRequest.putExtras(params);
                         mContext.startActivity(intentRequest);
                         break;

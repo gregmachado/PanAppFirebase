@@ -10,16 +10,11 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -29,6 +24,7 @@ import java.util.Random;
 
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.domain.Feed;
+import gregmachado.com.panappfirebase.domain.Historic;
 import gregmachado.com.panappfirebase.domain.Product;
 import gregmachado.com.panappfirebase.domain.Request;
 import gregmachado.com.panappfirebase.pagSeguro.PagSeguroAddress;
@@ -51,7 +47,7 @@ import gregmachado.com.panappfirebase.util.DateUtil;
 public class ScheduleActivity extends CommonActivity {
 
     private static final String TAG = ScheduleActivity.class.getSimpleName();
-    private String bakeryId, userId, productID, userName, bakeryName;
+    private String bakeryId, userId, productID, userName, bakeryName, code;
     private ArrayList<Product> itemsCart;
     private WithdrawFragment withdrawFragment;
     private DeliveryFragment deliveryFragment;
@@ -237,14 +233,15 @@ public class ScheduleActivity extends CommonActivity {
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
         String requestID = mDatabaseReference.push().getKey();
         request.setRequestID(requestID);
-        String code = generateRandomCode();
+        code = generateRandomCode();
         request.setRequestCode(code);
         request.setTotal(total);
         mDatabaseReference.child("requests").child(userId).child(requestID).setValue(request);
         mDatabaseReference.child("requests").child(bakeryId).child(requestID).setValue(request);
         newFeed();
+        newHistoric();
         sendNotification();
-        Toast.makeText(ScheduleActivity.this, "Pedido realizado com sucesso!", Toast.LENGTH_SHORT).show();
+        showToast("Pedido realizado com sucesso!");
         Intent intentHome = new Intent(ScheduleActivity.this, UserMainActivity.class);
         startActivity(intentHome);
     }
@@ -252,15 +249,28 @@ public class ScheduleActivity extends CommonActivity {
     private void newFeed() {
         String feedID = mDatabaseReference.push().getKey();
         String time = DateUtil.getTime();
-        String date = DateUtil.getToday();
-        String msgUser = "Seu pedido foi enviado!";
-        Feed feedUser = new Feed(feedID, bakeryId, userId, date, time, userName, bakeryName, msgUser, false, 1);
+        String date = DateUtil.getTodayDate();
+        String msgUser = "Recebemos o seu pedido!";
+        Feed feedUser = new Feed(feedID, bakeryId, userId, date, userName, bakeryName, msgUser, 1, null);
         //save user feed
         mDatabaseReference.child("users").child(userId).child("feed").child(feedID).setValue(feedUser);
         String msgBakery = "Você possui um novo pedido!";
-        Feed feedBakery = new Feed(feedID, bakeryId, userId, date, time, userName, bakeryName, msgBakery, false, 1);
+        Feed feedBakery = new Feed(feedID, bakeryId, userId, date, userName, bakeryName, msgBakery, 1, null);
         //save bakery feed
         mDatabaseReference.child("bakeries").child(bakeryId).child("feed").child(feedID).setValue(feedBakery);
+    }
+
+    private void newHistoric() {
+        String historicID = mDatabaseReference.push().getKey();
+        String date = DateUtil.getTodayDate();
+        //user historic
+        String hUser = "Pedido " + code + " realizado no estabelecimento " + bakeryName + " foi enviado!";
+        Historic historicUser = new Historic(historicID, date, userName, bakeryName, hUser);
+        mDatabaseReference.child("users").child(userId).child("historic").child(historicID).setValue(historicUser);
+        //bakery historic
+        String hBakery = "Pedido " + code + " realizado por " + userName + " foi recebido!";
+        Historic historicBakery = new Historic(historicID, date, userName, bakeryName, hBakery);
+        mDatabaseReference.child("bakeries").child(bakeryId).child("historic").child(historicID).setValue(historicBakery);
     }
 
     private String generateRandomCode() {
@@ -289,14 +299,18 @@ public class ScheduleActivity extends CommonActivity {
         for (Product productAux : itemsCart) {
             productID = productAux.getId();
             items = productAux.getUnit();
-            mDatabaseReference.child("bakeries").child(bakeryId).child("products").child(productID).
-                    addListenerForSingleValueEvent(new ValueEventListener() {
+            int itemsSale = productAux.getItensSale();
+            mDatabaseReference.child("bakeries").child(bakeryId).child("products").child(productID).child("itensSale").
+                    setValue(itemsSale);
+            /*mDatabaseReference.child("bakeries").child(bakeryId).child("products").child(productID).
+                    addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-                    int itemsSale = Integer.parseInt(dataSnapshot.child("itensSale").getValue().toString());
+                    int itemsSale = dataSnapshot.child("itensSale").getValue(Integer.class);
                     items = itemsSale + items;
                     mDatabaseReference.child("bakeries").child(bakeryId).child("products").child(productID).child("itensSale").
                             setValue(items);
+                    Log.w(TAG, "itemsSale: " + itemsSale);
                 }
 
                 @Override
@@ -304,6 +318,7 @@ public class ScheduleActivity extends CommonActivity {
                     Log.w(TAG, "getUser:onCancelled", databaseError.toException());
                 }
             });
+            Log.w(TAG, "saiu");*/
         }
     }
 

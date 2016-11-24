@@ -101,7 +101,7 @@ public class AdminMainActivity extends CommonActivity
 
     private void loadFeed() {
         openProgressBar();
-        mDatabaseReference.child("bakeries").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+        mDatabaseReference.child("bakeries").child(bakeryID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChild("feed")) {
@@ -112,7 +112,7 @@ public class AdminMainActivity extends CommonActivity
                     if (icFeed.getVisibility() == View.VISIBLE) {
                         icFeed.setVisibility(View.GONE);
                     }
-                    adapter = new FeedAdapter(mDatabaseReference.child("bakeries").child(id).child("feed").getRef(),
+                    adapter = new FeedAdapter(mDatabaseReference.child("bakeries").child(bakeryID).child("feed").getRef(),
                             AdminMainActivity.this, true
                     ) {
                     };

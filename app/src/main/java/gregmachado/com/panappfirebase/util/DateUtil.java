@@ -28,7 +28,7 @@ public class DateUtil {
     public static String getTodayDate() {
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DATE, 0);
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy-HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy-HH:mm");
         return sdf.format(c.getTime());
     }
 

@@ -11,17 +11,16 @@ import gregmachado.com.panappfirebase.R;
  * Created by gregmachado on 18/11/16.
  */
 public class FeedViewHolder extends RecyclerView.ViewHolder{
-    public TextView tvMsg, tvDate, tvHour, tvName;
-    public ImageView ivNewFeed;
+    public TextView tvMsg, tvDate, tvName;
+    public ImageView ivSender;
     public View mView;
 
     public FeedViewHolder(View v) {
         super(v);
         mView = v;
         tvDate = (TextView) itemView.findViewById(R.id.tv_date);
-        tvHour = (TextView) itemView.findViewById(R.id.tv_hour);
-        tvMsg = (TextView) itemView.findViewById(R.id.tv_feed_msg);
+        tvMsg = (TextView) itemView.findViewById(R.id.tv_msg);
         tvName = (TextView) itemView.findViewById(R.id.tv_name);
-        ivNewFeed = (ImageView) itemView.findViewById(R.id.ic_new_feed);
+        ivSender = (ImageView) itemView.findViewById(R.id.iv_sender);
     }
 }

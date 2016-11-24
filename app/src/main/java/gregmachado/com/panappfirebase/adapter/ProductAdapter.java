@@ -215,6 +215,7 @@ public class ProductAdapter extends FirebaseRecyclerAdapter<Product, ProductView
                         product.setBakeryId(model.getBakeryId());
                         product.setProductImage(model.getProductImage());
                         product.setId(model.getId());
+                        product.setItensSale(Integer.parseInt(viewHolder.tvItensSale.getText().toString()));
                         items = getValue(viewHolder);
                         product.setUnit(items);
                         price = model.getProductPrice() * items;

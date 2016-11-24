@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="#CFCFCF"
     android:orientation="vertical"
-    tools:context=".activity.ProductListActivity">
+    tools:context=".activity.HistoricActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -13,7 +13,7 @@
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar_product"
+            android:id="@+id/toolbar_historic"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
@@ -22,6 +22,7 @@
     </android.support.design.widget.AppBarLayout>
 
     <RelativeLayout
+        android:layout_margin="8dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -38,66 +39,39 @@
                 android:visibility="invisible" />
 
             <ImageView
-                android:id="@+id/ic_product"
+                android:id="@+id/ic_historic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_centerInParent="true"
                 android:layout_marginTop="40dp"
-                android:src="@drawable/ic_shopping_basket_black_36dp"
+                android:src="@drawable/ic_history_black_36dp"
                 android:visibility="invisible" />
 
             <com.devspark.robototextview.widget.RobotoTextView
-                android:id="@+id/tv_no_products"
+                android:id="@+id/tv_no_historic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_centerInParent="true"
                 android:layout_marginTop="100dp"
-                android:text="@string/no_products"
+                android:text="@string/no_historic"
                 android:textColor="@color/black_50_opacity"
                 android:textSize="15sp"
                 android:visibility="invisible"
                 app:typeface="roboto_light_italic" />
 
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_product"
+                android:id="@+id/rv_historic"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
             <Space
                 android:layout_width="match_parent"
                 android:layout_height="80dp"
-                android:layout_below="@+id/rv_product" />
+                android:layout_below="@+id/rv_historic" />
 
         </RelativeLayout>
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/btn_cart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginBottom="48dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp"
-            android:background="@color/colorPrimaryDark"
-            android:elevation="4dp"
-            android:onClick="openBasket"
-            android:src="@drawable/ic_shopping_cart_white_18dp"
-            tools:ignore="RelativeOverlap" />
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true">
-
-            <include
-                android:id="@+id/inc_tb_bottom"
-                layout="@layout/footer_product_list" />
-        </RelativeLayout>
-
     </RelativeLayout>
 
 </LinearLayout>

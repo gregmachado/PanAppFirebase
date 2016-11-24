@@ -11,7 +11,6 @@ import android.widget.Toast;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.List;
 
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.activity.ProductCartActivity;
@@ -25,14 +24,14 @@ import gregmachado.com.panappfirebase.viewHolder.CartViewHolder;
 public class CartAdapter extends RecyclerView.Adapter<CartViewHolder> {
 
     private Context mContext;
-    private final List<Product> products;
+    private final ArrayList<Product> products;
     private Double price, parcialPrice;
     private int items;
     private ItemClickListener clickListener;
     private ProductCartActivity productCartActivity;
     private DecimalFormat precision = new DecimalFormat("#0.00");
 
-    public CartAdapter(ProductCartActivity productCartActivity, Context contexts, List<Product> products,
+    public CartAdapter(ProductCartActivity productCartActivity, Context contexts, ArrayList<Product> products,
                        ItemClickListener listener, double parcialPrice) {
         this.products = products;
         this.mContext = contexts;

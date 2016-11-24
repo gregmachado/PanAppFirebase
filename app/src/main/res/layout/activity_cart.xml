@@ -39,7 +39,7 @@
                 android:id="@+id/card_total"
                 android:layout_below="@+id/product_cart_list"
                 android:layout_margin="16dp"
-                app:cardCornerRadius="5dp"
+                app:cardCornerRadius="2dp"
                 android:elevation="4dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">

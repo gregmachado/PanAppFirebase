@@ -152,7 +152,7 @@ public class WithdrawFragment extends Fragment {
         request.setMethod(method);
         request.setDelivered(false);
         request.setProductList(products);
-        request.setStatus("Pendente");
+        request.setStatus("Pedido enviado!");
         request.setUserName(userName);
         request.setBakeryName(bakeryName);
         return request;

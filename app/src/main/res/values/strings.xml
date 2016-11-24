@@ -117,4 +117,21 @@
     <string name="percent">%</string>
     <string name="choose_product">Escolha o produto:</string>
     <string name="five">5</string>
+    <string name="ready_for_withdraw">Pronto para retirada</string>
+    <string name="retired">Produto retirado</string>
+    <string name="change">alterar</string>
+    <string name="update">atualizar</string>
+    <string name="update_status">atualizar status</string>
+    <string name="request_received">Pedido recebido</string>
+    <string name="ready_for_send">Pronto para envio</string>
+    <string name="product_delivered">Produto entregue</string>
+    <string name="in_transit">Em trânsito</string>
+    <string name="msg_update_status">Status atualizado!</string>
+    <string name="msg_status_no_update">Não houve alteração no status atual! Para voltar clique em cancelar</string>
+    <string name="msg_ready_from_withdraw">está pronto para retirada</string>
+    <string name="msg_was_withdrawn">foi retirado</string>
+    <string name="msg_ready_from_delivery">está pronto para o envio</string>
+    <string name="msg_on_the_way">à caminho!</string>
+    <string name="msg_was_delivered">foi entregue</string>
+    <string name="no_historic">Sem histórico para exibir!</string>
 </resources>

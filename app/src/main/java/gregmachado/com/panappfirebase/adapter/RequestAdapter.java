@@ -23,8 +23,8 @@ public class RequestAdapter extends FirebaseRecyclerAdapter<Request, RequestView
 
     private static final String TAG = RequestAdapter.class.getSimpleName();
     private Context mContext;
-    private String id, name;
-    private boolean type;
+    private String id, userName, bakeryName;
+    private boolean type, open;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference mDatabaseReference = database.getReference();
 
@@ -45,6 +45,12 @@ public class RequestAdapter extends FirebaseRecyclerAdapter<Request, RequestView
         } else {
             viewHolder.tvBakeryName.setText(model.getBakeryName());
         }
+        open = model.isOpen();
+        if (open){
+            viewHolder.icNewRequest.setVisibility(View.INVISIBLE);
+        } else {
+            viewHolder.icNewRequest.setVisibility(View.VISIBLE);
+        }
         viewHolder.tvDate.setText(model.getScheduleDate());
         viewHolder.tvUnits.setText(String.valueOf(model.getProductList().size()));
         viewHolder.tvStatus.setText(model.getStatus());
@@ -54,7 +60,6 @@ public class RequestAdapter extends FirebaseRecyclerAdapter<Request, RequestView
             public void onClick(View view) {
                 Log.w(TAG, "You clicked on " + model.getRequestID());
                 String requestID = model.getRequestID();
-                boolean open = model.isOpen();
                 if(!open){
                     viewHolder.icNewRequest.setVisibility(View.INVISIBLE);
                     mDatabaseReference.child("requests").child(id).child(requestID)
@@ -62,14 +67,14 @@ public class RequestAdapter extends FirebaseRecyclerAdapter<Request, RequestView
                 }
                 String bakeryID = model.getBakeryID();
                 Bundle params = new Bundle();
+                bakeryName = model.getBakeryName();
+                userName = model.getUserName();
+                String code = model.getRequestCode();
+                params.putString("code", code);
                 params.putString("bakeryID", bakeryID);
                 params.putString("requestID", requestID);
-                if(type){
-                    name = model.getUserName();
-                } else {
-                    name = model.getBakeryName();
-                }
-                params.putString("name", name);
+                params.putString("userName", userName);
+                params.putString("bakeyName", bakeryName);
                 params.putBoolean("type", type);
                 Intent intentProductList = new Intent(mContext, RequestDetailActivity.class);
                 intentProductList.putExtras(params);

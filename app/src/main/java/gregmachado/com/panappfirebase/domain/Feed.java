@@ -6,27 +6,26 @@ package gregmachado.com.panappfirebase.domain;
 public class Feed {
     private String feedID;
     private String bakeryID, userID;
-    private String date, hour;
+    private String date;
     private String userName, bakeryName;
     private String msg;
-    private boolean open;
     private int action;
+    private String image;
 
     public Feed() {
     }
 
-    public Feed(String feedID, String bakeryID, String userID, String date, String hour,
-                String userName, String bakeryName, String msg, boolean open, int action) {
+    public Feed(String feedID, String bakeryID, String userID, String date,
+                String userName, String bakeryName, String msg, int action, String image) {
         this.feedID = feedID;
         this.bakeryID = bakeryID;
         this.userID = userID;
         this.date = date;
-        this.hour = hour;
         this.userName = userName;
         this.bakeryName = bakeryName;
         this.msg = msg;
-        this.open = open;
         this.action = action;
+        this.image = image;
     }
 
     public String getFeedID() {
@@ -61,14 +60,6 @@ public class Feed {
         this.date = date;
     }
 
-    public String getHour() {
-        return hour;
-    }
-
-    public void setHour(String hour) {
-        this.hour = hour;
-    }
-
     public String getUserName() {
         return userName;
     }
@@ -93,12 +84,12 @@ public class Feed {
         this.msg = msg;
     }
 
-    public boolean isOpen() {
-        return open;
+    public String getImage() {
+        return image;
     }
 
-    public void setOpen(boolean open) {
-        this.open = open;
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public int getAction() {

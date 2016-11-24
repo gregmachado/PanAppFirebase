@@ -1,12 +1,13 @@
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="5dp"
-    android:elevation="4dp">
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    android:layout_marginTop="8dp"
+    android:elevation="4dp"
+    app:cardCornerRadius="2dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -15,69 +16,56 @@
         android:padding="8dp"
         tools:background="#ffffff">
 
-        <ImageView
-            android:id="@+id/ic_new_feed"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:src="@drawable/ic_new_releases_red_400_18dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/tv_feed_msg"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/ic_new_feed"
-            android:layout_toEndOf="@+id/ic_new_feed"
-            android:layout_marginLeft="4dp"
-            android:layout_marginStart="4dp"
-            android:layout_alignParentTop="true"
-            android:text="Mensagem"
-            android:textSize="16sp"
-            android:textStyle="bold"
-            tools:ignore="HardcodedText" />
+        <de.hdodenhof.circleimageview.CircleImageView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/iv_sender"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/img_product"
+            app:civ_border_width="1dp"
+            app:civ_border_color="#FF000000"/>
 
         <TextView
             android:id="@+id/tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_feed_msg"
-            android:layout_marginTop="26dp"
-            android:text="Nome"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:textColor="@color/colorPrimaryDark"
+            android:layout_toRightOf="@+id/iv_sender"
+            android:layout_toEndOf="@+id/iv_sender"
+            android:text="@string/name"
+            android:layout_marginTop="11dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
             android:textSize="14sp"
             android:textStyle="bold"
             tools:ignore="HardcodedText" />
+
+        <LinearLayout
+            android:id="@+id/ll"
+            android:layout_marginTop="8dp"
+            android:layout_below="@+id/iv_sender"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_msg"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="mensagem"
+                android:textSize="14sp"
+                android:textColor="@color/black_50_opacity"
+                tools:ignore="HardcodedText" />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/tv_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_feed_msg"
+            android:layout_below="@+id/ll"
+            android:layout_marginTop="10dp"
             android:text="data"
-            android:layout_marginTop="26dp"
-            android:textSize="14sp"
-            android:textColor="@color/black_50_opacity"
-            android:textStyle="bold"
-            tools:ignore="HardcodedText" />
-
-        <TextView
-            android:id="@+id/tv_hour"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_feed_msg"
-            android:layout_toRightOf="@id/tv_date"
-            android:layout_toEndOf="@id/tv_date"
-            android:layout_marginLeft="4dp"
-            android:layout_marginStart="4dp"
-            android:text="hora"
-            android:textColor="@color/black_50_opacity"
-            android:layout_marginTop="26dp"
-            android:textSize="14sp"
-            android:textStyle="bold"
+            android:textColor="@color/black_70_opacity"
+            android:textSize="12sp"
             tools:ignore="HardcodedText" />
 
     </RelativeLayout>

@@ -18,13 +18,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
-
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.List;
 
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.adapter.CartAdapter;
@@ -39,12 +34,12 @@ public class ProductCartActivity extends CommonActivity implements ItemClickList
     private static final String TAG = ProductCartActivity.class.getSimpleName();
     private RecyclerView rvProduct;
     private CartAdapter cartAdapter;
-    private List<Product> _list;
+    private ArrayList<Product> _list;
     private TextView tvItens, tvPrice, tvEmptyCart;
     private Double priceTotal, price;
     private Bundle params;
     private String bakeryId, productID, userName, bakeryName;
-    private int items;
+    private int items, itemsSale;
     private ImageView icCart;
     private CardView cardView;
     private Button btnFinish;
@@ -59,7 +54,6 @@ public class ProductCartActivity extends CommonActivity implements ItemClickList
     @Override
     protected void onResume() {
         super.onResume();
-        initViews();
         Intent it = getIntent();
         params = it.getExtras();
         if (params != null) {
@@ -70,6 +64,7 @@ public class ProductCartActivity extends CommonActivity implements ItemClickList
             _list = (ArrayList<Product>)
                     getIntent().getSerializableExtra("cart");
         }
+        initViews();
         loadCartList();
     }
 
@@ -81,7 +76,7 @@ public class ProductCartActivity extends CommonActivity implements ItemClickList
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     public void loadCartList() {
-        if(!(_list.isEmpty())&!(_list==null)){
+        if (!(_list.isEmpty()) & !(_list == null)) {
             setValuesToolbarBottom(priceTotal);
             rvProduct.setLayoutManager(new LinearLayoutManager(this));
             cartAdapter = new CartAdapter(this, this, _list, this, priceTotal);
@@ -148,28 +143,21 @@ public class ProductCartActivity extends CommonActivity implements ItemClickList
         // before stating the pagseguro checkout process.(it will need internet connection)
 
         // simulating an user buying
-        if(!(_list.isEmpty())&!(_list==null)){
+        if (!(_list.isEmpty()) & !(_list == null)) {
+
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Finalizar?");
             builder.setMessage("Deseja finalizar a compra?");
             builder.setPositiveButton("SIM", new DialogInterface.OnClickListener() {
+
                 public void onClick(DialogInterface arg0, int arg1) {
                     for (Product productAux : _list) {
                         productID = productAux.getId();
                         items = productAux.getUnit();
-                        mDatabaseReference.child("bakeries").child(bakeryId).child("products").child(productID).addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                int itemsSale = Integer.parseInt(dataSnapshot.child("itensSale").getValue().toString());
-                                items = itemsSale - items;
-                                mDatabaseReference.child("bakeries").child(bakeryId).child("products").child(productID).child("itensSale").setValue(items);
-                            }
-
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                                Log.w(TAG, "getUser:onCancelled", databaseError.toException());
-                            }
-                        });
+                        itemsSale = productAux.getItensSale();
+                        items = itemsSale - items;
+                        mDatabaseReference.child("bakeries").child(bakeryId).child("products").child(productID).
+                                child("itensSale").setValue(items);
                     }
                     callScheduleActivity();
                 }
@@ -187,7 +175,7 @@ public class ProductCartActivity extends CommonActivity implements ItemClickList
 
     @Override
     public void onBackPressed() {
-        if(_list.isEmpty()||_list==null){
+        if (_list.isEmpty() || _list == null) {
             finish();
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);

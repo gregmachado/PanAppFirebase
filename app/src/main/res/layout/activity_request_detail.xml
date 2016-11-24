@@ -50,7 +50,7 @@
                   android:layout_marginLeft="16dp"
                   android:layout_marginRight="16dp"
                   android:layout_marginTop="16dp"
-                  app:cardCornerRadius="5dp"
+                  app:cardCornerRadius="2dp"
                   android:elevation="4dp"
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content">
@@ -74,7 +74,7 @@
                   android:layout_marginLeft="16dp"
                   android:layout_marginRight="16dp"
                   android:layout_marginTop="22dp"
-                  app:cardCornerRadius="5dp"
+                  app:cardCornerRadius="2dp"
                   android:elevation="4dp">
 
                   <RelativeLayout
@@ -170,7 +170,7 @@
                   tools:ignore="HardcodedText" />
 
               <Button
-                  android:id="@+id/btn_change_status"
+                  android:id="@+id/btn_update_status"
                   android:layout_width="180sp"
                   android:layout_height="wrap_content"
                   android:layout_marginTop="22sp"
@@ -178,13 +178,13 @@
                   android:layout_below="@+id/tv_status"
                   android:layout_centerHorizontal="true"
                   android:textColor="@color/white"
-                  android:text="@string/change_status"
+                  android:text="@string/update_status"
                   android:elevation="4dp"
                   android:onClick="changeStatus"
                   android:textSize="16sp" />
 
               <Space
-                  android:layout_below="@+id/btn_change_status"
+                  android:layout_below="@+id/btn_update_status"
                   android:layout_width="match_parent"
                   android:layout_height="50dp" />
 

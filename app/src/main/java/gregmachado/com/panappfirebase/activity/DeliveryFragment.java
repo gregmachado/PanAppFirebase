@@ -213,7 +213,7 @@ public class DeliveryFragment extends Fragment {
         request.setDelivered(false);
         request.setProductList(products);
         request.setAdress(adress);
-        request.setStatus("Pendente");
+        request.setStatus("Pedido enviado!");
         request.setUserName(userName);
         request.setBakeryName(bakeryName);
         return request;
