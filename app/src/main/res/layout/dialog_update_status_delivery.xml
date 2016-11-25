@@ -12,8 +12,8 @@
         android:checked="false"
         android:text="@string/request_received"
         android:textSize="16sp"
-        android:layout_alignLeft="@id/cb_ready"
-        android:layout_alignStart="@id/cb_ready"
+        android:layout_alignLeft="@+id/cb_ready"
+        android:layout_alignStart="@+id/cb_ready"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

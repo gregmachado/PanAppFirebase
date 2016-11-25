@@ -16,9 +16,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -27,17 +25,7 @@ import gregmachado.com.panappfirebase.domain.Feed;
 import gregmachado.com.panappfirebase.domain.Historic;
 import gregmachado.com.panappfirebase.domain.Product;
 import gregmachado.com.panappfirebase.domain.Request;
-import gregmachado.com.panappfirebase.pagSeguro.PagSeguroAddress;
-import gregmachado.com.panappfirebase.pagSeguro.PagSeguroAreaCode;
-import gregmachado.com.panappfirebase.pagSeguro.PagSeguroBrazilianStates;
-import gregmachado.com.panappfirebase.pagSeguro.PagSeguroBuyer;
-import gregmachado.com.panappfirebase.pagSeguro.PagSeguroCheckout;
-import gregmachado.com.panappfirebase.pagSeguro.PagSeguroFactory;
-import gregmachado.com.panappfirebase.pagSeguro.PagSeguroItem;
 import gregmachado.com.panappfirebase.pagSeguro.PagSeguroPayment;
-import gregmachado.com.panappfirebase.pagSeguro.PagSeguroPhone;
-import gregmachado.com.panappfirebase.pagSeguro.PagSeguroShipping;
-import gregmachado.com.panappfirebase.pagSeguro.PagSeguroShippingType;
 import gregmachado.com.panappfirebase.util.AppUtil;
 import gregmachado.com.panappfirebase.util.DateUtil;
 
@@ -169,7 +157,7 @@ public class ScheduleActivity extends CommonActivity {
 
     public void callPayment(boolean b){
         isDelivery = b;
-        final PagSeguroFactory pagseguro = PagSeguroFactory.instance();
+        /*final PagSeguroFactory pagseguro = PagSeguroFactory.instance();
         List<PagSeguroItem> shoppingCart = new ArrayList<>();
         for (Iterator<Product> iterator = itemsCart.iterator(); iterator.hasNext(); ) {
             Product product = iterator.next();
@@ -183,7 +171,9 @@ public class ScheduleActivity extends CommonActivity {
         PagSeguroShipping buyerShippingOption = pagseguro.shipping(PagSeguroShippingType.NOT_DEFINED, buyerAddress);
         PagSeguroCheckout checkout = pagseguro.checkout("Ref0001", shoppingCart, buyer, buyerShippingOption);
         // starting payment process
-        new PagSeguroPayment(ScheduleActivity.this, itemsCart, bakeryId).pay(checkout.buildCheckoutXml());
+        new PagSeguroPayment(ScheduleActivity.this, itemsCart, bakeryId).pay(checkout.buildCheckoutXml());*/
+
+
     }
 
     @Override
@@ -242,8 +232,9 @@ public class ScheduleActivity extends CommonActivity {
         newHistoric();
         sendNotification();
         showToast("Pedido realizado com sucesso!");
-        Intent intentHome = new Intent(ScheduleActivity.this, UserMainActivity.class);
-        startActivity(intentHome);
+        //Intent intentHome = new Intent(ScheduleActivity.this, UserMainActivity.class);
+        //startActivity(intentHome);
+        finish();
     }
 
     private void newFeed() {

@@ -169,9 +169,9 @@ public class AdminMainActivity extends CommonActivity
             intentRequest.putExtras(params);
             startActivity(intentRequest);
         } else if (id == R.id.nav_history_admin) {
-            Intent intentFeed = new Intent(AdminMainActivity.this, AdminMainActivity.class);
-            intentFeed.putExtras(params);
-            startActivity(intentFeed);
+            Intent intentHistoric = new Intent(AdminMainActivity.this, HistoricActivity.class);
+            intentHistoric.putExtras(params);
+            startActivity(intentHistoric);
         } else if (id == R.id.nav_my_bakery) {
             Intent intentMyBakery = new Intent(AdminMainActivity.this, MyBakeryActivity.class);
             intentMyBakery.putExtras(params);

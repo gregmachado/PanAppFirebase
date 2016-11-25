@@ -116,7 +116,7 @@ public class RequestDetailActivity extends CommonActivity {
         tvTotal = (TextView) findViewById(R.id.tv_total);
         tvStatus = (TextView) findViewById(R.id.tv_status);
         rvItems = (RecyclerView) findViewById(R.id.rv_items);
-        Button btnChangeStatus = (Button) findViewById(R.id.btn_change_status);
+        Button btnChangeStatus = (Button) findViewById(R.id.btn_update_status);
         if(!type){
             btnChangeStatus.setVisibility(View.INVISIBLE);
         }

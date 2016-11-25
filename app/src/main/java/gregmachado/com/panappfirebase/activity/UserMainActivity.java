@@ -170,9 +170,9 @@ public class UserMainActivity extends CommonActivity
             intentRequest.putExtras(params);
             startActivity(intentRequest);
         } else if (id == R.id.nav_history) {
-            Intent intentFeed = new Intent(UserMainActivity.this, UserMainActivity.class);
-            intentFeed.putExtras(params);
-            startActivity(intentFeed);
+            Intent intentHistoric = new Intent(UserMainActivity.this, HistoricActivity.class);
+            intentHistoric.putExtras(params);
+            startActivity(intentHistoric);
         } else if (id == R.id.nav_my_adrees) {
             Intent intentAdressList = new Intent(UserMainActivity.this, AdressListActivity.class);
             intentAdressList.putExtras(params);
