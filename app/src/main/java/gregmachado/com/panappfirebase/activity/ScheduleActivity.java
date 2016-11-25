@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -19,14 +20,21 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ExecutionException;
 
+import cieloecommerce.sdk.Merchant;
+import cieloecommerce.sdk.ecommerce.CieloEcommerce;
+import cieloecommerce.sdk.ecommerce.Customer;
+import cieloecommerce.sdk.ecommerce.Environment;
+import cieloecommerce.sdk.ecommerce.Payment;
+import cieloecommerce.sdk.ecommerce.Sale;
+import cieloecommerce.sdk.ecommerce.request.CieloError;
+import cieloecommerce.sdk.ecommerce.request.CieloRequestException;
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.domain.Feed;
 import gregmachado.com.panappfirebase.domain.Historic;
 import gregmachado.com.panappfirebase.domain.Product;
 import gregmachado.com.panappfirebase.domain.Request;
-import gregmachado.com.panappfirebase.pagSeguro.PagSeguroPayment;
-import gregmachado.com.panappfirebase.util.AppUtil;
 import gregmachado.com.panappfirebase.util.DateUtil;
 
 /**
@@ -157,25 +165,48 @@ public class ScheduleActivity extends CommonActivity {
 
     public void callPayment(boolean b){
         isDelivery = b;
-        /*final PagSeguroFactory pagseguro = PagSeguroFactory.instance();
-        List<PagSeguroItem> shoppingCart = new ArrayList<>();
-        for (Iterator<Product> iterator = itemsCart.iterator(); iterator.hasNext(); ) {
-            Product product = iterator.next();
-            shoppingCart.add(pagseguro.item(product.getId(), product.getProductName(), BigDecimal.valueOf(product.getProductPrice()),
-                    product.getUnit(), 300));
+        // Configure seu merchant
+        Merchant merchant = new Merchant("8f785e77-1098-4eaf-9483-3e1160d8ab03", "TWYIEDUHYTOWKSDDGPZGJQVSFYDLXGXTIDEDRJGZ");
+        // Crie uma instância de Sale informando o ID do pagamento
+        Sale sale = new Sale("ID do pagamento");
+        // Crie uma instância de Customer informando o nome do cliente
+        Customer customer = sale.customer("Comprador Teste");
+        // Crie uma instância de Payment informando o valor do pagamento
+        Payment payment = sale.payment(15700);
+        // Crie  uma instância de Credit Card utilizando os dados de teste
+        // esses dados estão disponíveis no manual de integração
+        payment.creditCard("123", "Visa").setExpirationDate("12/2018")
+                .setCardNumber("0000000000000001")
+                .setHolder("Fulano de Tal");
+
+        // Crie o pagamento na Cielo
+        try {
+            // Configure o SDK com seu merchant e o ambiente apropriado para criar a venda
+            sale = new CieloEcommerce(merchant, Environment.SANDBOX).createSale(sale);
+            // Com a venda criada na Cielo, já temos o ID do pagamento, TID e demais
+            // dados retornados pela Cielo
+            String paymentId = sale.getPayment().getPaymentId();
+            Log.v(TAG, paymentId);
+            // Com o ID do pagamento, podemos fazer sua captura, se ela não tiver sido capturada ainda
+            //sale = new CieloEcommerce(merchant, Environment.SANDBOX).captureSale(paymentId, 15700, 0);
+            // E também podemos fazer seu cancelamento, se for o caso
+            //sale = new CieloEcommerce(merchant, Environment.SANDBOX).cancelSale(paymentId, 15700);
+        } catch (ExecutionException | InterruptedException e) {
+            // Como se trata de uma AsyncTask, será preciso tratar ExecutionException e InterruptedException
+            e.printStackTrace();
+        } catch (CieloRequestException e) {
+            // Em caso de erros de integração, podemos tratar o erro aqui.
+            // os códigos de erro estão todos disponíveis no manual de integração.
+            CieloError error = e.getError();
+            Log.v("Cielo", error.getCode().toString());
+            Log.v("Cielo", error.getMessage());
+            if (error.getCode() != 404) {
+                Log.e("Cielo", null, e);
+            }
         }
-        PagSeguroPhone buyerPhone = pagseguro.phone(PagSeguroAreaCode.DDD81, "998187427");
-        PagSeguroBuyer buyer = pagseguro.buyer("Ricardo Ferreira", "14/02/1978", "15061112000", "test@email.com.br", buyerPhone);
-        PagSeguroAddress buyerAddress = pagseguro.address("Av. Angelo Guisso", "850", "Apt507A", "Esplanada", "95095497",
-                "Caxias do Sul", PagSeguroBrazilianStates.RIOGRANDEDOSUL);
-        PagSeguroShipping buyerShippingOption = pagseguro.shipping(PagSeguroShippingType.NOT_DEFINED, buyerAddress);
-        PagSeguroCheckout checkout = pagseguro.checkout("Ref0001", shoppingCart, buyer, buyerShippingOption);
-        // starting payment process
-        new PagSeguroPayment(ScheduleActivity.this, itemsCart, bakeryId).pay(checkout.buildCheckoutXml());*/
-
-
     }
 
+    /*
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_CANCELED) {
@@ -213,6 +244,7 @@ public class ScheduleActivity extends CommonActivity {
             }
         }
     }
+    */
 
     private void callFinishRequest() {
         if(isDelivery){
