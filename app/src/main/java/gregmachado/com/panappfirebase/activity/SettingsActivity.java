@@ -168,7 +168,7 @@ public class SettingsActivity extends CommonActivity {
             public void onCheckedChanged(CompoundButton buttonView,
                                          boolean isChecked) {
                 sendNotification = isChecked;
-                btnSaveChanges.setVisibility(View.VISIBLE);
+                //btnSaveChanges.setVisibility(View.VISIBLE);
             }
         });
         ivUser = (ImageView) findViewById(R.id.iv_user);
@@ -178,6 +178,7 @@ public class SettingsActivity extends CommonActivity {
     public void editName(View view) {
         lblName.setVisibility(View.INVISIBLE);
         etName.setVisibility(View.VISIBLE);
+        etName.setText(name);
     }
 
     public void saveChanges(View view) {
