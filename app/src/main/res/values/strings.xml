@@ -134,4 +134,17 @@
     <string name="msg_on_the_way">à caminho!</string>
     <string name="msg_was_delivered">foi entregue</string>
     <string name="no_historic">Sem histórico para exibir!</string>
+    <string name="card_number">Número do cartão</string>
+    <string name="expiration_date">Data de expiração</string>
+    <string name="flag">Bandeira</string>
+    <string name="finish_payment">Finalizar pagamento</string>
+    <string name="field_security_code_size_invalid">Campo código deve ter 3 digitos!</string>
+    <string name="field_card_number_size_invalid">Este campo contém 12 digitos!</string>
+    <string name="field_verify">Verifique a data informada!</string>
+    <string name="code_abre">Cód.</string>
+    <string name="kms">kms</string>
+    <string name="twenty">20</string>
+    <string name="search_bakery_until">Buscar estabelecimentos até:</string>
+    <string name="notification">Notificações</string>
+    <string name="save_changes">salvar alterações</string>
 </resources>

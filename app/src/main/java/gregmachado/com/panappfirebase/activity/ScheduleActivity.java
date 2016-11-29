@@ -20,16 +20,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ExecutionException;
 
-import cieloecommerce.sdk.Merchant;
-import cieloecommerce.sdk.ecommerce.CieloEcommerce;
-import cieloecommerce.sdk.ecommerce.Customer;
-import cieloecommerce.sdk.ecommerce.Environment;
-import cieloecommerce.sdk.ecommerce.Payment;
-import cieloecommerce.sdk.ecommerce.Sale;
-import cieloecommerce.sdk.ecommerce.request.CieloError;
-import cieloecommerce.sdk.ecommerce.request.CieloRequestException;
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.domain.Feed;
 import gregmachado.com.panappfirebase.domain.Historic;
@@ -43,7 +34,7 @@ import gregmachado.com.panappfirebase.util.DateUtil;
 public class ScheduleActivity extends CommonActivity {
 
     private static final String TAG = ScheduleActivity.class.getSimpleName();
-    private String bakeryId, userId, productID, userName, bakeryName, code;
+    private String bakeryId, userId, productID, userName, bakeryName, code, returnCode;
     private ArrayList<Product> itemsCart;
     private WithdrawFragment withdrawFragment;
     private DeliveryFragment deliveryFragment;
@@ -165,86 +156,16 @@ public class ScheduleActivity extends CommonActivity {
 
     public void callPayment(boolean b){
         isDelivery = b;
-        // Configure seu merchant
-        Merchant merchant = new Merchant("8f785e77-1098-4eaf-9483-3e1160d8ab03", "TWYIEDUHYTOWKSDDGPZGJQVSFYDLXGXTIDEDRJGZ");
-        // Crie uma instância de Sale informando o ID do pagamento
-        Sale sale = new Sale("ID do pagamento");
-        // Crie uma instância de Customer informando o nome do cliente
-        Customer customer = sale.customer("Comprador Teste");
-        // Crie uma instância de Payment informando o valor do pagamento
-        Payment payment = sale.payment(15700);
-        // Crie  uma instância de Credit Card utilizando os dados de teste
-        // esses dados estão disponíveis no manual de integração
-        payment.creditCard("123", "Visa").setExpirationDate("12/2018")
-                .setCardNumber("0000000000000001")
-                .setHolder("Fulano de Tal");
-
-        // Crie o pagamento na Cielo
-        try {
-            // Configure o SDK com seu merchant e o ambiente apropriado para criar a venda
-            sale = new CieloEcommerce(merchant, Environment.SANDBOX).createSale(sale);
-            // Com a venda criada na Cielo, já temos o ID do pagamento, TID e demais
-            // dados retornados pela Cielo
-            String paymentId = sale.getPayment().getPaymentId();
-            Log.v(TAG, paymentId);
-            // Com o ID do pagamento, podemos fazer sua captura, se ela não tiver sido capturada ainda
-            //sale = new CieloEcommerce(merchant, Environment.SANDBOX).captureSale(paymentId, 15700, 0);
-            // E também podemos fazer seu cancelamento, se for o caso
-            //sale = new CieloEcommerce(merchant, Environment.SANDBOX).cancelSale(paymentId, 15700);
-        } catch (ExecutionException | InterruptedException e) {
-            // Como se trata de uma AsyncTask, será preciso tratar ExecutionException e InterruptedException
-            e.printStackTrace();
-        } catch (CieloRequestException e) {
-            // Em caso de erros de integração, podemos tratar o erro aqui.
-            // os códigos de erro estão todos disponíveis no manual de integração.
-            CieloError error = e.getError();
-            Log.v("Cielo", error.getCode().toString());
-            Log.v("Cielo", error.getMessage());
-            if (error.getCode() != 404) {
-                Log.e("Cielo", null, e);
-            }
-        }
+        Intent intentPayment = new Intent(ScheduleActivity.this,PaymentActivity.class);
+        Bundle params = new Bundle();
+        params.putString("idPayment", code);
+        params.putString("customer", userName);
+        int amount = (int) (total * 100);
+        Log.w(TAG, "amount: " + amount);
+        params.putInt("amount", amount);
+        intentPayment.putExtras(params);
+        startActivityForResult(intentPayment, 2);
     }
-
-    /*
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_CANCELED) {
-            // se foi uma tentativa de pagamento
-            if (requestCode == PagSeguroPayment.PAG_SEGURO_REQUEST_CODE) {
-                // exibir confirmação de cancelamento
-                final String msg = getString(R.string.transaction_cancelled);
-                AppUtil.showConfirmDialog(this, msg, null);
-            }
-        } else if (resultCode == RESULT_OK) {
-            // se foi uma tentativa de pagamento
-            if (requestCode == PagSeguroPayment.PAG_SEGURO_REQUEST_CODE) {
-                // exibir confirmação de sucesso
-                final String msg = getString(R.string.transaction_succeded);
-                AppUtil.showConfirmDialog(this, msg, null);
-            }
-        } else if (resultCode == PagSeguroPayment.PAG_SEGURO_REQUEST_CODE) {
-            switch (data.getIntExtra(PagSeguroPayment.PAG_SEGURO_EXTRA, 0)) {
-                case PagSeguroPayment.PAG_SEGURO_REQUEST_SUCCESS_CODE: {
-                    final String msg = getString(R.string.transaction_succeded);
-                    AppUtil.showConfirmDialog(this, msg, null);
-                    callFinishRequest();
-                    break;
-                }
-                case PagSeguroPayment.PAG_SEGURO_REQUEST_FAILURE_CODE: {
-                    final String msg = getString(R.string.transaction_error);
-                    AppUtil.showConfirmDialog(this, msg, null);
-                    break;
-                }
-                case PagSeguroPayment.PAG_SEGURO_REQUEST_CANCELLED_CODE: {
-                    final String msg = getString(R.string.transaction_cancelled);
-                    AppUtil.showConfirmDialog(this, msg, null);
-                    break;
-                }
-            }
-        }
-    }
-    */
 
     private void callFinishRequest() {
         if(isDelivery){
@@ -258,6 +179,7 @@ public class ScheduleActivity extends CommonActivity {
         code = generateRandomCode();
         request.setRequestCode(code);
         request.setTotal(total);
+        request.setSituation(1);
         mDatabaseReference.child("requests").child(userId).child(requestID).setValue(request);
         mDatabaseReference.child("requests").child(bakeryId).child(requestID).setValue(request);
         newFeed();
@@ -347,5 +269,38 @@ public class ScheduleActivity extends CommonActivity {
 
     private void sendNotification() {
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 2)
+        {
+            returnCode = data.getStringExtra("returnCode");
+            switch (resultCode){
+                case 4:
+                    callFinishRequest();
+                    break;
+                case 2:
+                    showToast("Paganento não autorizado!");
+                    break;
+                case 99:
+                    showToast("Paganento não autorizado! Tempo esgotado!");
+                    break;
+                case 77:
+                    showToast("Paganento não autorizado! Cartão cancelado!");
+                    break;
+                case 70:
+                    showToast("Paganento não autorizado! Problemas com o cartão!");
+                    break;
+                case 78:
+                    showToast("Paganento não autorizado! Cartão bloqueado!");
+                    break;
+                case 57:
+                    showToast("Paganento não autorizado! Cartão expirado!");
+                    break;
+            }
+        }
     }
 }

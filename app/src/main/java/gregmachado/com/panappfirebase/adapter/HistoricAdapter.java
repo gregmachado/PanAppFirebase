@@ -5,14 +5,9 @@ import android.content.Context;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.database.Query;
 
-import java.util.ArrayList;
-
 import gregmachado.com.panappfirebase.R;
-import gregmachado.com.panappfirebase.activity.ProductListActivity;
 import gregmachado.com.panappfirebase.domain.Historic;
-import gregmachado.com.panappfirebase.domain.Product;
 import gregmachado.com.panappfirebase.viewHolder.HistoricViewHolder;
-import gregmachado.com.panappfirebase.viewHolder.ProductViewHolderUser;
 
 /**
  * Created by gregmachado on 24/11/16.

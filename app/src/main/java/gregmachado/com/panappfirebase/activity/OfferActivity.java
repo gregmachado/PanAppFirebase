@@ -125,7 +125,7 @@ public class OfferActivity extends CommonActivity {
         params.putString("bakeryID", bakeryID);
         params.putString("bakeryName", bakeryName);
         params.putBoolean("update", false);
-        Intent intentFormProduct = new Intent(OfferActivity.this, FormOffer.class);
+        Intent intentFormProduct = new Intent(OfferActivity.this, FormOfferActivity.class);
         intentFormProduct.putExtras(params);
         startActivity(intentFormProduct);
     }

@@ -23,6 +23,7 @@ public class User {
     private ArrayList<String> favorites;
     private double lastLatitude;
     private double lastLongitude;
+    private int distanceForSearchBakery;
 
     public User() {
     }
@@ -133,6 +134,14 @@ public class User {
 
     public void setLastLongitude(double lastLongitude) {
         this.lastLongitude = lastLongitude;
+    }
+
+    public int getDistanceForSearchBakery() {
+        return distanceForSearchBakery;
+    }
+
+    public void setDistanceForSearchBakery(int distanceForSearchBakery) {
+        this.distanceForSearchBakery = distanceForSearchBakery;
     }
 
     public void saveDB(DatabaseReference.CompletionListener... completionListener) {

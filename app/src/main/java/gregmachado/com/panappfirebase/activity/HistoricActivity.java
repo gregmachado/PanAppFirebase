@@ -2,7 +2,7 @@ package gregmachado.com.panappfirebase.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -12,9 +12,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.adapter.HistoricAdapter;
 import gregmachado.com.panappfirebase.util.DividerItemDecoration;
@@ -30,33 +32,37 @@ public class HistoricActivity extends CommonActivity{
     private ImageView ivHistoric;
     private RecyclerView rvHistoric;
     private HistoricAdapter adapter;
+    private CardView cardView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_historic);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         Intent it = getIntent();
         params = it.getExtras();
         if (params != null) {
             id = params.getString("id");
             typeUser = params.getBoolean("type");
         }
-        initViews();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        loadHistoric();
-    }
-
-    private void loadHistoric() {
-        openProgressBar();
         if (typeUser){
             reference = "bakeries";
         } else {
             reference = "users";
         }
+        initViews();
+        rvHistoric.setHasFixedSize(true);
+        rvHistoric.setLayoutManager(new LinearLayoutManager(HistoricActivity.this));
+        rvHistoric.addItemDecoration(new DividerItemDecoration(HistoricActivity.this));
+        loadHistoric();
+    }
+
+    private void loadHistoric() {
+        openProgressBar();
         mDatabaseReference.child(reference).child(id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -68,14 +74,15 @@ public class HistoricActivity extends CommonActivity{
                     if (ivHistoric.getVisibility() == View.VISIBLE) {
                         ivHistoric.setVisibility(View.GONE);
                     }
+                    cardView.setVisibility(View.VISIBLE);
                     adapter = new HistoricAdapter(mDatabaseReference.child(reference).child(id).child("historic").getRef(),
-                            HistoricActivity.this
-                    ) {};
+                            HistoricActivity.this);
                     rvHistoric.setAdapter(adapter);
                 } else {
                     closeProgressBar();
                     tvNoHistoric.setVisibility(View.VISIBLE);
                     ivHistoric.setVisibility(View.VISIBLE);
+                    cardView.setVisibility(View.INVISIBLE);
                 }
             }
 
@@ -96,11 +103,8 @@ public class HistoricActivity extends CommonActivity{
         tvNoHistoric = (TextView) findViewById(R.id.tv_no_historic);
         progressBar = (ProgressBar) findViewById(R.id.simpleProgressBar);
         ivHistoric = (ImageView) findViewById(R.id.ic_historic);
+        cardView = (CardView) findViewById(R.id.card_historic);
         rvHistoric = (RecyclerView) findViewById(R.id.rv_historic);
-        rvHistoric.setHasFixedSize(true);
-        rvHistoric.setItemAnimator(new DefaultItemAnimator());
-        rvHistoric.addItemDecoration(new DividerItemDecoration(this));
-        rvHistoric.setLayoutManager(new LinearLayoutManager(HistoricActivity.this));
     }
 
     @Override

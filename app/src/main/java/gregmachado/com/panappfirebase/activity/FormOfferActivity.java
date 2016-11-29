@@ -42,8 +42,8 @@ import gregmachado.com.panappfirebase.domain.Product;
 /**
  * Created by gregmachado on 20/11/16.
  */
-public class FormOffer extends CommonActivity {
-    private static final String TAG = FormOffer.class.getSimpleName();
+public class FormOfferActivity extends CommonActivity {
+    private static final String TAG = FormOfferActivity.class.getSimpleName();
     FirebaseStorage storage = FirebaseStorage.getInstance();
     private Offer offer;
     private Resources resources;
@@ -197,7 +197,7 @@ public class FormOffer extends CommonActivity {
                             products.add(name);
                         }
                         ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                                FormOffer.this,
+                                FormOfferActivity.this,
                                 android.R.layout.simple_dropdown_item_1line,
                                 products);
                         adapter.setDropDownViewResource(android.R.layout.simple_list_item_1);

@@ -164,7 +164,9 @@ public class UserMainActivity extends CommonActivity
             intentFavoriteBakeryList.putExtras(params);
             startActivity(intentFavoriteBakeryList);
         } else if (id == R.id.nav_configuration) {
-
+            Intent intSettings = new Intent(UserMainActivity.this, SettingsActivity.class);
+            intSettings.putExtras(params);
+            startActivity(intSettings);
         } else if (id == R.id.nav_follow_orders) {
             Intent intentRequest = new Intent(UserMainActivity.this, RequestActivity.class);
             intentRequest.putExtras(params);

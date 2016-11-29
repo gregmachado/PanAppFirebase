@@ -154,11 +154,7 @@ public class FormEditBakeryActivity extends CommonActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView,
                                          boolean isChecked) {
-                if (isChecked) {
-                    hasDelivery = true;
-                } else {
-                    hasDelivery = false;
-                }
+                hasDelivery = isChecked;
             }
         });
     }

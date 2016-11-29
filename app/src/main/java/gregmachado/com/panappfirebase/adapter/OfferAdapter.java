@@ -31,7 +31,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import gregmachado.com.panappfirebase.R;
-import gregmachado.com.panappfirebase.activity.FormOffer;
+import gregmachado.com.panappfirebase.activity.FormOfferActivity;
 import gregmachado.com.panappfirebase.activity.ProductListActivity;
 import gregmachado.com.panappfirebase.domain.Offer;
 import gregmachado.com.panappfirebase.domain.Product;
@@ -259,7 +259,7 @@ public class OfferAdapter extends FirebaseRecyclerAdapter<Offer, OfferViewHolder
                 params.putString("offerID", offerID);
                 params.putInt("items", itemSale);
                 params.putInt("percent", percent);
-                Intent intentFormProduct = new Intent(mContext, FormOffer.class);
+                Intent intentFormProduct = new Intent(mContext, FormOfferActivity.class);
                 intentFormProduct.putExtras(params);
                 mContext.startActivity(intentFormProduct);
                 break;

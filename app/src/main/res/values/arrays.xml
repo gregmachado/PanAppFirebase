@@ -11,4 +11,12 @@
         <item>Biscoitos</item>
         <item>Outros</item>
     </string-array>
+
+    <string-array name="flags">
+        <item>Visa</item>
+        <item>MasterCard</item>
+        <item>Elo</item>
+        <item>American Express</item>
+        <item>Diners</item>
+    </string-array>
 </resources>

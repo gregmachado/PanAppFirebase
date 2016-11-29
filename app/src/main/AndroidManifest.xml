@@ -68,8 +68,9 @@
         <activity android:name=".activity.FavoriteListActivity" />
         <activity android:name=".activity.RequestDetailActivity" />
         <activity android:name=".activity.OfferActivity" />
-        <activity android:name=".activity.FormOffer" />
+        <activity android:name=".activity.FormOfferActivity" />
         <activity android:name=".activity.HistoricActivity" />
+        <activity android:name=".activity.PaymentActivity" />
         <!-- [START firebase_service] -->
         <service
             android:name=".services.MyFirebaseMessagingService">
