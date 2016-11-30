@@ -218,6 +218,7 @@ public class FormEditBakeryActivity extends CommonActivity {
                 showToast("Padaria atualizada!");
             }
             closeProgressDialog();
+
             finish();
         }
     }

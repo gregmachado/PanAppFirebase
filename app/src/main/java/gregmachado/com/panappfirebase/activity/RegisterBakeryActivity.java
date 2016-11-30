@@ -8,7 +8,6 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -22,12 +21,7 @@ import android.widget.TextView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -41,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import br.com.jansenfelipe.androidmask.MaskEditTextChangedListener;
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.domain.Adress;
 import gregmachado.com.panappfirebase.domain.Bakery;
@@ -85,7 +80,6 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
     private Bakery bakery;
     private Adress adress;
     private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthStateListener;
     private DatabaseReference mDatabaseReference;
     // Hashmap for ListView
     ArrayList<HashMap<String, String>> bakerieList;
@@ -110,25 +104,6 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
         bakerieList = new ArrayList<HashMap<String, String>>();
         mAuth = FirebaseAuth.getInstance();
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
-
-        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-                if (firebaseUser == null || user.getId() != null) {
-                    return;
-                }
-                String id = firebaseUser.getUid();
-                user.setId(id);
-                bakery.setUserID(user.getId());
-                user.saveDB(RegisterBakeryActivity.this);
-                //bakery.saveDB(RegisterBakeryActivity.this);
-                bakeryID = mDatabaseReference.push().getKey();
-                bakery.setId(bakeryID);
-                mDatabaseReference.child("bakeries").child(bakeryID).setValue(bakery);
-                mDatabaseReference.child("users").child(id).child("bakeryID").setValue(bakeryID);
-            }
-        };
         initViews();
         initWatchers();
     }
@@ -194,6 +169,7 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
 
     public void searchByCNPJ(View view) {
         cnpjAux = inputCnpj.getText().toString().trim();
+        cnpjAux = cnpjAux.replaceAll("[^0-9]", "");
         // Calling async task to get json
         new GetBakery().execute();
     }
@@ -206,6 +182,11 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
             initBakery();
             saveUser();
         }
+    }
+
+    @Override
+    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+
     }
 
     /**
@@ -349,6 +330,8 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
     @Override
     protected void initViews() {
         inputCnpj = (EditText) findViewById(R.id.input_cnpj);
+        MaskEditTextChangedListener maskCnpj = new MaskEditTextChangedListener("##.###.###/####-##", inputCnpj);
+        inputCnpj.addTextChangedListener(maskCnpj);
         inputAdminPassword = (EditText) findViewById(R.id.input_admin_password);
         tvResult = (TextView) findViewById(R.id.tv_result);
         icFound = (ImageView) findViewById(R.id.ic_bakery_found);
@@ -405,29 +388,19 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
     }
 
     private void saveUser() {
-        mAuth.createUserWithEmailAndPassword(
-                user.getEmail(),
-                user.getPassword()
-        ).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-
-                if (!task.isSuccessful()) {
-                    closeProgressDialog();
-                }
-            }
-        }).addOnFailureListener(this, new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                showSnackbar(e.getMessage());
-            }
-        });
+        String id = mDatabaseReference.push().getKey();
+        user.setId(id);
+        bakery.setUserID(id);
+        //user.saveDB(RegisterBakeryActivity.this);
+        //bakery.saveDB(RegisterBakeryActivity.this);
+        bakeryID = mDatabaseReference.push().getKey();
+        bakery.setId(bakeryID);
+        mDatabaseReference.child("users").child(id).setValue(user);
+        mDatabaseReference.child("bakeries").child(bakeryID).setValue(bakery);
+        callEditBakery();
     }
 
-    @Override
-    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-        //bakery.saveDB(RegisterBakeryActivity.this);
-        //mAuth.signOut();
+    private void callEditBakery() {
         params.putString("bakeryID", bakeryID);
         params.putBoolean("isRegister", true);
         Intent intentFormEditBakery = new Intent(RegisterBakeryActivity.this, FormEditBakeryActivity.class);
@@ -435,19 +408,5 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
         closeProgressDialog();
         //showToast("Padaria registrada com sucesso!");
         startActivity(intentFormEditBakery);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mAuth.addAuthStateListener(mAuthStateListener);
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (mAuthStateListener != null) {
-            mAuth.removeAuthStateListener(mAuthStateListener);
-        }
     }
 }
