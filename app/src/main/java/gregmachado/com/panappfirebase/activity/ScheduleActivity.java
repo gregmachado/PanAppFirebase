@@ -42,6 +42,8 @@ public class ScheduleActivity extends CommonActivity {
     private boolean isDelivery;
     private Request request;
     private double total;
+    private ProductCartActivity productCartActivity;
+    private ProductListActivity productListActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,6 +145,13 @@ public class ScheduleActivity extends CommonActivity {
         builder.setMessage("Se você voltar agora perderá seus itens. Deseja realmente sair?");
         builder.setPositiveButton("SIM", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
+                for (Product productAux : itemsCart) {
+                    productID = productAux.getId();
+                    items = productAux.getUnit();
+                    int itemsSale = productAux.getItensSale();
+                    mDatabaseReference.child("bakeries").child(bakeryId).child("products").child(productID).child("itensSale").
+                            setValue(itemsSale);
+                }
                 finish();
             }
         });
@@ -156,6 +165,7 @@ public class ScheduleActivity extends CommonActivity {
 
     public void callPayment(boolean b){
         isDelivery = b;
+        code = generateRandomCode();
         Intent intentPayment = new Intent(ScheduleActivity.this,PaymentActivity.class);
         Bundle params = new Bundle();
         params.putString("idPayment", code);
@@ -176,7 +186,6 @@ public class ScheduleActivity extends CommonActivity {
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
         String requestID = mDatabaseReference.push().getKey();
         request.setRequestID(requestID);
-        code = generateRandomCode();
         request.setRequestCode(code);
         request.setTotal(total);
         request.setSituation(1);
@@ -186,8 +195,12 @@ public class ScheduleActivity extends CommonActivity {
         newHistoric();
         sendNotification();
         showToast("Pedido realizado com sucesso!");
-        //Intent intentHome = new Intent(ScheduleActivity.this, UserMainActivity.class);
-        //startActivity(intentHome);
+        Intent intentHome = new Intent(ScheduleActivity.this, UserMainActivity.class);
+        params.putString("id", userId);
+        params.putString("name", userName);
+        params.putBoolean("type", false);
+        intentHome.putExtras(params);
+        startActivity(intentHome);
         finish();
     }
 
@@ -241,30 +254,6 @@ public class ScheduleActivity extends CommonActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        for (Product productAux : itemsCart) {
-            productID = productAux.getId();
-            items = productAux.getUnit();
-            int itemsSale = productAux.getItensSale();
-            mDatabaseReference.child("bakeries").child(bakeryId).child("products").child(productID).child("itensSale").
-                    setValue(itemsSale);
-            /*mDatabaseReference.child("bakeries").child(bakeryId).child("products").child(productID).
-                    addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    int itemsSale = dataSnapshot.child("itensSale").getValue(Integer.class);
-                    items = itemsSale + items;
-                    mDatabaseReference.child("bakeries").child(bakeryId).child("products").child(productID).child("itensSale").
-                            setValue(items);
-                    Log.w(TAG, "itemsSale: " + itemsSale);
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Log.w(TAG, "getUser:onCancelled", databaseError.toException());
-                }
-            });
-            Log.w(TAG, "saiu");*/
-        }
     }
 
     private void sendNotification() {
@@ -277,29 +266,33 @@ public class ScheduleActivity extends CommonActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 2)
         {
-            returnCode = data.getStringExtra("returnCode");
-            switch (resultCode){
-                case 4:
-                    callFinishRequest();
-                    break;
-                case 2:
-                    showToast("Paganento não autorizado!");
-                    break;
-                case 99:
-                    showToast("Paganento não autorizado! Tempo esgotado!");
-                    break;
-                case 77:
-                    showToast("Paganento não autorizado! Cartão cancelado!");
-                    break;
-                case 70:
-                    showToast("Paganento não autorizado! Problemas com o cartão!");
-                    break;
-                case 78:
-                    showToast("Paganento não autorizado! Cartão bloqueado!");
-                    break;
-                case 57:
-                    showToast("Paganento não autorizado! Cartão expirado!");
-                    break;
+            if (resultCode == 2){
+                returnCode = data.getStringExtra("returnCode");
+                switch (returnCode){
+                    case "4":
+                        callFinishRequest();
+                        break;
+                    case "2":
+                        showToast("Paganento não autorizado!");
+                        break;
+                    case "99":
+                        showToast("Paganento não autorizado! Tempo esgotado!");
+                        break;
+                    case "77":
+                        showToast("Paganento não autorizado! Cartão cancelado!");
+                        break;
+                    case "70":
+                        showToast("Paganento não autorizado! Problemas com o cartão!");
+                        break;
+                    case "78":
+                        showToast("Paganento não autorizado! Cartão bloqueado!");
+                        break;
+                    case "57":
+                        showToast("Paganento não autorizado! Cartão expirado!");
+                        break;
+                }
+            } else if (resultCode == 1){
+                showToast("Pagamento cancelado!");
             }
         }
     }

@@ -35,6 +35,7 @@ import java.io.ByteArrayOutputStream;
 
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.domain.User;
+import gregmachado.com.panappfirebase.util.ImagePicker;
 
 /**
  * Created by gregmachado on 28/11/16.
@@ -43,7 +44,7 @@ public class SettingsActivity extends CommonActivity {
     private static final String TAG = SettingsActivity.class.getSimpleName();
     private FirebaseStorage storage = FirebaseStorage.getInstance();
     private StorageReference mStorageRef;
-    private TextView lblName, lblEmail, lblAddPhoto, tvDistance;
+    private TextView lblName, lblEmail, lblAddPhoto, tvDistance, lblVersion;
     private EditText etName;
     private ImageView ivUser, ivAddPhoto;
     private Button btnSaveChanges;
@@ -54,6 +55,7 @@ public class SettingsActivity extends CommonActivity {
     private boolean sendNotification, noPhoto;
     private int distance;
     private User user;
+    private static final int PICK_IMAGE_ID = 235;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,6 +77,7 @@ public class SettingsActivity extends CommonActivity {
                 user = dataSnapshot.getValue(User.class);
                 lblName.setText(user.getName());
                 lblEmail.setText(user.getEmail());
+                lblVersion.setText(getResources().getString(R.string.VERSION));
                 distance = user.getDistanceForSearchBakery();
                 tvDistance.setText(String.valueOf(distance));
                 seekBar.setProgress(distance);
@@ -141,6 +144,7 @@ public class SettingsActivity extends CommonActivity {
         lblEmail = (TextView) findViewById(R.id.lbl_email);
         lblName = (TextView) findViewById(R.id.lbl_name);
         lblAddPhoto = (TextView) findViewById(R.id.lbl_add_photo);
+        lblVersion = (TextView) findViewById(R.id.lbl_version);
         tvDistance = (TextView) findViewById(R.id.tv_distance);
         btnSaveChanges = (Button) findViewById(R.id.btn_save_changes);
         etName = (EditText) findViewById(R.id.et_name);
@@ -172,6 +176,13 @@ public class SettingsActivity extends CommonActivity {
             }
         });
         ivUser = (ImageView) findViewById(R.id.iv_user);
+        ivUser.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent chooseImageIntent = ImagePicker.getPickImageIntent(SettingsActivity.this);
+                startActivityForResult(chooseImageIntent, PICK_IMAGE_ID);
+            }
+        });
         ivAddPhoto = (ImageView) findViewById(R.id.iv_add_photo);
     }
 
@@ -260,6 +271,22 @@ public class SettingsActivity extends CommonActivity {
     private void clearErrorFields(EditText... editTexts) {
         for (EditText editText : editTexts) {
             editText.setError(null);
+        }
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        switch (requestCode) {
+            case PICK_IMAGE_ID:
+                Bitmap bitmap = ImagePicker.getImageFromResult(this, resultCode, data);
+                ivUser.setImageBitmap(bitmap);
+                lblAddPhoto.setVisibility(View.INVISIBLE);
+                ivAddPhoto.setVisibility(View.INVISIBLE);
+                noPhoto = false;
+                break;
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
+                break;
         }
     }
 }

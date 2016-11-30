@@ -48,7 +48,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="8dp"
-                    android:src="@drawable/ic_credit_card_black_36dp" />
+                    android:src="@drawable/ic_credit_card_black_24dp" />
 
                 <com.devspark.robototextview.widget.RobotoEditText
                     android:id="@+id/et_card_number"
@@ -60,91 +60,49 @@
                     android:background="@android:color/transparent"
                     android:hint="@string/card_number"
                     android:inputType="number"
-                    android:textSize="20sp" />
+                    android:textSize="16sp" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/ll_date_code"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:id="@+id/ll_date"
                 android:layout_below="@+id/ll_credit_card"
+                android:layout_width="wrap_content"
+                android:layout_height="40sp"
+                android:layout_marginTop="12sp"
                 android:layout_marginEnd="12dp"
                 android:layout_marginStart="12dp"
+                android:background="@drawable/shape_linear_layout"
                 android:orientation="horizontal">
 
-                <LinearLayout
-                    android:id="@+id/ll_date"
+                <ImageView
                     android:layout_width="wrap_content"
-                    android:layout_height="40sp"
-                    android:layout_marginTop="12sp"
-                    android:background="@drawable/shape_linear_layout"
-                    android:orientation="horizontal">
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="8dp"
+                    android:src="@drawable/ic_date_range_black_24dp" />
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="8dp"
-                        android:src="@drawable/ic_date_range_black_36dp" />
-
-                    <com.devspark.robototextview.widget.RobotoEditText
-                        android:id="@+id/et_date_expiration"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginEnd="4dp"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginRight="4dp"
-                        android:layout_marginStart="8dp"
-                        android:background="@android:color/transparent"
-                        android:hint="@string/expiration_date"
-                        android:inputType="number"
-                        android:textSize="20sp" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/ll_code"
+                <com.devspark.robototextview.widget.RobotoEditText
+                    android:id="@+id/et_date_expiration"
                     android:layout_width="match_parent"
-                    android:layout_height="40sp"
-                    android:layout_marginLeft="20dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="12sp"
-                    android:background="@drawable/shape_linear_layout"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginLeft="8dp"
-                        android:src="@drawable/ic_https_black_36dp" />
-
-                    <com.devspark.robototextview.widget.RobotoEditText
-                        android:id="@+id/et_code"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginRight="10dp"
-                        android:layout_marginStart="8dp"
-                        android:background="@android:color/transparent"
-                        android:hint="@string/code_abre"
-                        android:inputType="number"
-                        android:maxLines="3"
-                        android:textSize="20sp" />
-
-                </LinearLayout>
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@android:color/transparent"
+                    android:hint="@string/expiration_date"
+                    android:inputType="number"
+                    android:textSize="16sp" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/ll_name"
-                android:layout_width="match_parent"
+                android:id="@+id/ll_code"
+                android:layout_below="@+id/ll_date"
+                android:layout_width="wrap_content"
                 android:layout_height="40sp"
-                android:layout_below="@+id/ll_date_code"
                 android:layout_marginEnd="12dp"
                 android:layout_marginStart="12dp"
                 android:layout_marginTop="12sp"
@@ -156,7 +114,42 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginLeft="8dp"
-                    android:src="@drawable/ic_account_circle_black_36dp" />
+                    android:src="@drawable/ic_https_black_24dp" />
+
+                <com.devspark.robototextview.widget.RobotoEditText
+                    android:id="@+id/et_code"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginStart="8dp"
+                    android:background="@android:color/transparent"
+                    android:hint="@string/code"
+                    android:inputType="number"
+                    android:maxLines="3"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_name"
+                android:layout_width="match_parent"
+                android:layout_height="40sp"
+                android:layout_below="@+id/ll_code"
+                android:layout_marginEnd="12dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="12sp"
+                android:background="@drawable/shape_linear_layout"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="8dp"
+                    android:src="@drawable/ic_account_circle_black_24dp" />
 
                 <com.devspark.robototextview.widget.RobotoEditText
                     android:id="@+id/et_name"
@@ -168,7 +161,7 @@
                     android:background="@android:color/transparent"
                     android:hint="@string/name"
                     android:inputType="textCapCharacters"
-                    android:textSize="20sp" />
+                    android:textSize="16sp" />
 
             </LinearLayout>
 
@@ -183,15 +176,14 @@
                 android:background="@drawable/shape_linear_rectangle"
                 android:orientation="horizontal">
 
-                <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+                <Spinner
                     android:id="@+id/spinner_flag"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/flag"
                     android:paddingLeft="20dp"
                     android:paddingStart="20dp"
-                    android:textSize="20sp"
-                    app:met_floatingLabel="normal" />
+                    android:textSize="16sp" />
 
             </LinearLayout>
 

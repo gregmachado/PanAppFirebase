@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">PanApp</string>
+    <string name="VERSION">1.0.0</string>
     <string name="action_settings">Configurações</string>
     <string name="error_google_sign_in">Erro ao realizar Login com a conta do Google!</string>
     <string name="google_sign_in_key">457659997751-49rg9hs7a7hmqmsqk2c5t05r2dgkscbg.apps.googleusercontent.com</string>
@@ -147,4 +148,6 @@
     <string name="search_bakery_until">Buscar estabelecimentos até:</string>
     <string name="notification">Notificações</string>
     <string name="save_changes">salvar alterações</string>
+    <string name="version">versão</string>
+    <string name="code">Código</string>
 </resources>

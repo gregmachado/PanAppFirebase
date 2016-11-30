@@ -138,7 +138,8 @@ public class ProductListActivity extends CommonActivity {
     protected void initViews() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_product);
         setSupportActionBar(toolbar);
-        setTitle("Produtos - " + name);
+        setTitle("Produtos");
+        toolbar.setSubtitle(name);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         tvNoProducts = (TextView) findViewById(R.id.tv_no_products);
