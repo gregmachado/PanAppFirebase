@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#dcdbdb"
+    android:background="#CFCFCF"
     android:orientation="vertical"
     tools:context=".activity.BakeryListActivity">
 
@@ -23,7 +23,7 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <ProgressBar
             android:id="@+id/simpleProgressBar"
@@ -58,12 +58,10 @@
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_bakery"
+            android:paddingBottom="40dp"
+            android:clipToPadding="false"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_below="@+id/rv_bakery" />
     </RelativeLayout>
 </LinearLayout>

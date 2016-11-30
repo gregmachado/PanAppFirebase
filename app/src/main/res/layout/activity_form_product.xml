@@ -122,16 +122,24 @@
 
         </LinearLayout>
 
-        <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
-            android:id="@+id/spinner_category"
+        <LinearLayout
+            android:id="@+id/ll_spinner"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="36sp"
             android:layout_marginTop="12sp"
-            android:hint="@string/category"
-            android:paddingLeft="20dp"
-            android:paddingStart="20dp"
-            android:textSize="20sp"
-            app:met_floatingLabel="normal" />
+            android:background="@drawable/shape_linear_rectangle"
+            android:orientation="horizontal">
+
+            <Spinner
+                android:id="@+id/spinner_category"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/category"
+                android:layout_marginStart="4dp"
+                android:layout_marginLeft="4dp"
+                android:textSize="20sp" />
+
+        </LinearLayout>
 
         <Button
             android:id="@+id/btn_save_product"

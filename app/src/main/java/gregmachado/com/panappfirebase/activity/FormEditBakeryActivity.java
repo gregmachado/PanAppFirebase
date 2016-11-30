@@ -2,9 +2,13 @@ package gregmachado.com.panappfirebase.activity;
 
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -13,16 +17,23 @@ import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,6 +45,7 @@ import gregmachado.com.panappfirebase.domain.Adress;
 import gregmachado.com.panappfirebase.domain.Bakery;
 import gregmachado.com.panappfirebase.domain.Product;
 import gregmachado.com.panappfirebase.util.CustomTimePickerDialog;
+import gregmachado.com.panappfirebase.util.ImagePicker;
 
 /**
  * Created by gregmachado on 05/11/16.
@@ -41,14 +53,18 @@ import gregmachado.com.panappfirebase.util.CustomTimePickerDialog;
 public class FormEditBakeryActivity extends CommonActivity {
     private static final String TAG = FormEditBakeryActivity.class.getSimpleName();
     private String bakeryId, userId, startTime, finishTime, cnpj, corporateName, fantasyName, phone, email, street, district, state, city;
-    private TextView lblStartTime, lblFinishTime, lblCnpj, lblCorporateName;
+    private TextView lblStartTime, lblFinishTime, lblCnpj, lblCorporateName, tvAddPhoto;
     private EditText inputFantasyname, inputPhone, inputEmail, inputStreet, inputNumber, inputDistrict, inputState, inputCity;
     private Switch switchDelivery;
-    private boolean hasDelivery, isRegister;
+    private boolean hasDelivery, isRegister, noPhoto;
     private Double latitude, longitude;
     private int number;
     private Resources resources;
     private List<Product> products;
+    private ImageView ivBakery, ivAddPhoto;
+    private FirebaseStorage storage = FirebaseStorage.getInstance();
+    private StorageReference mStorageRef;
+    private static final int PICK_IMAGE_ID = 235;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -103,6 +119,27 @@ public class FormEditBakeryActivity extends CommonActivity {
                 inputEmail.setText(bakery.getEmail());
                 inputPhone.setText(bakery.getFone());
                 products = bakery.getProductList();
+                if(bakery.getBakeryImage() == null){
+                    ivAddPhoto.setVisibility(View.VISIBLE);
+                    tvAddPhoto.setVisibility(View.VISIBLE);
+                    noPhoto = true;
+                } else {
+                    StorageReference mStorage = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com");
+                    StorageReference imageRef = mStorage.child(bakeryId);
+                    final long ONE_MEGABYTE = 1024 * 1024;
+                    imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                            ivBakery.setImageBitmap(bitmap);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            // Handle any errors
+                        }
+                    });
+                }
             }
 
             @Override
@@ -157,6 +194,16 @@ public class FormEditBakeryActivity extends CommonActivity {
                 hasDelivery = isChecked;
             }
         });
+        ivAddPhoto = (ImageView) findViewById(R.id.iv_add_photo);
+        ivBakery = (ImageView) findViewById(R.id.iv_bakery);
+        tvAddPhoto = (TextView) findViewById(R.id.tv_add_photo);
+        ivBakery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent chooseImageIntent = ImagePicker.getPickImageIntent(FormEditBakeryActivity.this);
+                startActivityForResult(chooseImageIntent, PICK_IMAGE_ID);
+            }
+        });
     }
 
     public void sendEditBakery(View view) {
@@ -176,7 +223,7 @@ public class FormEditBakeryActivity extends CommonActivity {
     }
 
     private Bakery initBakery() {
-        Bakery bakery = new Bakery();
+        final Bakery bakery = new Bakery();
         bakery.setId(bakeryId);
         bakery.setUserID(userId);
         bakery.setFone(phone);
@@ -197,6 +244,38 @@ public class FormEditBakeryActivity extends CommonActivity {
         adress.setLongitude(longitude);
         bakery.setAdress(adress);
         bakery.setProductList(products);
+        if (!noPhoto) {
+            mStorageRef = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com").child(bakeryId);
+            mStorageRef.delete().addOnSuccessListener(new OnSuccessListener() {
+                @Override
+                public void onSuccess(Object o) {
+                }
+            });
+        }
+        ivBakery.setDrawingCacheEnabled(true);
+        ivBakery.buildDrawingCache();
+        Bitmap bitmap = ivBakery.getDrawingCache();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        UploadTask uploadTask = mStorageRef.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                closeProgressDialog();
+                showToast("Erro ao gravar imagem!");
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                if (downloadUrl != null) {
+                    bakery.setBakeryImage(downloadUrl.toString());
+                }
+            }
+        });
         return bakery;
     }
 
@@ -324,4 +403,20 @@ public class FormEditBakeryActivity extends CommonActivity {
             lblFinishTime.setText(String.format("%02d", hourOfDay) + ":" +String.format("%02d", minute));
         }
     };
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        switch (requestCode) {
+            case PICK_IMAGE_ID:
+                Bitmap bitmap = ImagePicker.getImageFromResult(this, resultCode, data);
+                ivBakery.setImageBitmap(bitmap);
+                tvAddPhoto.setVisibility(View.INVISIBLE);
+                ivAddPhoto.setVisibility(View.INVISIBLE);
+                noPhoto = false;
+                break;
+            default:
+                super.onActivityResult(requestCode, resultCode, data);
+                break;
+        }
+    }
 }

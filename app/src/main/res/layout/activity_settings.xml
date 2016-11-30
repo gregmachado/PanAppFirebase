@@ -252,7 +252,6 @@
                     android:textSize="18sp"
                     app:typeface="roboto_light_italic" />
 
-
                 <Switch
                     android:id="@+id/switch_notification"
                     android:layout_alignParentEnd="true"
@@ -266,7 +265,6 @@
             </RelativeLayout>
 
             <Button
-                android:visibility="invisible"
                 android:id="@+id/btn_save_changes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

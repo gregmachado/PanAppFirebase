@@ -58,7 +58,7 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private Resources resources;
-    private EditText inputCnpj, inputAdminPassword, inputEmail;
+    private EditText inputCnpj, inputAdminPassword;
     private String corporateName, fantasyName, fone, email, cnpj, street, district, city, adminPassword, cnpjAux;
     private int number;
     private static final String TAG = RegisterBakeryActivity.class.getSimpleName();
@@ -154,18 +154,13 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
     private boolean validateFields() {
         cnpj = inputCnpj.getText().toString().trim();
         adminPassword = inputAdminPassword.getText().toString().trim();
-        email = inputEmail.getText().toString().trim();
-        return (!isEmptyFields(adminPassword, email) && hasSizeValid(cnpj, adminPassword) && emailValid(email));
+        return (!isEmptyFields(adminPassword) && hasSizeValid(cnpj, adminPassword));
     }
 
-    private boolean isEmptyFields(String adminPassword, String email) {
+    private boolean isEmptyFields(String adminPassword) {
         if (TextUtils.isEmpty(adminPassword)) {
             inputAdminPassword.requestFocus();
             inputAdminPassword.setError(resources.getString(R.string.register_password_required));
-            return true;
-        } else  if (TextUtils.isEmpty(email)) {
-            inputEmail.requestFocus();
-            inputEmail.setError(resources.getString(R.string.register_email_required));
             return true;
         }
             return false;
@@ -185,22 +180,6 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
         return true;
     }
 
-    private boolean emailValid(String email) {
-
-        String Expn = "^(([\\w-]+\\.)+[\\w-]+|([a-zA-Z]{1}|[\\w-]{2,}))@"
-                + "((([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
-                + "[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\."
-                + "([0-1]?[0-9]{1,2}|25[0-5]|2[0-4][0-9])\\.([0-1]?"
-                + "[0-9]{1,2}|25[0-5]|2[0-4][0-9])){1}|"
-                + "([a-zA-Z]+[\\w-]+\\.)+[a-zA-Z]{2,4})$";
-        if (email.matches(Expn) && email.length() > 0) {
-            return true;
-        } else {
-            inputEmail.requestFocus();
-            inputEmail.setError(resources.getString(R.string.register_email_char_invalid));
-            return false;
-        }
-    }
 
     /**
      * Limpa os ícones e as mensagens de erro dos campos desejados
@@ -319,7 +298,6 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
                 icNotFound.setVisibility(View.INVISIBLE);
                 icFound.setVisibility(View.VISIBLE);
                 btnAddBakery.setEnabled(true);
-                inputEmail.setText(emailJson);
             } else {
                 tvResult.setText(R.string.bakery_not_found);
                 icFound.setVisibility(View.INVISIBLE);
@@ -372,7 +350,6 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
     protected void initViews() {
         inputCnpj = (EditText) findViewById(R.id.input_cnpj);
         inputAdminPassword = (EditText) findViewById(R.id.input_admin_password);
-        inputEmail = (EditText) findViewById(R.id.input_email);
         tvResult = (TextView) findViewById(R.id.tv_result);
         icFound = (ImageView) findViewById(R.id.ic_bakery_found);
         icNotFound = (ImageView) findViewById(R.id.ic_bakery_not_found);
@@ -382,7 +359,7 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
     protected void initUser() {
         user = new User();
         user.setName(fantasyName);
-        user.setEmail(email);
+        user.setEmail("testepadaria09@gmail.com");
         final Encryption cripto = Encryption.getInstance(adminPassword);
         user.setPassword(cripto.getEncryptPassword());
         user.setType(true);
@@ -392,7 +369,7 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
     private void initBakery() {
         bakery = new Bakery();
         adress = new Adress(user.getId(), street, district, city, number, latitude, longitude);
-        bakery.setEmail(email);
+        bakery.setEmail("testepadaria09@gmail.com");
         bakery.setAdress(adress);
         bakery.setCnpj(cnpj);
         bakery.setCorporateName(corporateName);
@@ -420,7 +397,6 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
         };
         inputCnpj.addTextChangedListener(textWatcher);
         inputAdminPassword.addTextChangedListener(textWatcher);
-        inputEmail.addTextChangedListener(textWatcher);
     }
 
     @Override

@@ -2,7 +2,6 @@ package gregmachado.com.panappfirebase.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -32,7 +31,7 @@ public class HistoricActivity extends CommonActivity{
     private ImageView ivHistoric;
     private RecyclerView rvHistoric;
     private HistoricAdapter adapter;
-    private CardView cardView;
+    //private CardView cardView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,7 +73,7 @@ public class HistoricActivity extends CommonActivity{
                     if (ivHistoric.getVisibility() == View.VISIBLE) {
                         ivHistoric.setVisibility(View.GONE);
                     }
-                    cardView.setVisibility(View.VISIBLE);
+                    //cardView.setVisibility(View.VISIBLE);
                     adapter = new HistoricAdapter(mDatabaseReference.child(reference).child(id).child("historic").getRef(),
                             HistoricActivity.this);
                     rvHistoric.setAdapter(adapter);
@@ -82,7 +81,7 @@ public class HistoricActivity extends CommonActivity{
                     closeProgressBar();
                     tvNoHistoric.setVisibility(View.VISIBLE);
                     ivHistoric.setVisibility(View.VISIBLE);
-                    cardView.setVisibility(View.INVISIBLE);
+                    //cardView.setVisibility(View.INVISIBLE);
                 }
             }
 
@@ -103,7 +102,7 @@ public class HistoricActivity extends CommonActivity{
         tvNoHistoric = (TextView) findViewById(R.id.tv_no_historic);
         progressBar = (ProgressBar) findViewById(R.id.simpleProgressBar);
         ivHistoric = (ImageView) findViewById(R.id.ic_historic);
-        cardView = (CardView) findViewById(R.id.card_historic);
+        //cardView = (CardView) findViewById(R.id.card_historic);
         rvHistoric = (RecyclerView) findViewById(R.id.rv_historic);
     }
 

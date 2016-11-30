@@ -65,11 +65,15 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
         super.onCreate(savedInstanceState);
         context = getApplicationContext();
         setContentView(R.layout.activity_bakery_list);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
+        Intent it = getIntent();
+        params = it.getExtras();
+        if (params != null) {
+            userName = params.getString("name");
+        }
+        firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        assert firebaseUser != null;
+        userID = firebaseUser.getUid();
         LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
         boolean enabled = service
                 .isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -82,16 +86,12 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
         }
         callConnection();
         initViews();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         openProgressBar();
-        Intent it = getIntent();
-        params = it.getExtras();
-        if (params != null) {
-            userName = params.getString("name");
-        }
-        firebaseAuth = FirebaseAuth.getInstance();
-        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-        assert firebaseUser != null;
-        userID = firebaseUser.getUid();
         mDatabaseReference.child("users").child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -135,12 +135,26 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
     }
 
     private synchronized void callConnection() {
-        googleApiClient = new GoogleApiClient.Builder(this)
-                .addOnConnectionFailedListener(this)
-                .addConnectionCallbacks(this)
-                .addApi(LocationServices.API)
-                .build();
+        if (googleApiClient == null) {
+            googleApiClient = new GoogleApiClient.Builder(this)
+                    .addOnConnectionFailedListener(this)
+                    .addConnectionCallbacks(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
+    }
+
+    protected void onStart() {
         googleApiClient.connect();
+        super.onStart();
+    }
+
+    /*
+      * Ao finalizar, desconectamos!
+     */
+    protected void onStop() {
+        googleApiClient.disconnect();
+        super.onStop();
     }
 
     @Override
@@ -158,29 +172,15 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
         }
 
         if (l != null) {
-            Log.i("Log", "onConnected(" + bundle + ")");
-            Log.i("Log", "latitude: " + l.getLatitude());
-            Log.i("Log", "longitude: " + l.getLongitude());
+            Log.i(TAG, "onConnected(" + bundle + ")");
+            Log.i(TAG, "latitude: " + l.getLatitude());
+            Log.i(TAG, "longitude: " + l.getLongitude());
             userLatitude = l.getLatitude();
             userLongitude = l.getLongitude();
-            /*if (userLatitude != null) {
+            if (userLatitude != null) {
                 mDatabaseReference.child("users").child(userID).child("lastLatitude").setValue(userLatitude);
                 mDatabaseReference.child("users").child(userID).child("lastLongitude").setValue(userLongitude);
-            } else {
-                mDatabaseReference.child("users").child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        User user = dataSnapshot.getValue(User.class);
-                        userLatitude = user.getLastLatitude();
-                        userLongitude = user.getLastLongitude();
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        Log.w(TAG, "getUser:onCancelled", databaseError.toException());
-                    }
-                });
-            }*/
+            }
         }
     }
 
@@ -191,7 +191,7 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.i("Log", "onConnectionFailed(" + connectionResult + ")");
+        Log.i(TAG, "onConnectionFailed(" + connectionResult + ")");
     }
 
     @Override

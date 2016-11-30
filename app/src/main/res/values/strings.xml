@@ -150,4 +150,7 @@
     <string name="save_changes">salvar alterações</string>
     <string name="version">versão</string>
     <string name="code">Código</string>
+    <string name="cep">CEP</string>
+    <string name="complement">Complemento</string>
+    <string name="reference">Referência</string>
 </resources>

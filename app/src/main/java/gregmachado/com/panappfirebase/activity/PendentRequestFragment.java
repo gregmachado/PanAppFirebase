@@ -56,7 +56,6 @@ public class PendentRequestFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_pendent_request, container, false);
-
         simpleProgressBar = (ProgressBar) v.findViewById(R.id.simpleProgressBar);
         ic_request = (ImageView) v.findViewById(R.id.ic_pendent_request);
         ic_request.setVisibility(View.INVISIBLE);

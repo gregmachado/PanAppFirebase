@@ -52,7 +52,7 @@ public class SettingsActivity extends CommonActivity {
     private Switch switchNotification;
     private String name, email, id;
     private Resources resources;
-    private boolean sendNotification, noPhoto;
+    private boolean sendNotification, noPhoto, changeName = false;
     private int distance;
     private User user;
     private static final int PICK_IMAGE_ID = 235;
@@ -75,6 +75,7 @@ public class SettingsActivity extends CommonActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 user = dataSnapshot.getValue(User.class);
+                name = user.getName();
                 lblName.setText(user.getName());
                 lblEmail.setText(user.getEmail());
                 lblVersion.setText(getResources().getString(R.string.VERSION));
@@ -92,7 +93,7 @@ public class SettingsActivity extends CommonActivity {
                 } else {
                     noPhoto = false;
                     StorageReference mStorage = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com");
-                    StorageReference imageRef = mStorage.child(user.getId());
+                    StorageReference imageRef = mStorage.child(id);
                     final long ONE_MEGABYTE = 1024 * 1024;
                     imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                         @Override
@@ -190,6 +191,7 @@ public class SettingsActivity extends CommonActivity {
         lblName.setVisibility(View.INVISIBLE);
         etName.setVisibility(View.VISIBLE);
         etName.setText(name);
+        changeName = true;
     }
 
     public void saveChanges(View view) {
@@ -204,39 +206,50 @@ public class SettingsActivity extends CommonActivity {
                     public void onSuccess(Object o) {
                     }
                 });
-                ivUser.setDrawingCacheEnabled(true);
-                ivUser.buildDrawingCache();
-                Bitmap bitmap = ivUser.getDrawingCache();
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-                byte[] data = baos.toByteArray();
-
-                UploadTask uploadTask = mStorageRef.putBytes(data);
-                uploadTask.addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        closeProgressDialog();
-                        showToast("Erro ao gravar imagem!");
-                    }
-                }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                        if (downloadUrl != null) {
-                            user.setImage(downloadUrl.toString());
-                        }
-                    }
-                });
             }
-            mDatabaseReference.child("users").child(id).setValue(user);
+            ivUser.setDrawingCacheEnabled(true);
+            ivUser.buildDrawingCache();
+            Bitmap bitmap = ivUser.getDrawingCache();
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+            byte[] data = baos.toByteArray();
+
+            UploadTask uploadTask = mStorageRef.putBytes(data);
+            uploadTask.addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    closeProgressDialog();
+                    showToast("Erro ao gravar imagem!");
+                }
+            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                    if (downloadUrl != null) {
+                        user.setImage(downloadUrl.toString());
+                    }
+                }
+            });
+
+            mDatabaseReference.child("users").child(id).child("name").setValue(name);
+            mDatabaseReference.child("users").child(id).child("distanceForSearchBakery").setValue(distance);
+            mDatabaseReference.child("users").child(id).child("sendNotification").setValue(sendNotification);
+            mDatabaseReference.child("users").child(id).child("image").setValue(user.getImage());
+            showToast("Usuário atualizado!");
+        } else {
+            showToast("Erro ao enviar dados!");
         }
     }
 
     private boolean validateFields() {
-        name = etName.getText().toString().trim();
         if (distance > 5) {
-            return (!isEmptyFields(name));
+            if (changeName) {
+                name = etName.getText().toString().trim();
+                return (!isEmptyFields(name));
+            } else {
+                return true;
+            }
         } else {
             showToast("Distância minima de 5 kms!");
             return false;

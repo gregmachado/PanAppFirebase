@@ -1,17 +1,25 @@
 package gregmachado.com.panappfirebase.activity;
 
+import android.Manifest;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.google.firebase.database.DatabaseReference;
 
@@ -20,6 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import br.com.jansenfelipe.androidmask.MaskEditTextChangedListener;
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.domain.Adress;
 import gregmachado.com.panappfirebase.util.LibraryClass;
@@ -31,14 +40,20 @@ public class FormAdressActivity extends CommonActivity {
 
     private static final String TAG = FormProductActivity.class.getSimpleName();
     private ProgressDialog progressDialog;
-    private EditText inputNameAdress, inputCep, inputStreet, inputNumber, inputComplement, inputDistrict, inputCity, inputState, inputReference;
+    private EditText inputNameAdress, inputCep, inputStreet, inputNumber, inputComplement,
+            inputDistrict, inputCity, inputReference, inputState;
     private String cep, adressName, street, complement, district, city, state, reference;
     private Resources resources;
     private String userId;
     private Integer number;
     private Boolean update = false;
+    private Spinner spState;
     private DatabaseReference mDatabaseReference;
     private Double latitude, longitude;
+    private ArrayAdapter<String> dataAdapter;
+    private Location location;
+    private LocationManager locationManager;
+    private Address a;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -108,8 +123,8 @@ public class FormAdressActivity extends CommonActivity {
         complement = (inputComplement.getText().toString().trim());
         cep = (inputCep.getText().toString().trim());
         city = (inputCity.getText().toString().trim());
-        state = (inputState.getText().toString().trim());
         reference = (inputReference.getText().toString().trim());
+        state = (inputState.getText().toString().trim());
         return (!isEmptyFields(adressName, street));
     }
 
@@ -147,6 +162,8 @@ public class FormAdressActivity extends CommonActivity {
         inputNameAdress.addTextChangedListener(textWatcher);
         inputCep = (EditText) findViewById(R.id.input_cep);
         inputCep.addTextChangedListener(textWatcher);
+        MaskEditTextChangedListener maskCep = new MaskEditTextChangedListener("#####-###", inputCep);
+        inputCep.addTextChangedListener(maskCep);
         inputCity = (EditText) findViewById(R.id.input_city);
         inputCity.addTextChangedListener(textWatcher);
         inputComplement = (EditText) findViewById(R.id.input_complement);
@@ -163,7 +180,7 @@ public class FormAdressActivity extends CommonActivity {
         inputStreet.addTextChangedListener(textWatcher);
     }
 
-    private Adress initAdress(){
+    private Adress initAdress() {
         Adress adress = new Adress();
         adress.setAdressName(adressName);
         adress.setStreet(street);
@@ -179,7 +196,7 @@ public class FormAdressActivity extends CommonActivity {
     }
 
     public void addAdress(View view) {
-        if(validateFields()){
+        if (validateFields()) {
             Adress adress = initAdress();
             getLocation();
             adress.setLatitude(latitude);
@@ -213,5 +230,43 @@ public class FormAdressActivity extends CommonActivity {
             latitude = a.getLatitude();
             longitude = a.getLongitude();
         }
+    }
+
+    public void getMyLocation(View view) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+        } else {
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        }
+
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
+        try {
+            a = searchAddress(latitude,longitude);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        inputStreet.setText(a.getAddressLine(0));
+        inputCity.setText(a.getLocality());
+        inputCep.setText(a.getPostalCode());
+        inputDistrict.setText(a.getSubLocality());
+        inputState.setText(a.getAdminArea());
+    }
+
+    private Address searchAddress(double latitude, double longitude) throws IOException{
+
+        Geocoder geocoder;
+        Address address = null;
+        List<Address> addresses;
+
+        geocoder = new Geocoder(getApplicationContext());
+        addresses = geocoder.getFromLocation(latitude, longitude, 1);
+        if (addresses.size() > 0) {
+            address = addresses.get(0);
+        }
+        return address;
     }
 }

@@ -7,179 +7,246 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_margin="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="36sp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12sp"
+            android:background="@drawable/shape_linear_layout"
             android:orientation="horizontal">
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/input_layout_cep"
-                android:layout_width="200dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp">
-
-                <EditText
-                    android:id="@+id/input_cep"
-                    android:layout_width="180dp"
-                    android:layout_height="wrap_content"
-                    android:hint="CEP"
-                    android:maxLength="9"
-                    android:inputType="number"
-                    android:singleLine="true" />
-            </android.support.design.widget.TextInputLayout>
-
-            <Button
-                android:id="@+id/btn_search_by_cnpj"
+            <com.devspark.robototextview.widget.RobotoEditText
+                android:id="@+id/input_cep"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/colorPrimaryDark"
-                android:text="Buscar"
-                android:layout_marginLeft="0dp"
-                android:layout_marginTop="6dp"
-                android:elevation="4dp"
-                android:textColor="#ffffff"/>
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:background="@android:color/transparent"
+                android:hint="@string/cep"
+                android:inputType="number"
+                android:textSize="16sp" />
 
         </LinearLayout>
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/input_layout_adress_name"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp">
+            android:layout_height="36sp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12sp"
+            android:background="@drawable/shape_linear_layout"
+            android:orientation="horizontal">
 
-            <EditText
+            <com.devspark.robototextview.widget.RobotoEditText
                 android:id="@+id/input_adress_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:background="@android:color/transparent"
                 android:hint="Nome Ex.: Minha Casa"
-                android:inputType="textCapWords"
-                android:singleLine="true" />
-        </android.support.design.widget.TextInputLayout>
+                android:inputType="textCapSentences"
+                android:textSize="16sp" />
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/input_layout_street"
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp">
+            android:layout_height="36sp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12sp"
+            android:background="@drawable/shape_linear_layout"
+            android:orientation="horizontal">
 
-            <EditText
+            <com.devspark.robototextview.widget.RobotoEditText
                 android:id="@+id/input_street"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Rua"
-                android:inputType="textCapWords"
-                android:singleLine="true" />
-        </android.support.design.widget.TextInputLayout>
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:background="@android:color/transparent"
+                android:hint="@string/street"
+                android:inputType="textCapSentences"
+                android:textSize="16sp" />
 
-        <LinearLayout
+        </LinearLayout>
+
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/input_layout_number"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_weight="2"
-                android:paddingRight="2dp">
+            <LinearLayout
+                android:layout_width="120sp"
+                android:layout_height="36sp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_marginEnd="12dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="12sp"
+                android:background="@drawable/shape_linear_layout"
+                android:orientation="horizontal">
 
-                <EditText
+                <com.devspark.robototextview.widget.RobotoEditText
                     android:id="@+id/input_number"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Número"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@android:color/transparent"
+                    android:hint="@string/number"
                     android:inputType="number"
-                    android:singleLine="true" />
-            </android.support.design.widget.TextInputLayout>
+                    android:textSize="16sp" />
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/input_layout_complement"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:layout_weight="1"
-                android:paddingLeft="2dp">
+            </LinearLayout>
 
-                <EditText
+            <LinearLayout
+                android:layout_width="182sp"
+                android:layout_height="36sp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="12dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="12sp"
+                android:background="@drawable/shape_linear_layout"
+                android:orientation="horizontal">
+
+                <com.devspark.robototextview.widget.RobotoEditText
                     android:id="@+id/input_complement"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Complemento"
-                    android:inputType="textCapWords"
-                    android:singleLine="true" />
-            </android.support.design.widget.TextInputLayout>
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:background="@android:color/transparent"
+                    android:hint="@string/complement"
+                    android:inputType="textCapSentences"
+                    android:textSize="16sp" />
 
-        </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/input_layout_district"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp">
+            android:layout_height="36sp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12sp"
+            android:background="@drawable/shape_linear_layout"
+            android:orientation="horizontal">
 
-            <EditText
+            <com.devspark.robototextview.widget.RobotoEditText
                 android:id="@+id/input_district"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Bairro"
-                android:inputType="textCapWords"
-                android:singleLine="true" />
-        </android.support.design.widget.TextInputLayout>
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:background="@android:color/transparent"
+                android:hint="@string/district"
+                android:inputType="textCapSentences"
+                android:textSize="16sp" />
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/input_layout_city"
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp">
+            android:layout_height="36sp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12sp"
+            android:background="@drawable/shape_linear_layout"
+            android:orientation="horizontal">
 
-            <EditText
+            <com.devspark.robototextview.widget.RobotoEditText
                 android:id="@+id/input_city"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Cidade"
-                android:inputType="textCapWords"
-                android:singleLine="true" />
-        </android.support.design.widget.TextInputLayout>
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:background="@android:color/transparent"
+                android:hint="@string/city"
+                android:inputType="textCapSentences"
+                android:textSize="16sp" />
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/input_layout_state"
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp">
+            android:layout_height="36sp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12sp"
+            android:background="@drawable/shape_linear_layout"
+            android:orientation="horizontal">
 
-            <EditText
+            <com.devspark.robototextview.widget.RobotoEditText
                 android:id="@+id/input_state"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Estado"
-                android:inputType="textCapWords"
-                android:singleLine="true" />
-        </android.support.design.widget.TextInputLayout>
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:background="@android:color/transparent"
+                android:hint="@string/state"
+                android:inputType="textCapSentences"
+                android:textSize="16sp" />
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/input_layout_reference"
+        </LinearLayout>
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp">
+            android:layout_height="36sp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="12sp"
+            android:background="@drawable/shape_linear_layout"
+            android:orientation="horizontal">
 
-            <EditText
+            <com.devspark.robototextview.widget.RobotoEditText
                 android:id="@+id/input_reference"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Referência"
-                android:inputType="textCapWords"
-                android:singleLine="true" />
-        </android.support.design.widget.TextInputLayout>
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:background="@android:color/transparent"
+                android:hint="@string/reference"
+                android:inputType="textCapSentences"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_get_my_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginStart="12dp"
+            android:background="@drawable/btn_radius_28dp_dark_color"
+            android:elevation="4dp"
+            android:textColor="@color/white"
+            android:onClick="getMyLocation"
+            android:text="Localize-me" />
 
         <Button
             android:id="@+id/btn_add_adress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:background="@color/colorPrimaryDark"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="40dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginStart="12dp"
+            android:background="@drawable/btn_radius_28dp_primary_color"
             android:elevation="4dp"
             android:textColor="@color/white"
             android:onClick="addAdress"
