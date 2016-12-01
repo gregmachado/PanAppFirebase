@@ -52,7 +52,8 @@ public class FormEditBakeryActivity extends CommonActivity {
     private static final String TAG = FormEditBakeryActivity.class.getSimpleName();
     private String bakeryId, userId, startTime, finishTime, cnpj, corporateName, fantasyName, phone, email, street, district, state, city;
     private TextView lblStartTime, lblFinishTime, lblCnpj, lblCorporateName, tvAddPhoto;
-    private EditText inputFantasyname, inputPhone, inputEmail, inputStreet, inputNumber, inputDistrict, inputState, inputCity;
+    private TextView inputEmail, inputStreet, inputNumber, inputDistrict, inputState, inputCity;
+    private EditText inputFantasyname, inputPhone;
     private Switch switchDelivery;
     private boolean hasDelivery, isRegister, noPhoto;
     private Double latitude, longitude;
@@ -166,22 +167,16 @@ public class FormEditBakeryActivity extends CommonActivity {
         lblCorporateName = (TextView) findViewById(R.id.lbl_corporate_name);
         lblStartTime = (TextView) findViewById(R.id.tv_start_time);
         lblFinishTime = (TextView) findViewById(R.id.tv_finish_time);
-        inputDistrict = (EditText) findViewById(R.id.input_district);
-        inputDistrict.addTextChangedListener(textWatcher);
-        inputEmail = (EditText) findViewById(R.id.input_email);
-        inputEmail.addTextChangedListener(textWatcher);
+        inputDistrict = (TextView) findViewById(R.id.input_district);
+        inputEmail = (TextView) findViewById(R.id.input_email);
         inputFantasyname = (EditText) findViewById(R.id.input_fantasy_name);
         inputFantasyname.addTextChangedListener(textWatcher);
-        inputNumber = (EditText) findViewById(R.id.input_number);
-        inputNumber.addTextChangedListener(textWatcher);
+        inputNumber = (TextView) findViewById(R.id.input_number);
         inputPhone = (EditText) findViewById(R.id.input_fone);
         inputPhone.addTextChangedListener(textWatcher);
-        inputState = (EditText) findViewById(R.id.input_state);
-        inputState.addTextChangedListener(textWatcher);
-        inputStreet = (EditText) findViewById(R.id.input_street);
-        inputStreet.addTextChangedListener(textWatcher);
-        inputCity = (EditText) findViewById(R.id.input_city);
-        inputCity.addTextChangedListener(textWatcher);
+        inputState = (TextView) findViewById(R.id.input_state);
+        inputStreet = (TextView) findViewById(R.id.input_street);
+        inputCity = (TextView) findViewById(R.id.input_city);
         switchDelivery = (Switch) findViewById(R.id.switch_delivery);
         switchDelivery.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -291,49 +286,15 @@ public class FormEditBakeryActivity extends CommonActivity {
 
     private boolean validateFields() {
         fantasyName = inputFantasyname.getText().toString().trim();
-        street = (inputStreet.getText().toString().trim());
-        number = Integer.parseInt(inputNumber.getText().toString().trim());
-        district = (inputDistrict.getText().toString().trim());
-        cnpj = (lblCnpj.getText().toString().trim());
-        city = (inputCity.getText().toString().trim());
-        state = (inputState.getText().toString().trim());
-        corporateName = (lblCorporateName.getText().toString().trim());
         startTime = (lblStartTime.getText().toString().trim());
         finishTime = (lblFinishTime.getText().toString().trim());
-        phone = (inputPhone.getText().toString().trim());
-        email = (inputEmail.getText().toString().trim());
-        return (!isEmptyFields(fantasyName, street, number, district, city, state, phone, email));
+        return (!isEmptyFields(fantasyName, phone));
     }
 
-    private boolean isEmptyFields(String name, String street, int number, String district, String city, String state,
-                                  String phone, String email) {
+    private boolean isEmptyFields(String name, String phone) {
         if (TextUtils.isEmpty(name)) {
             inputFantasyname.requestFocus(); //seta o foco para o campo name
             inputFantasyname.setError(resources.getString(R.string.register_name_required));
-            return true;
-        } else if (TextUtils.isEmpty(street)) {
-            inputStreet.requestFocus(); //seta o foco para o campo email
-            inputStreet.setError(resources.getString(R.string.register_field_required));
-            return true;
-        } else if (TextUtils.isEmpty(email)) {
-            inputEmail.requestFocus();
-            inputEmail.setError(resources.getString(R.string.register_field_required));
-            return true;
-        } else if (TextUtils.isEmpty(String.valueOf(number))) {
-            inputNumber.requestFocus();
-            inputNumber.setError(resources.getString(R.string.register_field_required));
-            return true;
-        } else if (TextUtils.isEmpty(district)) {
-            inputDistrict.requestFocus();
-            inputDistrict.setError(resources.getString(R.string.register_field_required));
-            return true;
-        } else if (TextUtils.isEmpty(city)) {
-            inputCity.requestFocus();
-            inputCity.setError(resources.getString(R.string.register_field_required));
-            return true;
-        } else if (TextUtils.isEmpty(state)) {
-            inputState.requestFocus();
-            inputState.setError(resources.getString(R.string.register_field_required));
             return true;
         } else if (TextUtils.isEmpty(phone)) {
             inputPhone.requestFocus();
