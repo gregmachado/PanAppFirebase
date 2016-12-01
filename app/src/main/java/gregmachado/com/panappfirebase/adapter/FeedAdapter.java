@@ -40,31 +40,29 @@ public class FeedAdapter extends FirebaseRecyclerAdapter<Feed, FeedViewHolder> {
 
     @Override
     protected void populateViewHolder(final FeedViewHolder viewHolder, final Feed model, final int position) {
-        if(model.getImage() == null){
-            viewHolder.ivSender.setImageResource(R.drawable.img_product);
+
+        StorageReference mStorage = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com");
+        if (type) {
+            imageRef = mStorage.child(model.getUserID());
         } else {
-            StorageReference mStorage = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com");
-            if (type){
-                imageRef = mStorage.child(model.getUserID());
-            } else {
-                imageRef = mStorage.child(model.getBakeryID());
-            }
-            final long ONE_MEGABYTE = 1024 * 1024;
-            imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                @Override
-                public void onSuccess(byte[] bytes) {
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    viewHolder.ivSender.setImageBitmap(bitmap);
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle any errors
-                }
-            });
+            imageRef = mStorage.child(model.getBakeryID());
         }
+        final long ONE_MEGABYTE = 1024 * 1024;
+        imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+            @Override
+            public void onSuccess(byte[] bytes) {
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                viewHolder.ivSender.setImageBitmap(bitmap);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle any errors
+            }
+        });
+
         viewHolder.tvDate.setText(model.getDate());
-        if(type){
+        if (type) {
             viewHolder.tvName.setText(model.getUserName());
         } else {
             viewHolder.tvName.setText(model.getBakeryName());
@@ -78,12 +76,12 @@ public class FeedAdapter extends FirebaseRecyclerAdapter<Feed, FeedViewHolder> {
                 String feedID = model.getFeedID();
                 int action = model.getAction();
                 String id;
-                if (type){
+                if (type) {
                     id = model.getBakeryID();
                 } else {
                     id = model.getUserID();
                 }
-                switch (action){
+                switch (action) {
                     case 1:
                         String bakeryID = model.getBakeryID();
                         Bundle params = new Bundle();

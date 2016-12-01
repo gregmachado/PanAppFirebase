@@ -189,7 +189,9 @@ public class AdminMainActivity extends CommonActivity
             intentMyBakery.putExtras(params);
             startActivity(intentMyBakery);
         } else if (id == R.id.nav_talk_whit_us_admin) {
-
+            Intent intentTalkWithUs = new Intent(AdminMainActivity.this, TalkWithUsActivity.class);
+            intentTalkWithUs.putExtras(params);
+            startActivity(intentTalkWithUs);
         } else if (id == R.id.nav_offers) {
             Intent intentOffers = new Intent(AdminMainActivity.this, OfferActivity.class);
             intentOffers.putExtras(params);

@@ -67,6 +67,7 @@ public class ProductAdapter extends FirebaseRecyclerAdapter<Product, ProductView
         viewHolder.tvCategory.setText(model.getType());
         viewHolder.tvItensSale.setText(String.valueOf(model.getItensSale()));
         if(model.getProductImage() == null){
+            Log.i(TAG, "Image: " + model.getProductImage());
             viewHolder.ivProduct.setImageResource(R.drawable.img_product);
         } else {
             StorageReference mStorage = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com");
@@ -231,6 +232,7 @@ public class ProductAdapter extends FirebaseRecyclerAdapter<Product, ProductView
             }
         });
         viewHolder.progressBar.setVisibility(View.GONE);
+        viewHolder.ivProduct.setVisibility(View.VISIBLE);
     }
 
     protected void decrease(ProductViewHolderUser productViewHolder) {

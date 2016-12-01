@@ -16,12 +16,18 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -44,7 +50,7 @@ public class FormAdressActivity extends CommonActivity {
             inputDistrict, inputCity, inputReference, inputState;
     private String cep, adressName, street, complement, district, city, state, reference;
     private Resources resources;
-    private String userId;
+    private String userId, adressID;
     private Integer number;
     private Boolean update = false;
     private Spinner spState;
@@ -54,12 +60,15 @@ public class FormAdressActivity extends CommonActivity {
     private Location location;
     private LocationManager locationManager;
     private Address a;
+    private Adress adress;
+    private Button btnSaveAdress;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form_adress);
         resources = getResources();
+        adress = new Adress();
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_new_adress);
         setSupportActionBar(toolbar);
         setTitle("Novo Endereço");
@@ -67,41 +76,45 @@ public class FormAdressActivity extends CommonActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         mDatabaseReference = LibraryClass.getFirebase();
         mDatabaseReference.getRef();
-        initViews();
         Intent it = getIntent();
         params = it.getExtras();
 
         if (params != null) {
+            adressID = params.getString("adressID");
             userId = params.getString("userID");
             update = params.getBoolean("update");
-            if (update) {
-                /*items = params.getInt("items");
-                id = params.getLong("productId");
-                productName = params.getString("productName");
-                productType = params.getString("productType");
-                strImage = params.getString("productImage");
-                productPrice = params.getDouble("productPrice");
-                setTitle("Editar Produto");
-                btnAddProduct.setText("ATUALIZAR PRODUTO");
-                fillLabels(strImage, productName, productPrice, productType);
-                */
-            }
+        }
+        initViews();
+        if (update) {
+            setTitle("Editar Endereço");
+            fillLabels();
         }
     }
 
-    /*private void fillLabels(String strImage, String productName, Double productPrice, String productType) {
-        inputNameProduct.setText(productName);
-        inputPriceProduct.setText(String.valueOf(productPrice));
-        byte[] imgBytes = Base64.decode(strImage, Base64.DEFAULT);
-        Bitmap bitmap = BitmapFactory.decodeByteArray(imgBytes, 0, imgBytes.length);
-        imageProduct.setImageBitmap(bitmap);
-        if (!(productType == null)) {
-            int spinnerPostion = dataAdapter.getPosition(productType);
-            spTypeProduct.setSelection(spinnerPostion);
-            spinnerPostion = 0;
-        }
+    private void fillLabels() {
+        mDatabaseReference.child("users").child(userId).child("adress")
+                .child(adressID).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                adress = dataSnapshot.getValue(Adress.class);
+                inputState.setText(adress.getState());
+                inputNumber.setText(String.valueOf(adress.getNumber()));
+                inputCity.setText(adress.getCity());
+                inputStreet.setText(adress.getStreet());
+                inputDistrict.setText(adress.getDistrict());
+                inputCep.setText(adress.getCep());
+                inputComplement.setText(adress.getComplement());
+                inputReference.setText(adress.getReference());
+                inputNameAdress.setText(adress.getAdressName());
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "getUser:onCancelled", databaseError.toException());
+            }
+        });
     }
-    */
+
 
     private void callClearErrors(Editable s) {
         if (!s.toString().isEmpty()) {
@@ -118,26 +131,43 @@ public class FormAdressActivity extends CommonActivity {
     private boolean validateFields() {
         adressName = inputNameAdress.getText().toString().trim();
         street = (inputStreet.getText().toString().trim());
-        number = Integer.parseInt(inputNumber.getText().toString().trim());
+        String numb = (inputNumber.getText().toString().trim());
         district = (inputDistrict.getText().toString().trim());
         complement = (inputComplement.getText().toString().trim());
         cep = (inputCep.getText().toString().trim());
         city = (inputCity.getText().toString().trim());
         reference = (inputReference.getText().toString().trim());
         state = (inputState.getText().toString().trim());
-        return (!isEmptyFields(adressName, street));
+        return (!isEmptyFields(adressName, street, numb, cep, district, city));
     }
 
-    private boolean isEmptyFields(String name, String street) {
+    private boolean isEmptyFields(String name, String street, String numb, String cep, String district, String city) {
         if (TextUtils.isEmpty(name)) {
             inputNameAdress.requestFocus(); //seta o foco para o campo name
             inputNameAdress.setError(resources.getString(R.string.register_name_required));
             return true;
         } else if (TextUtils.isEmpty(street)) {
-            inputStreet.requestFocus(); //seta o foco para o campo email
+            inputStreet.requestFocus();
             inputStreet.setError(resources.getString(R.string.register_field_required));
             return true;
+        }else if (TextUtils.isEmpty(numb)) {
+            inputNumber.requestFocus();
+            inputNumber.setError(resources.getString(R.string.register_field_required));
+            return true;
+        }else if (TextUtils.isEmpty(cep)) {
+            inputCep.requestFocus();
+            inputCep.setError(resources.getString(R.string.register_field_required));
+            return true;
+        }else if (TextUtils.isEmpty(district)) {
+            inputDistrict.requestFocus();
+            inputDistrict.setError(resources.getString(R.string.register_field_required));
+            return true;
+        }else if (TextUtils.isEmpty(city)) {
+            inputCity.requestFocus();
+            inputCity.setError(resources.getString(R.string.register_field_required));
+            return true;
         }
+        number = Integer.parseInt(numb);
         return false;
     }
 
@@ -178,10 +208,13 @@ public class FormAdressActivity extends CommonActivity {
         inputState.addTextChangedListener(textWatcher);
         inputStreet = (EditText) findViewById(R.id.input_street);
         inputStreet.addTextChangedListener(textWatcher);
+        btnSaveAdress = (Button) findViewById(R.id.btn_add_adress);
+        if (update){
+            btnSaveAdress.setText("Atualizar endereço");
+        }
     }
 
-    private Adress initAdress() {
-        Adress adress = new Adress();
+    private void initAdress() {
         adress.setAdressName(adressName);
         adress.setStreet(street);
         adress.setCep(cep);
@@ -192,17 +225,18 @@ public class FormAdressActivity extends CommonActivity {
         adress.setCity(city);
         adress.setReference(reference);
         adress.setUserID(userId);
-        return adress;
     }
 
     public void addAdress(View view) {
         if (validateFields()) {
-            Adress adress = initAdress();
+            initAdress();
             getLocation();
             adress.setLatitude(latitude);
             adress.setLongitude(longitude);
-            String adressID = mDatabaseReference.push().getKey();
-            adress.setId(adressID);
+            if (!update){
+                adressID = mDatabaseReference.push().getKey();
+                adress.setId(adressID);
+            }
             mDatabaseReference.child("users").child(userId).child("adress").child(adressID).setValue(adress);
             showToast("Endereço cadastrado");
             finish();
@@ -245,7 +279,7 @@ public class FormAdressActivity extends CommonActivity {
         latitude = location.getLatitude();
         longitude = location.getLongitude();
         try {
-            a = searchAddress(latitude,longitude);
+            a = searchAddress(latitude, longitude);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -256,7 +290,7 @@ public class FormAdressActivity extends CommonActivity {
         inputState.setText(a.getAdminArea());
     }
 
-    private Address searchAddress(double latitude, double longitude) throws IOException{
+    private Address searchAddress(double latitude, double longitude) throws IOException {
 
         Geocoder geocoder;
         Address address = null;
@@ -268,5 +302,15 @@ public class FormAdressActivity extends CommonActivity {
             address = addresses.get(0);
         }
         return address;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

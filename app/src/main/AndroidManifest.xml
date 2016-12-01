@@ -72,6 +72,7 @@
         <activity android:name=".activity.HistoricActivity" />
         <activity android:name=".activity.PaymentActivity" />
         <activity android:name=".activity.SettingsActivity" />
+        <activity android:name=".activity.TalkWithUsActivity" />
         <!-- [START firebase_service] -->
         <service
             android:name=".services.MyFirebaseMessagingService">

@@ -2,6 +2,8 @@ package gregmachado.com.panappfirebase.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -20,6 +22,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -27,6 +31,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.adapter.FeedAdapter;
@@ -47,8 +53,10 @@ public class UserMainActivity extends CommonActivity
     private RecyclerView rvFeed;
     private TextView tvNoFeed;
     private FeedAdapter adapter;
-    private ImageView icFeed;
+    private ImageView icFeed, ivUser;
     private String bakeryName, userName, userID, userEmail;
+    private FirebaseStorage storage = FirebaseStorage.getInstance();
+    private StorageReference mStorageRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +105,23 @@ public class UserMainActivity extends CommonActivity
         mDatabaseReference.child("users").child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.child("image").exists()){
+                    StorageReference mStorage = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com");
+                    StorageReference imageRef = mStorage.child(userID);
+                    final long ONE_MEGABYTE = 1024 * 1024;
+                    imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                            ivUser.setImageBitmap(bitmap);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            // Handle any errors
+                        }
+                    });
+                }
                 if (dataSnapshot.hasChild("feed")) {
                     closeProgressBar();
                     if (tvNoFeed.getVisibility() == View.VISIBLE) {
@@ -161,7 +186,9 @@ public class UserMainActivity extends CommonActivity
             intentOffers.putExtras(params);
             startActivity(intentOffers);
         } else if (id == R.id.nav_talk_whit_us) {
-
+            Intent intentTalkWithUs = new Intent(UserMainActivity.this, TalkWithUsActivity.class);
+            intentTalkWithUs.putExtras(params);
+            startActivity(intentTalkWithUs);
         } else if (id == R.id.nav_exit) {
             onBackPressed();
         }
@@ -203,6 +230,7 @@ public class UserMainActivity extends CommonActivity
         icFeed = (ImageView) findViewById(R.id.ic_feed);
         progressBar = (ProgressBar) findViewById(R.id.simpleProgressBar);
         rvFeed = (RecyclerView) findViewById(R.id.rv_feed);
+        ivUser = (ImageView) header.findViewById(R.id.iv_user);
     }
 
     @Override

@@ -5,7 +5,7 @@
     <string name="error_google_sign_in">Erro ao realizar Login com a conta do Google!</string>
     <string name="google_sign_in_key">457659997751-49rg9hs7a7hmqmsqk2c5t05r2dgkscbg.apps.googleusercontent.com</string>
     <string name="action_sign_in_facebook">Entrar com Facebook</string>
-    <string name="facebook_app_id">112993499108891</string>
+    <string name="facebook_app_id">961896533936878</string>
     <string name="terms_cadastre">Li e concordo com os <u>Termos de Uso</u> do PanApp</string>
     <string name="register_name_required">Campo nome obrigatório!</string>
     <string name="register_email_required">Campo email obrigatório!</string>
@@ -153,4 +153,5 @@
     <string name="cep">CEP</string>
     <string name="complement">Complemento</string>
     <string name="reference">Referência</string>
+    <string name="msg">Ou deixe sua mensagem aqui, que logo retornaremos!</string>
 </resources>

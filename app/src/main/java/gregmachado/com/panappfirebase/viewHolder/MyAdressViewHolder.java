@@ -2,6 +2,7 @@ package gregmachado.com.panappfirebase.viewHolder;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import gregmachado.com.panappfirebase.R;
@@ -12,6 +13,7 @@ import gregmachado.com.panappfirebase.R;
 public class MyAdressViewHolder extends RecyclerView.ViewHolder{
 
     public TextView tvStreet, tvNumber, tvComplement, tvDistrict, tvCityState, tvName, tvCep, tvReference;
+    public ImageButton ibtnEdit, ibtnDelete;
     public View mView;
 
     public MyAdressViewHolder(View v) {
@@ -25,5 +27,7 @@ public class MyAdressViewHolder extends RecyclerView.ViewHolder{
         tvName = (TextView) itemView.findViewById(R.id.tv_adress_name);
         tvCep = (TextView) itemView.findViewById(R.id.tv_cep);
         tvReference = (TextView) itemView.findViewById(R.id.tv_reference);
+        ibtnEdit = (ImageButton) itemView.findViewById(R.id.ibtn_edit);
+        ibtnDelete = (ImageButton) itemView.findViewById(R.id.ibtn_delete);
     }
 }

@@ -126,6 +126,8 @@ public class FormEditBakeryActivity extends CommonActivity {
                     tvAddPhoto.setVisibility(View.VISIBLE);
                     noPhoto = true;
                 } else {
+                    ivAddPhoto.setVisibility(View.INVISIBLE);
+                    tvAddPhoto.setVisibility(View.INVISIBLE);
                     noPhoto = false;
                     Log.i(TAG, "no Photo is false");
                     StorageReference mStorage = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com");

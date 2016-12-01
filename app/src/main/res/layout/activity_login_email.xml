@@ -83,24 +83,24 @@
 
         <Button
             android:id="@+id/btn_sign_in"
-            android:layout_width="300sp"
+            android:layout_width="280sp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="5dp"
             android:layout_marginTop="30dp"
-            android:background="#67CBD1"
+            android:background="@color/colorPrimary"
             android:text="@string/signIn"
             android:onClick="signIn"
             android:textColor="#ffffff" />
 
         <Button
             android:id="@+id/btn_sign_up"
-            android:layout_width="300sp"
+            android:layout_width="280sp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginBottom="10dp"
             android:layout_marginTop="5dp"
-            android:background="#3DA2C4"
+            android:background="@color/colorPrimaryDark"
             android:text="@string/register"
             android:onClick="signUp"
             android:textColor="#ffffff" />

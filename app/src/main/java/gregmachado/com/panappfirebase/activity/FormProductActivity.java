@@ -161,14 +161,16 @@ public class FormProductActivity extends CommonActivity {
     private void uploadImageAndSaveProduct() {
         FirebaseStorage storage = FirebaseStorage.getInstance();
         if (update) {
+            noPhoto = false;
             product.setId(productID);
         } else {
             productID = mDatabaseReference.push().getKey();
             product.setId(productID);
         }
+        mStorageRef = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com").child(productID);
         if (noPhoto) {
             saveProduct();
-            mStorageRef = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com").child(productID);
+
         } else {
             mStorageRef.delete().addOnSuccessListener(new OnSuccessListener() {
                 @Override

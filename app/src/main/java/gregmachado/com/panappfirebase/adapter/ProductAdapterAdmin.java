@@ -28,6 +28,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 
 import gregmachado.com.panappfirebase.R;
@@ -73,6 +75,7 @@ public class ProductAdapterAdmin extends FirebaseRecyclerAdapter<Product, Produc
         viewHolder.tvProductType.setText(model.getType());
         viewHolder.tvProductPrice.setText(precision.format(model.getProductPrice()));
         if(model.getProductImage() == null){
+            Log.i(TAG, "Image: " + model.getProductImage());
             viewHolder.ivProduct.setImageResource(R.drawable.img_product);
         } else {
             StorageReference mStorage = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com");
@@ -231,13 +234,21 @@ public class ProductAdapterAdmin extends FirebaseRecyclerAdapter<Product, Produc
             }
         });
         viewHolder.progressBar.setVisibility(View.GONE);
+        viewHolder.ivProduct.setVisibility(View.VISIBLE);
     }
 
     private void makeAction(String action, ProductViewHolder viewHolder, String productImage) {
         switch (action){
             case "Editar":
                 String productType = viewHolder.tvProductType.getText().toString();
-                Double productPrice = Double.parseDouble(viewHolder.tvProductPrice.getText().toString());
+                //double productPrice = Double.parseDouble(viewHolder.tvProductPrice.getText().toString());
+                double productPrice = 0;
+                try {
+                    productPrice = NumberFormat.getInstance().parse
+                            (String.valueOf(viewHolder.tvProductPrice.getText())).doubleValue();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
                 Bundle params = new Bundle();
                 params.putString("bakeryID", bakeryID);
                 params.putBoolean("update", true);

@@ -15,7 +15,7 @@
             android:layout_marginEnd="12dp"
             android:layout_marginStart="12dp"
             android:layout_marginTop="12sp"
-            android:background="@drawable/shape_linear_layout"
+            android:background="@drawable/shape_linear_rectangle"
             android:orientation="horizontal">
 
             <com.devspark.robototextview.widget.RobotoEditText
@@ -38,7 +38,7 @@
             android:layout_marginEnd="12dp"
             android:layout_marginStart="12dp"
             android:layout_marginTop="12sp"
-            android:background="@drawable/shape_linear_layout"
+            android:background="@drawable/shape_linear_rectangle"
             android:orientation="horizontal">
 
             <com.devspark.robototextview.widget.RobotoEditText
@@ -61,7 +61,7 @@
             android:layout_marginEnd="12dp"
             android:layout_marginStart="12dp"
             android:layout_marginTop="12sp"
-            android:background="@drawable/shape_linear_layout"
+            android:background="@drawable/shape_linear_rectangle"
             android:orientation="horizontal">
 
             <com.devspark.robototextview.widget.RobotoEditText
@@ -91,7 +91,7 @@
                 android:layout_marginEnd="12dp"
                 android:layout_marginStart="12dp"
                 android:layout_marginTop="12sp"
-                android:background="@drawable/shape_linear_layout"
+                android:background="@drawable/shape_linear_rectangle"
                 android:orientation="horizontal">
 
                 <com.devspark.robototextview.widget.RobotoEditText
@@ -116,7 +116,7 @@
                 android:layout_marginEnd="12dp"
                 android:layout_marginStart="12dp"
                 android:layout_marginTop="12sp"
-                android:background="@drawable/shape_linear_layout"
+                android:background="@drawable/shape_linear_rectangle"
                 android:orientation="horizontal">
 
                 <com.devspark.robototextview.widget.RobotoEditText
@@ -140,7 +140,7 @@
             android:layout_marginEnd="12dp"
             android:layout_marginStart="12dp"
             android:layout_marginTop="12sp"
-            android:background="@drawable/shape_linear_layout"
+            android:background="@drawable/shape_linear_rectangle"
             android:orientation="horizontal">
 
             <com.devspark.robototextview.widget.RobotoEditText
@@ -163,7 +163,7 @@
             android:layout_marginEnd="12dp"
             android:layout_marginStart="12dp"
             android:layout_marginTop="12sp"
-            android:background="@drawable/shape_linear_layout"
+            android:background="@drawable/shape_linear_rectangle"
             android:orientation="horizontal">
 
             <com.devspark.robototextview.widget.RobotoEditText
@@ -186,7 +186,7 @@
             android:layout_marginEnd="12dp"
             android:layout_marginStart="12dp"
             android:layout_marginTop="12sp"
-            android:background="@drawable/shape_linear_layout"
+            android:background="@drawable/shape_linear_rectangle"
             android:orientation="horizontal">
 
             <com.devspark.robototextview.widget.RobotoEditText
@@ -208,7 +208,7 @@
             android:layout_marginEnd="12dp"
             android:layout_marginStart="12dp"
             android:layout_marginTop="12sp"
-            android:background="@drawable/shape_linear_layout"
+            android:background="@drawable/shape_linear_rectangle"
             android:orientation="horizontal">
 
             <com.devspark.robototextview.widget.RobotoEditText

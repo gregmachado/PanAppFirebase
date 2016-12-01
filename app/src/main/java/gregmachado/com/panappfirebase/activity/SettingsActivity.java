@@ -66,6 +66,7 @@ public class SettingsActivity extends CommonActivity {
         if (params != null) {
             id = params.getString("id");
         }
+        user = new User();
         initViews();
         loadInfo();
     }
@@ -199,8 +200,8 @@ public class SettingsActivity extends CommonActivity {
             user.setName(name);
             user.setSendNotification(sendNotification);
             user.setDistanceForSearchBakery(distance);
+            mStorageRef = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com").child(id);
             if (!noPhoto) {
-                mStorageRef = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com").child(id);
                 mStorageRef.delete().addOnSuccessListener(new OnSuccessListener() {
                     @Override
                     public void onSuccess(Object o) {
@@ -292,10 +293,10 @@ public class SettingsActivity extends CommonActivity {
         switch (requestCode) {
             case PICK_IMAGE_ID:
                 Bitmap bitmap = ImagePicker.getImageFromResult(this, resultCode, data);
-                ivUser.setImageBitmap(bitmap);
+                Bitmap reducedImagePhoto = Bitmap.createScaledBitmap(bitmap, 200, 200, true);
+                ivUser.setImageBitmap(reducedImagePhoto);
                 lblAddPhoto.setVisibility(View.INVISIBLE);
                 ivAddPhoto.setVisibility(View.INVISIBLE);
-                noPhoto = false;
                 break;
             default:
                 super.onActivityResult(requestCode, resultCode, data);
