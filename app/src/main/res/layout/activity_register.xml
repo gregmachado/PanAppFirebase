@@ -19,83 +19,95 @@
             android:src="@drawable/logo" />
 
         <LinearLayout
-            android:layout_width="300sp"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="5dp"
-            android:background="#ffffff"
-            android:orientation="vertical">
+            android:layout_width="match_parent"
+            android:layout_height="40sp"
+            android:layout_marginEnd="40dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginBottom="6dp"
+            android:background="@drawable/shape_linear_rectangle"
+            android:orientation="horizontal">
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/input_layout_cadastre_name"
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/ic_perm_identity_black_18dp" />
+
+            <com.devspark.robototextview.widget.RobotoEditText
+                android:id="@+id/et_cadastre_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#ffffff">
-
-                <EditText
-                    android:id="@+id/et_cadastre_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/ic_perm_identity_black_18dp"
-                    android:drawableStart="@drawable/ic_perm_identity_black_18dp"
-                    android:ems="10"
-                    android:hint="@string/name"
-                    android:inputType="textCapWords"
-                    android:maxLength="20" />
-            </android.support.design.widget.TextInputLayout>
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:background="@android:color/transparent"
+                android:hint="@string/name"
+                android:inputType="textCapSentences"
+                android:textSize="16sp" />
 
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="300sp"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:background="#ffffff"
-            android:orientation="vertical">
+            android:layout_width="match_parent"
+            android:layout_height="40sp"
+            android:layout_marginEnd="40dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginBottom="6dp"
+            android:background="@drawable/shape_linear_rectangle"
+            android:orientation="horizontal">
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/input_layout_cadastre_email"
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/ic_email_black_18dp" />
+
+            <com.devspark.robototextview.widget.RobotoEditText
+                android:id="@+id/et_cadastre_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#ffffff">
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:background="@android:color/transparent"
+                android:hint="@string/email"
+                android:inputType="textEmailAddress"
+                android:textSize="16sp" />
 
-                <EditText
-                    android:id="@+id/et_cadastre_email"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/ic_email_black_18dp"
-                    android:drawableStart="@drawable/ic_email_black_18dp"
-                    android:ems="10"
-                    android:hint="@string/email"
-                    android:inputType="textEmailAddress" />
-            </android.support.design.widget.TextInputLayout>
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="300sp"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="5dp"
-            android:background="#ffffff"
-            android:orientation="vertical">
+            android:layout_width="match_parent"
+            android:layout_height="40sp"
+            android:layout_marginEnd="40dp"
+            android:layout_marginStart="40dp"
+            android:layout_marginBottom="6dp"
+            android:background="@drawable/shape_linear_rectangle"
+            android:orientation="horizontal">
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/input_layout_cadastre_pass"
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:src="@drawable/ic_lock_open_black_18dp" />
+
+            <com.devspark.robototextview.widget.RobotoEditText
+                android:id="@+id/et_cadastre_pass"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#ffffff">
-
-                <EditText
-                    android:id="@+id/et_cadastre_pass"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:drawableLeft="@drawable/ic_lock_open_black_18dp"
-                    android:drawableStart="@drawable/ic_lock_open_black_18dp"
-                    android:ems="10"
-                    android:hint="@string/password"
-                    android:inputType="textPassword"
-                    android:maxLength="16" />
-            </android.support.design.widget.TextInputLayout>
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:background="@android:color/transparent"
+                android:hint="@string/password"
+                android:inputType="textPassword"
+                android:textSize="16sp" />
 
         </LinearLayout>
 

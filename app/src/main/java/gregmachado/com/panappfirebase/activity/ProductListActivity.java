@@ -184,7 +184,9 @@ public class ProductListActivity extends CommonActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        adapter.cleanup();
+        if (adapter != null){
+            adapter.cleanup();
+        }
         Log.i(TAG, "onDestroy");
     }
 }

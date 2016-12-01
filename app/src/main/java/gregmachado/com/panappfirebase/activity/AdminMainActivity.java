@@ -57,6 +57,7 @@ public class AdminMainActivity extends CommonActivity
     private TextView tvNoFeed;
     private FeedAdapter adapter;
     private ImageView icFeed;
+    private boolean firstOpen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +74,19 @@ public class AdminMainActivity extends CommonActivity
             adminName = params.getString("name");
             bakeryID = params.getString("bakeryID");
             adminEmail = params.getString("email");
+            firstOpen = params.getBoolean("firstOpen");
+        }
+        firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        assert firebaseUser != null;
+        id = firebaseUser.getUid();
+        if (firstOpen){
+            params.putString("bakeryID", bakeryID);
+            params.putString("userID", id);
+            params.putBoolean("isRegister", true);
+            Intent intentFormEditBakery = new Intent(AdminMainActivity.this, FormEditBakeryActivity.class);
+            intentFormEditBakery.putExtras(params);
+            startActivity(intentFormEditBakery);
         }
         initViews();
         rvFeed.setItemAnimator(new DefaultItemAnimator());
@@ -87,10 +101,6 @@ public class AdminMainActivity extends CommonActivity
                 }
             }
         };
-        firebaseAuth = FirebaseAuth.getInstance();
-        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-        assert firebaseUser != null;
-        id = firebaseUser.getUid();
         firebaseAuth.addAuthStateListener(authStateListener);
         databaseReference = LibraryClass.getFirebase();
         databaseReference.getRef();

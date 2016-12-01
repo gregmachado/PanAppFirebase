@@ -1,6 +1,5 @@
 package gregmachado.com.panappfirebase.activity;
 
-import android.content.Intent;
 import android.content.res.Resources;
 import android.location.Address;
 import android.location.Geocoder;
@@ -8,6 +7,7 @@ import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -21,7 +21,12 @@ import android.widget.TextView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -54,7 +59,7 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
     private Location mLastLocation;
     private Resources resources;
     private EditText inputCnpj, inputAdminPassword;
-    private String corporateName, fantasyName, fone, email, cnpj, street, district, city, adminPassword, cnpjAux;
+    private String corporateName, fantasyName, fone, email, cnpj, street, district, city, adminPassword, cnpjAux, userID;
     private int number;
     private static final String TAG = RegisterBakeryActivity.class.getSimpleName();
     // URL to get contacts JSON
@@ -68,6 +73,7 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
     private static final String TAG_PHONE = "telefone";
     private static final String TAG_NUMBER = "numero";
     private static final String TAG_CITY = "municipio";
+    private static final String TAG_MESSAGE = "message";
     private String nameJson;
     private String numberJson;
     private String emailJson;
@@ -76,10 +82,12 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
     private String streetJson;
     private String districtJson;
     private String cityJson;
+    private String message;
     private User user;
     private Bakery bakery;
     private Adress adress;
     private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthStateListener;
     private DatabaseReference mDatabaseReference;
     // Hashmap for ListView
     ArrayList<HashMap<String, String>> bakerieList;
@@ -103,9 +111,40 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
         }
         bakerieList = new ArrayList<HashMap<String, String>>();
         mAuth = FirebaseAuth.getInstance();
+        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+                if (firebaseUser == null || user.getId() != null) {
+                    return;
+                }
+                userID = firebaseUser.getUid();
+                Log.i(TAG, userID);
+                user.setId(userID);
+                user.saveDB(RegisterBakeryActivity.this);
+                firebaseUser.sendEmailVerification();
+                bakery.setUserID(userID);
+                bakeryID = mDatabaseReference.push().getKey();
+                bakery.setId(bakeryID);
+                mDatabaseReference.child("bakeries").child(bakeryID).setValue(bakery);
+            }
+        };
         mDatabaseReference = FirebaseDatabase.getInstance().getReference();
         initViews();
-        initWatchers();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthStateListener);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mAuthStateListener != null) {
+            mAuth.removeAuthStateListener(mAuthStateListener);
+        }
     }
 
     /**
@@ -143,7 +182,7 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
 
     private boolean hasSizeValid(String cnpj, String adminPassword) {
 
-        if (!(cnpj.length() > 13)) {
+        if (!(cnpj.length() > 17)) {
             inputCnpj.requestFocus();
             inputCnpj.setError(resources.getString(R.string.register_cnpj_size_invalid));
             return false;
@@ -154,7 +193,6 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
         }
         return true;
     }
-
 
     /**
      * Limpa os ícones e as mensagens de erro dos campos desejados
@@ -170,8 +208,12 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
     public void searchByCNPJ(View view) {
         cnpjAux = inputCnpj.getText().toString().trim();
         cnpjAux = cnpjAux.replaceAll("[^0-9]", "");
-        // Calling async task to get json
-        new GetBakery().execute();
+        if (cnpjAux.length() < 14){
+            showToast("CNPJ Inválido!");
+        } else {
+            // Calling async task to get json
+            new GetBakery().execute();
+        }
     }
 
     public void addBakery(View view) {
@@ -186,7 +228,10 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
 
     @Override
     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-
+        mAuth.signOut();
+        showToast("Conta criada com sucesso! Verifique o email cadastrado na Receita Federal para validar a conta!");
+        closeProgressDialog();
+        finish();
     }
 
     /**
@@ -224,6 +269,7 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
                     phoneJson = c.optString(TAG_PHONE);
                     districtJson = c.optString(TAG_DISTRICT);
                     cityJson = c.optString(TAG_CITY);
+                    message = c.optString(TAG_MESSAGE);
 
                     // tmp hashmap for single contact
                     HashMap<String, String> bakery = new HashMap<String, String>();
@@ -247,9 +293,11 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
                     } catch (IOException e) {
                         e.printStackTrace();
                         error = "Network problem";
+                        Log.i(TAG, "IOException");
                     } catch (IllegalArgumentException e) {
                         e.printStackTrace();
                         error = "Illegal arguments";
+                        Log.i(TAG, "IllegalArgumentException");
                     }
 
                     if (list != null && list.size() > 0) {
@@ -263,6 +311,7 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
                     bakerieList.add(bakery);
                     return !jsonStr.contains("ERROR");
                 } catch (JSONException e) {
+                    Log.i(TAG, "JSONException");
                     e.printStackTrace();
                     return false;
                 }
@@ -284,6 +333,7 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
                 icFound.setVisibility(View.INVISIBLE);
                 icNotFound.setVisibility(View.VISIBLE);
                 btnAddBakery.setEnabled(false);
+                showToast(message);
             }
             closeProgressDialog();
         }
@@ -329,40 +379,6 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
 
     @Override
     protected void initViews() {
-        inputCnpj = (EditText) findViewById(R.id.input_cnpj);
-        MaskEditTextChangedListener maskCnpj = new MaskEditTextChangedListener("##.###.###/####-##", inputCnpj);
-        inputCnpj.addTextChangedListener(maskCnpj);
-        inputAdminPassword = (EditText) findViewById(R.id.input_admin_password);
-        tvResult = (TextView) findViewById(R.id.tv_result);
-        icFound = (ImageView) findViewById(R.id.ic_bakery_found);
-        icNotFound = (ImageView) findViewById(R.id.ic_bakery_not_found);
-        btnAddBakery = (Button) findViewById(R.id.btn_add_bakery);
-    }
-
-    protected void initUser() {
-        user = new User();
-        user.setName(fantasyName);
-        user.setEmail("testepadaria09@gmail.com");
-        final Encryption cripto = Encryption.getInstance(adminPassword);
-        user.setPassword(cripto.getEncryptPassword());
-        user.setType(true);
-        user.setSendNotification(true);
-    }
-
-    private void initBakery() {
-        bakery = new Bakery();
-        adress = new Adress(user.getId(), street, district, city, number, latitude, longitude);
-        bakery.setEmail("testepadaria09@gmail.com");
-        bakery.setAdress(adress);
-        bakery.setCnpj(cnpj);
-        bakery.setCorporateName(corporateName);
-        bakery.setFantasyName(fantasyName);
-        bakery.setFone(fone);
-        bakery.setUserID(user.getId());
-    }
-
-    private void initWatchers() {
-
         resources = getResources();
         TextWatcher textWatcher = new TextWatcher() {
             @Override
@@ -378,8 +394,42 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
                 callClearErrors(s);
             }
         };
+        inputCnpj = (EditText) findViewById(R.id.input_cnpj);
+        MaskEditTextChangedListener maskCnpj = new MaskEditTextChangedListener("##.###.###/####-##", inputCnpj);
+        inputCnpj.addTextChangedListener(maskCnpj);
+        inputAdminPassword = (EditText) findViewById(R.id.input_admin_password);
+        tvResult = (TextView) findViewById(R.id.tv_result);
         inputCnpj.addTextChangedListener(textWatcher);
         inputAdminPassword.addTextChangedListener(textWatcher);
+        icFound = (ImageView) findViewById(R.id.ic_bakery_found);
+        icNotFound = (ImageView) findViewById(R.id.ic_bakery_not_found);
+        btnAddBakery = (Button) findViewById(R.id.btn_add_bakery);
+    }
+
+    protected void initUser() {
+        email = "pan.app.info@gmail.com";
+        //email = "testepadaria09@gmail.com";
+        //email = "soprostorrent@gmail.com";
+        user = new User();
+        user.setName(fantasyName);
+        user.setEmail(email);
+        final Encryption cripto = Encryption.getInstance(adminPassword);
+        user.setPassword(cripto.getEncryptPassword());
+        user.setType(true);
+        user.setSendNotification(true);
+        user.setFirstOpen(true);
+    }
+
+    private void initBakery() {
+        bakery = new Bakery();
+        adress = new Adress(user.getId(), street, district, city, number, latitude, longitude);
+        bakery.setEmail(email);
+        bakery.setAdress(adress);
+        bakery.setCnpj(cnpj);
+        bakery.setCorporateName(corporateName);
+        bakery.setFantasyName(fantasyName);
+        bakery.setFone(fone);
+        bakery.setUserID(user.getId());
     }
 
     @Override
@@ -388,25 +438,22 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
     }
 
     private void saveUser() {
-        String id = mDatabaseReference.push().getKey();
-        user.setId(id);
-        bakery.setUserID(id);
-        //user.saveDB(RegisterBakeryActivity.this);
-        //bakery.saveDB(RegisterBakeryActivity.this);
-        bakeryID = mDatabaseReference.push().getKey();
-        bakery.setId(bakeryID);
-        mDatabaseReference.child("users").child(id).setValue(user);
-        mDatabaseReference.child("bakeries").child(bakeryID).setValue(bakery);
-        callEditBakery();
-    }
+        mAuth.createUserWithEmailAndPassword(
+                user.getEmail(),
+                user.getPassword()
+        ).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
 
-    private void callEditBakery() {
-        params.putString("bakeryID", bakeryID);
-        params.putBoolean("isRegister", true);
-        Intent intentFormEditBakery = new Intent(RegisterBakeryActivity.this, FormEditBakeryActivity.class);
-        intentFormEditBakery.putExtras(params);
-        closeProgressDialog();
-        //showToast("Padaria registrada com sucesso!");
-        startActivity(intentFormEditBakery);
+                if (!task.isSuccessful()) {
+                    closeProgressDialog();
+                }
+            }
+        }).addOnFailureListener(this, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                showToast("Este email já está cadastrado no sistema!");
+            }
+        });
     }
 }

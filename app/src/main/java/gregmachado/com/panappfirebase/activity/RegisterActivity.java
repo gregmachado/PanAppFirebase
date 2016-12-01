@@ -43,9 +43,7 @@ public class RegisterActivity extends CommonActivity implements DatabaseReferenc
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-
         mAuth = FirebaseAuth.getInstance();
-
         if (android.os.Build.VERSION.SDK_INT > 9) {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
@@ -60,6 +58,7 @@ public class RegisterActivity extends CommonActivity implements DatabaseReferenc
                 }
                 user.setId(firebaseUser.getUid());
                 user.saveDB(RegisterActivity.this);
+                firebaseUser.sendEmailVerification();
             }
         };
         initViews();
@@ -178,7 +177,7 @@ public class RegisterActivity extends CommonActivity implements DatabaseReferenc
         }).addOnFailureListener(this, new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                showSnackbar(e.getMessage());
+                showToast("Este email já está cadastrado no sistema!");
             }
         });
     }
@@ -186,8 +185,7 @@ public class RegisterActivity extends CommonActivity implements DatabaseReferenc
     @Override
     public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
         mAuth.signOut();
-
-        showToast("Conta criada com sucesso!");
+        showToast("Conta criada com sucesso! Verifique seu email para validar a conta!");
         closeProgressDialog();
         finish();
     }
@@ -229,6 +227,7 @@ public class RegisterActivity extends CommonActivity implements DatabaseReferenc
         user.setPassword(cripto.getEncryptPassword());
         user.setType(false);
         user.setSendNotification(true);
+        user.setDistanceForSearchBakery(20);
     }
 
     public void createAccount(View view) {

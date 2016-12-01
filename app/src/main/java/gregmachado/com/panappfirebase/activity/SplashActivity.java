@@ -42,15 +42,14 @@ public class SplashActivity extends AppCompatActivity implements Runnable {
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-
                 if (firebaseAuth.getCurrentUser() == null) {
                     progressBar.setVisibility(View.GONE);
                     Intent intent = new Intent(SplashActivity.this, SelectLoginActivity.class);
                     startActivity(intent);
                     finish();
                 } else {
+                    Log.i(TAG, "Voltou");
                     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-                    assert firebaseUser != null;
                     String id = firebaseUser.getUid();
                     databaseReference.child("users").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
@@ -63,7 +62,7 @@ public class SplashActivity extends AppCompatActivity implements Runnable {
                             params.putString("name", name);
                             params.putString("email", email);
                             params.putString("bakeryID", bakeryID);
-                            if(!user.isType()){
+                            if (!user.isType()) {
                                 Intent intentHomeUser = new Intent(SplashActivity.this, UserMainActivity.class);
                                 intentHomeUser.putExtras(params);
                                 startActivity(intentHomeUser);
@@ -88,10 +87,29 @@ public class SplashActivity extends AppCompatActivity implements Runnable {
         handler.postDelayed(this, 2000);
     }
 
-    public void run(){
+    public void run() {
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseAuth.addAuthStateListener(authStateListener);
         databaseReference = LibraryClass.getFirebase();
         databaseReference.getRef();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        firebaseAuth.removeAuthStateListener(authStateListener);
+        Log.i(TAG, "onStop");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.i(TAG, "onPause");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.i(TAG, "onPause");
     }
 }

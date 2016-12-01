@@ -18,6 +18,7 @@ public class User {
     private String newPassword;
     private boolean type;
     private boolean sendNotification;
+    private boolean firstOpen;
     private String image;
     private String bakeryID;
     private ArrayList<String> favorites;
@@ -142,6 +143,14 @@ public class User {
 
     public void setDistanceForSearchBakery(int distanceForSearchBakery) {
         this.distanceForSearchBakery = distanceForSearchBakery;
+    }
+
+    public boolean isFirstOpen() {
+        return firstOpen;
+    }
+
+    public void setFirstOpen(boolean firstOpen) {
+        this.firstOpen = firstOpen;
     }
 
     public void saveDB(DatabaseReference.CompletionListener... completionListener) {

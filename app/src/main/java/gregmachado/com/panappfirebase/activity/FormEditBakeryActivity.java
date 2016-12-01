@@ -24,8 +24,6 @@ import android.widget.TimePicker;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -82,10 +80,8 @@ public class FormEditBakeryActivity extends CommonActivity {
         if (params != null) {
             isRegister = params.getBoolean("isRegister");
             bakeryId = params.getString("bakeryID");
+            userId = params.getString("userID");
         }
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        FirebaseUser userFirebase = firebaseAuth.getCurrentUser();
-        userId = userFirebase.getUid();
         fillLabels();
         dateTimeSelect();
         if (isRegister){
@@ -218,7 +214,8 @@ public class FormEditBakeryActivity extends CommonActivity {
                 showToast("Padaria atualizada!");
             }
             closeProgressDialog();
-
+            Intent intent = new Intent(FormEditBakeryActivity.this, LoginEmailActivity.class);
+            startActivity(intent);
             finish();
         }
     }
