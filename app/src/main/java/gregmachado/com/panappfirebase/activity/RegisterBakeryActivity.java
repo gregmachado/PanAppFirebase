@@ -121,10 +121,11 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
                 userID = firebaseUser.getUid();
                 Log.i(TAG, userID);
                 user.setId(userID);
+                bakeryID = mDatabaseReference.push().getKey();
+                user.setBakeryID(bakeryID);
                 user.saveDB(RegisterBakeryActivity.this);
                 firebaseUser.sendEmailVerification();
                 bakery.setUserID(userID);
-                bakeryID = mDatabaseReference.push().getKey();
                 bakery.setId(bakeryID);
                 mDatabaseReference.child("bakeries").child(bakeryID).setValue(bakery);
             }
@@ -429,7 +430,6 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
         bakery.setCorporateName(corporateName);
         bakery.setFantasyName(fantasyName);
         bakery.setFone(fone);
-        bakery.setUserID(user.getId());
     }
 
     @Override
