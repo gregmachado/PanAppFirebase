@@ -80,14 +80,6 @@ public class AdminMainActivity extends CommonActivity
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         assert firebaseUser != null;
         id = firebaseUser.getUid();
-        if (firstOpen){
-            params.putString("bakeryID", bakeryID);
-            params.putString("userID", id);
-            params.putBoolean("isRegister", true);
-            Intent intentFormEditBakery = new Intent(AdminMainActivity.this, FormEditBakeryActivity.class);
-            intentFormEditBakery.putExtras(params);
-            startActivity(intentFormEditBakery);
-        }
         initViews();
         rvFeed.setItemAnimator(new DefaultItemAnimator());
         rvFeed.setLayoutManager(new LinearLayoutManager(AdminMainActivity.this));
@@ -107,6 +99,14 @@ public class AdminMainActivity extends CommonActivity
         String token = FirebaseInstanceId.getInstance().getToken();
         mDatabaseReference.child("users").child(id).child("token").setValue(token);
         loadFeed();
+        if (firstOpen){
+            params.putString("bakeryID", bakeryID);
+            params.putString("userID", id);
+            params.putBoolean("isRegister", true);
+            Intent intentFormEditBakery = new Intent(AdminMainActivity.this, FormEditBakeryActivity.class);
+            intentFormEditBakery.putExtras(params);
+            startActivity(intentFormEditBakery);
+        }
     }
 
     private void loadFeed() {

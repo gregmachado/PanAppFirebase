@@ -203,14 +203,13 @@ public class FormEditBakeryActivity extends CommonActivity {
             Bakery bakery = initBakery();
             mDatabaseReference.child("bakeries").child(bakeryId).setValue(bakery);
             mDatabaseReference.child("users").child(userId).child("name").setValue(bakery.getFantasyName());
+            mDatabaseReference.child("users").child(userId).child("firstOpen").setValue(false);
             if(isRegister){
-                showToast("Padaria cadastrada!");
+                showToast("Cadastro finalizado!");
             } else {
                 showToast("Padaria atualizada!");
             }
             closeProgressDialog();
-            Intent intent = new Intent(FormEditBakeryActivity.this, LoginEmailActivity.class);
-            startActivity(intent);
             finish();
         }
     }
