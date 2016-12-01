@@ -306,7 +306,6 @@ public class FormOfferActivity extends CommonActivity {
 
     private Product setProduct() {
         Product product = new Product();
-        product.setOldPrice(productPrice);
         product.setProductName(productName);
         product.setId(productID);
         product.setBakeryId(bakeryID);
@@ -314,8 +313,6 @@ public class FormOfferActivity extends CommonActivity {
         product.setProductImage(productImage);
         product.setProductPrice(productPriceInOffer);
         product.setType(productType);
-        product.setInOffer(true);
-        product.setDiscount(percent);
         return product;
     }
 

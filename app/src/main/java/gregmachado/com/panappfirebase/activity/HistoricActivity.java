@@ -73,7 +73,7 @@ public class HistoricActivity extends CommonActivity{
                     if (ivHistoric.getVisibility() == View.VISIBLE) {
                         ivHistoric.setVisibility(View.GONE);
                     }
-                    //cardView.setVisibility(View.VISIBLE);
+                    rvHistoric.setVisibility(View.VISIBLE);
                     adapter = new HistoricAdapter(mDatabaseReference.child(reference).child(id).child("historic").getRef(),
                             HistoricActivity.this);
                     rvHistoric.setAdapter(adapter);
@@ -81,7 +81,7 @@ public class HistoricActivity extends CommonActivity{
                     closeProgressBar();
                     tvNoHistoric.setVisibility(View.VISIBLE);
                     ivHistoric.setVisibility(View.VISIBLE);
-                    //cardView.setVisibility(View.INVISIBLE);
+                    rvHistoric.setVisibility(View.INVISIBLE);
                 }
             }
 

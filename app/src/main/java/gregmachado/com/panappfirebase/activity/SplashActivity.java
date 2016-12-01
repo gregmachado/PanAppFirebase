@@ -48,7 +48,6 @@ public class SplashActivity extends AppCompatActivity implements Runnable {
                     startActivity(intent);
                     finish();
                 } else {
-                    Log.i(TAG, "Voltou");
                     FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
                     String id = firebaseUser.getUid();
                     databaseReference.child("users").child(id).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -58,10 +57,12 @@ public class SplashActivity extends AppCompatActivity implements Runnable {
                             String name = user.getName();
                             String email = user.getEmail();
                             String bakeryID = user.getBakeryID();
+                            boolean firstOpen = user.isFirstOpen();
                             params = new Bundle();
                             params.putString("name", name);
                             params.putString("email", email);
                             params.putString("bakeryID", bakeryID);
+                            params.putBoolean("firstOpen", firstOpen);
                             if (!user.isType()) {
                                 Intent intentHomeUser = new Intent(SplashActivity.this, UserMainActivity.class);
                                 intentHomeUser.putExtras(params);

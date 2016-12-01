@@ -53,7 +53,7 @@ public class FormProductActivity extends CommonActivity {
     private ArrayAdapter<String> dataAdapter;
     private static final int PICK_IMAGE_ID = 234;
     private byte[] image;
-    private Boolean update, noPhoto = true;
+    private Boolean update, noPhoto;
     private List<Product> products;
     private StorageReference mStorageRef;
     private TextView tvAddPhoto;
@@ -69,6 +69,7 @@ public class FormProductActivity extends CommonActivity {
             bakeryID = params.getString("bakeryID");
             update = params.getBoolean("update");
         }
+        noPhoto = true;
         initViews();
         product = new Product();
         resources = getResources();
@@ -159,53 +160,52 @@ public class FormProductActivity extends CommonActivity {
 
     private void uploadImageAndSaveProduct() {
         FirebaseStorage storage = FirebaseStorage.getInstance();
-        if(update){
+        if (update) {
             product.setId(productID);
         } else {
             productID = mDatabaseReference.push().getKey();
             product.setId(productID);
         }
-        if (noPhoto){
+        if (noPhoto) {
             saveProduct();
-        } else {
             mStorageRef = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com").child(productID);
-            if(update){
-                mStorageRef.delete().addOnSuccessListener(new OnSuccessListener() {
-                    @Override
-                    public void onSuccess(Object o) {}
-                });
-            }
-            imageProduct.setDrawingCacheEnabled(true);
-            imageProduct.buildDrawingCache();
-            Bitmap bitmap = imageProduct.getDrawingCache();
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
-            byte[] data = baos.toByteArray();
-
-            UploadTask uploadTask = mStorageRef.putBytes(data);
-            uploadTask.addOnFailureListener(new OnFailureListener() {
+        } else {
+            mStorageRef.delete().addOnSuccessListener(new OnSuccessListener() {
                 @Override
-                public void onFailure(@NonNull Exception exception) {
-                    closeProgressDialog();
-                    showToast("Erro ao gravar imagem!");
-                }
-            }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
-                    if (downloadUrl != null) {
-                        product.setProductImage(downloadUrl.toString());
-                    }
-                    saveProduct();
+                public void onSuccess(Object o) {
                 }
             });
         }
+        imageProduct.setDrawingCacheEnabled(true);
+        imageProduct.buildDrawingCache();
+        Bitmap bitmap = imageProduct.getDrawingCache();
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] data = baos.toByteArray();
+
+        UploadTask uploadTask = mStorageRef.putBytes(data);
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                closeProgressDialog();
+                showToast("Erro ao gravar imagem!");
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
+                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                if (downloadUrl != null) {
+                    product.setProductImage(downloadUrl.toString());
+                }
+                saveProduct();
+            }
+        });
     }
 
     private void saveProduct() {
         closeProgressDialog();
-        if(update){
+        if (update) {
             product.setItensSale(items);
         }
         mDatabaseReference.child("bakeries").child(bakeryID).child("products").child(productID).setValue(product);
@@ -249,11 +249,11 @@ public class FormProductActivity extends CommonActivity {
 
     private boolean validateFields() {
         String p = inputPriceProduct.getText().toString().trim();
-        if(!TextUtils.isEmpty(p)){
+        if (!TextUtils.isEmpty(p)) {
             productName = inputNameProduct.getText().toString().trim();
             productPrice = Double.parseDouble(inputPriceProduct.getText().toString().trim());
             return (!isEmptyFields(productName, productPrice, productType));
-        } else{
+        } else {
             inputPriceProduct.setError(resources.getString(R.string.price_product_required));
         }
         return false;
@@ -280,7 +280,7 @@ public class FormProductActivity extends CommonActivity {
     public void loadPhoto(String localPhoto) {
         Bitmap imagePhoto = BitmapFactory.decodeFile(localPhoto);
         //Gerar imagem reduzida
-        Bitmap reducedImagePhoto = Bitmap.createScaledBitmap(imagePhoto, 150, 200, true);
+        Bitmap reducedImagePhoto = Bitmap.createScaledBitmap(imagePhoto, 200, 150, true);
         product.setProductImage(localPhoto);
         imageProduct.setImageBitmap(reducedImagePhoto);
     }
@@ -305,10 +305,10 @@ public class FormProductActivity extends CommonActivity {
         switch (requestCode) {
             case PICK_IMAGE_ID:
                 Bitmap bitmap = ImagePicker.getImageFromResult(this, resultCode, data);
-                imageProduct.setImageBitmap(bitmap);
+                Bitmap reducedImagePhoto = Bitmap.createScaledBitmap(bitmap, 200, 150, true);
+                imageProduct.setImageBitmap(reducedImagePhoto);
                 tvAddPhoto.setVisibility(View.INVISIBLE);
                 imageAddPhoto.setVisibility(View.INVISIBLE);
-                noPhoto = false;
                 break;
             default:
                 super.onActivityResult(requestCode, resultCode, data);

@@ -57,6 +57,7 @@
             app:typeface="roboto_light_italic" />
 
             <android.support.v7.widget.RecyclerView
+                android:visibility="invisible"
                 android:layout_margin="8dp"
                 android:id="@+id/rv_historic"
                 android:background="@color/white"

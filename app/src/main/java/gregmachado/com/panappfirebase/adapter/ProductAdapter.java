@@ -85,30 +85,6 @@ public class ProductAdapter extends FirebaseRecyclerAdapter<Product, ProductView
                 }
             });
         }
-        if (model.isInOffer()){
-            viewHolder.tvPrice.setTextColor(mContext.getResources().getColor(R.color.black_50_opacity));
-            viewHolder.tvPrice.setText(precision.format(model.getOldPrice()));
-            viewHolder.tvPriceInOffer.setVisibility(View.VISIBLE);
-            viewHolder.tvPriceInOffer.setText(precision.format(model.getProductPrice()));
-            viewHolder.tvDiscount.setText(String.valueOf(model.getDiscount()));
-            viewHolder.tvDiscount.setVisibility(View.VISIBLE);
-            viewHolder.icOffer.setVisibility(View.VISIBLE);
-            viewHolder.lblPercent.setVisibility(View.VISIBLE);
-        }
-        if (!productsToCart.isEmpty()){
-            if (model.getId().equals(productsToCart.get(0).getId())){
-                items = productsToCart.get(0).getUnit();
-                price = productsToCart.get(0).getProductPrice();
-                price = price * items;
-                viewHolder.btnAddCart.setVisibility(View.INVISIBLE);
-                viewHolder.btnRemoveCart.setVisibility(View.VISIBLE);
-                count++;
-                parcialPrice = parcialPrice + price;
-                setValuesToolbarBottom(String.valueOf(count), precision.format(parcialPrice));
-                viewHolder.tvUnitInCart.setText(String.valueOf(items));
-                viewHolder.llCart.setVisibility(View.VISIBLE);
-            }
-        }
         viewHolder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

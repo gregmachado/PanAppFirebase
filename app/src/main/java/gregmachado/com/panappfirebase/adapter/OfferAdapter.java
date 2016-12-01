@@ -210,7 +210,6 @@ public class OfferAdapter extends FirebaseRecyclerAdapter<Offer, OfferViewHolder
                             Product product = new Product();
                             product.setProductName(model.getProductName());
                             product.setProductPrice(model.getPriceInOffer());
-                            product.setOldPrice(model.getProductPrice());
                             product.setType(model.getType());
                             product.setBakeryId(model.getBakeryId());
                             product.setProductImage(model.getProductImage());

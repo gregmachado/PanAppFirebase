@@ -39,7 +39,6 @@ import java.util.List;
 import java.util.Locale;
 
 import gregmachado.com.panappfirebase.R;
-import gregmachado.com.panappfirebase.domain.Adress;
 import gregmachado.com.panappfirebase.domain.Bakery;
 import gregmachado.com.panappfirebase.domain.Product;
 import gregmachado.com.panappfirebase.util.CustomTimePickerDialog;
@@ -64,13 +63,15 @@ public class FormEditBakeryActivity extends CommonActivity {
     private FirebaseStorage storage = FirebaseStorage.getInstance();
     private StorageReference mStorageRef;
     private static final int PICK_IMAGE_ID = 235;
+    private Bakery bakery;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form_edit_bakery);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_form_edit_bakery);
         resources = getResources();
+        bakery = new Bakery();
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_form_edit_bakery);
         setSupportActionBar(toolbar);
         setTitle("Editar Padaria");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -83,6 +84,9 @@ public class FormEditBakeryActivity extends CommonActivity {
             bakeryId = params.getString("bakeryID");
             userId = params.getString("userID");
         }
+        if (isRegister){
+            setTitle("Completar cadastro");
+        }
         fillLabels();
         dateTimeSelect();
         if (isRegister){
@@ -94,15 +98,15 @@ public class FormEditBakeryActivity extends CommonActivity {
         mDatabaseReference.child("bakeries").child(bakeryId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Bakery bakery = dataSnapshot.getValue(Bakery.class);
+                bakery = dataSnapshot.getValue(Bakery.class);
                 lblCorporateName.setText(bakery.getCorporateName());
                 lblCnpj.setText(bakery.getCnpj());
-                if(bakery.getFinishTime()==null){
+                if(bakery.getFinishTime() == null){
                     lblFinishTime.setText(R.string.zero_hour);
                 }else{
                     lblFinishTime.setText(bakery.getFinishTime());
                 }
-                if(bakery.getStartTime()==null){
+                if(bakery.getStartTime() == null){
                     lblStartTime.setText(R.string.zero_hour);
                 }else{
                     lblStartTime.setText(bakery.getStartTime());
@@ -116,11 +120,14 @@ public class FormEditBakeryActivity extends CommonActivity {
                 inputEmail.setText(bakery.getEmail());
                 inputPhone.setText(bakery.getFone());
                 products = bakery.getProductList();
-                if(bakery.getBakeryImage() == null){
+                if(bakery.getBakeryImage() == null || bakery.getBakeryImage().equals("")){
+                    Log.i(TAG, "no Photo is true");
                     ivAddPhoto.setVisibility(View.VISIBLE);
                     tvAddPhoto.setVisibility(View.VISIBLE);
                     noPhoto = true;
                 } else {
+                    noPhoto = false;
+                    Log.i(TAG, "no Photo is false");
                     StorageReference mStorage = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com");
                     StorageReference imageRef = mStorage.child(bakeryId);
                     final long ONE_MEGABYTE = 1024 * 1024;
@@ -200,44 +207,19 @@ public class FormEditBakeryActivity extends CommonActivity {
     public void sendEditBakery(View view) {
         if (validateFields()) {
             openProgressDialog("Aguarde...", "Atualizando padaria!");
-            Bakery bakery = initBakery();
-            mDatabaseReference.child("bakeries").child(bakeryId).setValue(bakery);
-            mDatabaseReference.child("users").child(userId).child("name").setValue(bakery.getFantasyName());
-            mDatabaseReference.child("users").child(userId).child("firstOpen").setValue(false);
-            if(isRegister){
-                showToast("Cadastro finalizado!");
-            } else {
-                showToast("Padaria atualizada!");
-            }
-            closeProgressDialog();
-            finish();
+            initBakery();
         }
     }
 
-    private Bakery initBakery() {
-        final Bakery bakery = new Bakery();
-        bakery.setId(bakeryId);
-        bakery.setUserID(userId);
+    private void initBakery() {
         bakery.setFone(phone);
-        bakery.setCnpj(cnpj);
         bakery.setFantasyName(fantasyName);
         bakery.setStartTime(startTime);
-        bakery.setEmail(email);
         bakery.setFinishTime(finishTime);
         bakery.setHasDelivery(hasDelivery);
-        Adress adress = new Adress();
-        adress.setStreet(street);
-        adress.setNumber(number);
-        adress.setDistrict(district);
-        adress.setCity(city);
-        adress.setState(state);
-        getLocation();
-        adress.setLatitude(latitude);
-        adress.setLongitude(longitude);
-        bakery.setAdress(adress);
-        bakery.setProductList(products);
+        mStorageRef = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com").child(bakeryId);
         if (!noPhoto) {
-            mStorageRef = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com").child(bakeryId);
+            Log.i(TAG, "Tem photo");
             mStorageRef.delete().addOnSuccessListener(new OnSuccessListener() {
                 @Override
                 public void onSuccess(Object o) {
@@ -265,10 +247,26 @@ public class FormEditBakeryActivity extends CommonActivity {
                 Uri downloadUrl = taskSnapshot.getDownloadUrl();
                 if (downloadUrl != null) {
                     bakery.setBakeryImage(downloadUrl.toString());
+                    saveBakery();
                 }
             }
         });
-        return bakery;
+    }
+
+    private void saveBakery() {
+        mDatabaseReference.child("bakeries").child(bakeryId).setValue(bakery);
+        mDatabaseReference.child("users").child(userId).child("name").setValue(bakery.getFantasyName());
+        mDatabaseReference.child("users").child(userId).child("firstOpen").setValue(false);
+        if(isRegister){
+            showToast("Cadastro finalizado!");
+        } else {
+            showToast("Padaria atualizada!");
+        }
+        Intent intent = new Intent();
+        intent.putExtra("firstOpen", false);
+        setResult(5, intent);
+        closeProgressDialog();
+        finish();
     }
 
     private void callClearErrors(Editable s) {
@@ -285,12 +283,13 @@ public class FormEditBakeryActivity extends CommonActivity {
 
     private boolean validateFields() {
         fantasyName = inputFantasyname.getText().toString().trim();
+        phone = inputPhone.getText().toString().trim();
         startTime = (lblStartTime.getText().toString().trim());
         finishTime = (lblFinishTime.getText().toString().trim());
-        return (!isEmptyFields(fantasyName, phone));
+        return (!isEmptyFields(fantasyName, phone, startTime, finishTime));
     }
 
-    private boolean isEmptyFields(String name, String phone) {
+    private boolean isEmptyFields(String name, String phone, String startTime, String finishTime) {
         if (TextUtils.isEmpty(name)) {
             inputFantasyname.requestFocus(); //seta o foco para o campo name
             inputFantasyname.setError(resources.getString(R.string.register_name_required));
@@ -298,6 +297,14 @@ public class FormEditBakeryActivity extends CommonActivity {
         } else if (TextUtils.isEmpty(phone)) {
             inputPhone.requestFocus();
             inputPhone.setError(resources.getString(R.string.register_field_required));
+            return true;
+        } else if (TextUtils.isEmpty(startTime)) {
+            lblStartTime.requestFocus();
+            lblStartTime.setError(resources.getString(R.string.register_field_required));
+            return true;
+        } else if (TextUtils.isEmpty(finishTime)) {
+            lblFinishTime.requestFocus();
+            lblFinishTime.setError(resources.getString(R.string.register_field_required));
             return true;
         }
         return false;
@@ -370,7 +377,6 @@ public class FormEditBakeryActivity extends CommonActivity {
                 ivBakery.setImageBitmap(bitmap);
                 tvAddPhoto.setVisibility(View.INVISIBLE);
                 ivAddPhoto.setVisibility(View.INVISIBLE);
-                noPhoto = false;
                 break;
             default:
                 super.onActivityResult(requestCode, resultCode, data);

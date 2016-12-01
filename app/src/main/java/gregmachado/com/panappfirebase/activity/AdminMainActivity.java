@@ -2,6 +2,8 @@ package gregmachado.com.panappfirebase.activity;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -14,13 +16,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -28,11 +31,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.adapter.FeedAdapter;
 import gregmachado.com.panappfirebase.domain.Bakery;
-import gregmachado.com.panappfirebase.util.ImagePicker;
 import gregmachado.com.panappfirebase.util.LibraryClass;
 
 /**
@@ -48,7 +52,6 @@ public class AdminMainActivity extends CommonActivity
     private TextView tvAdminName, tvAdminEmail;
     private ImageView ivBakery;
     private Bakery bakery;
-    private static final int PICK_IMAGE_ID = 234;
     private DatabaseReference databaseReference;
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
@@ -58,16 +61,13 @@ public class AdminMainActivity extends CommonActivity
     private FeedAdapter adapter;
     private ImageView icFeed;
     private boolean firstOpen;
+    private FirebaseStorage storage = FirebaseStorage.getInstance();
+    private StorageReference mStorageRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin_base);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         Intent it = getIntent();
         params = it.getExtras();
         if (params != null) {
@@ -76,6 +76,11 @@ public class AdminMainActivity extends CommonActivity
             adminEmail = params.getString("email");
             firstOpen = params.getBoolean("firstOpen");
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         assert firebaseUser != null;
@@ -105,7 +110,7 @@ public class AdminMainActivity extends CommonActivity
             params.putBoolean("isRegister", true);
             Intent intentFormEditBakery = new Intent(AdminMainActivity.this, FormEditBakeryActivity.class);
             intentFormEditBakery.putExtras(params);
-            startActivity(intentFormEditBakery);
+            startActivityForResult(intentFormEditBakery, 5);
         }
     }
 
@@ -114,6 +119,23 @@ public class AdminMainActivity extends CommonActivity
         mDatabaseReference.child("bakeries").child(bakeryID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.child("bakeryImage").exists()){
+                    StorageReference mStorage = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com");
+                    StorageReference imageRef = mStorage.child(bakeryID);
+                    final long ONE_MEGABYTE = 1024 * 1024;
+                    imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                            ivBakery.setImageBitmap(bitmap);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            // Handle any errors
+                        }
+                    });
+                }
                 if (dataSnapshot.hasChild("feed")) {
                     closeProgressBar();
                     if (tvNoFeed.getVisibility() == View.VISIBLE) {
@@ -139,26 +161,6 @@ public class AdminMainActivity extends CommonActivity
                 Log.w(TAG, "getUser:onCancelled", databaseError.toException());
             }
         });
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.admin_base, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -228,13 +230,6 @@ public class AdminMainActivity extends CommonActivity
         ivBakery = (ImageView) header.findViewById(R.id.iv_user);
         tvAdminName.setText(adminName);
         tvAdminEmail.setText(adminEmail);
-        ivBakery.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent chooseImageIntent = ImagePicker.getPickImageIntent(AdminMainActivity.this);
-                startActivityForResult(chooseImageIntent, PICK_IMAGE_ID);
-            }
-        });
         tvNoFeed = (TextView) findViewById(R.id.tv_no_feed);
         icFeed = (ImageView) findViewById(R.id.ic_feed);
         progressBar = (ProgressBar) findViewById(R.id.simpleProgressBar);
@@ -258,6 +253,19 @@ public class AdminMainActivity extends CommonActivity
         });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 5)
+        {
+            if (resultCode == 5){
+                firstOpen = data.getBooleanExtra("firstOpen", false);
+                Log.i(TAG, String.valueOf(firstOpen));
+            }
+        }
     }
 }
 

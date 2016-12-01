@@ -7,10 +7,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -112,19 +110,6 @@ public class ProductListActivity extends CommonActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_product, menu);
-        SearchView mSearchView = new SearchView(this);
-        //Define um texto de ajuda:
-        mSearchView.setQueryHint("Digite aqui...");
-
-        // exemplos de utilização:
-        mSearchView.setOnQueryTextListener(new SearchFilter());
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -161,19 +146,6 @@ public class ProductListActivity extends CommonActivity {
         i.putExtra("cart", productsToCart);
         i.putExtras(params);
         startActivity(i);
-    }
-
-    private class SearchFilter implements SearchView.OnQueryTextListener {
-        @Override
-        public boolean onQueryTextSubmit(String query) {
-            return false;
-        }
-
-        @Override
-        public boolean onQueryTextChange(String newText) {
-            Log.i("Script", "onQueryTextChange" + newText);
-            return false;
-        }
     }
 
     public void setValuesToolbarBottom(String items, String price) {

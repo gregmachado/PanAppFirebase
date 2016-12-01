@@ -5,10 +5,8 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -100,19 +98,6 @@ public class ProductAdminActivity extends CommonActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_product, menu);
-        SearchView mSearchView = new SearchView(this);
-        //Define um texto de ajuda:
-        mSearchView.setQueryHint("Digite aqui...");
-
-        // exemplos de utilização:
-        mSearchView.setOnQueryTextListener(new SearchFilter());
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
@@ -128,18 +113,5 @@ public class ProductAdminActivity extends CommonActivity {
         Intent intentFormProduct = new Intent(ProductAdminActivity.this, FormProductActivity.class);
         intentFormProduct.putExtras(params);
         startActivity(intentFormProduct);
-    }
-
-    private class SearchFilter implements SearchView.OnQueryTextListener {
-        @Override
-        public boolean onQueryTextSubmit(String query) {
-            return false;
-        }
-
-        @Override
-        public boolean onQueryTextChange(String newText) {
-            Log.i("Script", "onQueryTextChange" + newText);
-            return false;
-        }
     }
 }

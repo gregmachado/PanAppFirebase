@@ -13,14 +13,11 @@ public class Product implements Serializable, Parcelable{
     private String id;
     private String productName;
     private double productPrice;
-    private double oldPrice;
     private String productImage;
     private String type;
     private String bakeryId;
     private int itensSale;
     private int unit;
-    private boolean inOffer;
-    private int discount;
 
     public Product() {}
 
@@ -33,9 +30,6 @@ public class Product implements Serializable, Parcelable{
         itensSale = in.readInt();
         unit = in.readInt();
         productPrice = in.readDouble();
-        oldPrice = in.readDouble();
-        inOffer = in.readByte() != 0;
-        discount = in.readInt();
     }
 
     public static final Creator<Product> CREATOR = new Creator<Product>() {
@@ -114,30 +108,6 @@ public class Product implements Serializable, Parcelable{
         this.unit = unit;
     }
 
-    public double getOldPrice() {
-        return oldPrice;
-    }
-
-    public void setOldPrice(double oldPrice) {
-        this.oldPrice = oldPrice;
-    }
-
-    public boolean isInOffer() {
-        return inOffer;
-    }
-
-    public void setInOffer(boolean inOffer) {
-        this.inOffer = inOffer;
-    }
-
-    public int getDiscount() {
-        return discount;
-    }
-
-    public void setDiscount(int discount) {
-        this.discount = discount;
-    }
-
     public static Creator<Product> getCREATOR() {
         return CREATOR;
     }
@@ -157,8 +127,5 @@ public class Product implements Serializable, Parcelable{
         dest.writeInt(itensSale);
         dest.writeInt(unit);
         dest.writeDouble(productPrice);
-        dest.writeDouble(oldPrice);
-        dest.writeByte((byte) (inOffer ? 1 : 0));
-        dest.writeInt(discount);
     }
 }
