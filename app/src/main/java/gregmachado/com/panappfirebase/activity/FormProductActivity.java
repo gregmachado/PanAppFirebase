@@ -18,6 +18,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -25,7 +26,6 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
@@ -39,7 +39,7 @@ import gregmachado.com.panappfirebase.util.ImagePicker;
  */
 public class FormProductActivity extends CommonActivity {
 
-    private MaterialBetterSpinner spTypeProduct;
+    private Spinner spTypeProduct;
     private EditText inputNameProduct, inputPriceProduct;
     private String strPrice, productName, productType, productImage;
     private String productID;
@@ -110,7 +110,7 @@ public class FormProductActivity extends CommonActivity {
         inputPriceProduct = (EditText) findViewById(R.id.et_product_price);
         tvAddPhoto = (TextView) findViewById(R.id.tv_add_photo);
         imageAddPhoto = (ImageView) findViewById(R.id.img_add_photo);
-        spTypeProduct = (MaterialBetterSpinner) findViewById(R.id.spinner_category);
+        spTypeProduct = (Spinner) findViewById(R.id.spinner_category);
         Button btnAddProduct = (Button) findViewById(R.id.btn_save_product);
         String[] categories = getResources().getStringArray(R.array.category);
         dataAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, categories);
@@ -215,7 +215,7 @@ public class FormProductActivity extends CommonActivity {
     private void fillLabels(String productName, Double productPrice, String productType) {
         inputNameProduct.setText(productName);
         inputPriceProduct.setText(String.valueOf(productPrice));
-        spTypeProduct.setText(productType);
+        //spTypeProduct.setText(productType);
         tvAddPhoto.setVisibility(View.INVISIBLE);
         imageAddPhoto.setVisibility(View.INVISIBLE);
         StorageReference mStorage = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com");
@@ -252,7 +252,6 @@ public class FormProductActivity extends CommonActivity {
         if(!TextUtils.isEmpty(p)){
             productName = inputNameProduct.getText().toString().trim();
             productPrice = Double.parseDouble(inputPriceProduct.getText().toString().trim());
-            productType = spTypeProduct.getText().toString();
             return (!isEmptyFields(productName, productPrice, productType));
         } else{
             inputPriceProduct.setError(resources.getString(R.string.price_product_required));
@@ -272,7 +271,7 @@ public class FormProductActivity extends CommonActivity {
             return true;
         } else if (TextUtils.isEmpty(productType)) {
             spTypeProduct.requestFocus();
-            spTypeProduct.setError(resources.getString(R.string.register_field_required));
+            //spTypeProduct.setError(resources.getString(R.string.register_field_required));
             return true;
         }
         return false;
