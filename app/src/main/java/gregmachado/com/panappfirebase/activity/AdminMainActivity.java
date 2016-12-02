@@ -76,11 +76,6 @@ public class AdminMainActivity extends CommonActivity
             adminEmail = params.getString("email");
             firstOpen = params.getBoolean("firstOpen");
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         assert firebaseUser != null;
@@ -112,6 +107,11 @@ public class AdminMainActivity extends CommonActivity
             intentFormEditBakery.putExtras(params);
             startActivityForResult(intentFormEditBakery, 5);
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     private void loadFeed() {

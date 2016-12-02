@@ -214,7 +214,7 @@ public class FormAdressActivity extends CommonActivity {
         }
     }
 
-    private void initAdress() {
+    private Adress initAdress() {
         adress.setAdressName(adressName);
         adress.setStreet(street);
         adress.setCep(cep);
@@ -225,6 +225,7 @@ public class FormAdressActivity extends CommonActivity {
         adress.setCity(city);
         adress.setReference(reference);
         adress.setUserID(userId);
+        return adress;
     }
 
     public void addAdress(View view) {

@@ -62,11 +62,6 @@ public class UserMainActivity extends CommonActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_base);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         Intent it = getIntent();
         params = it.getExtras();
         if (params != null) {
@@ -86,18 +81,26 @@ public class UserMainActivity extends CommonActivity
         };
         databaseReference = LibraryClass.getFirebase();
         databaseReference.getRef();
-        //frameLayout = (FrameLayout)findViewById(R.id.content_frame);
-        initViews();
-        rvFeed.setItemAnimator(new DefaultItemAnimator());
-        rvFeed.setLayoutManager(new LinearLayoutManager(UserMainActivity.this));
         firebaseAuth = FirebaseAuth.getInstance();
         FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         assert firebaseUser != null;
         userID = firebaseUser.getUid();
+        if (userEmail == null){
+            userEmail = firebaseUser.getEmail();
+            Log.i(TAG, "email: " + userEmail);
+        }
+        initViews();
+        rvFeed.setItemAnimator(new DefaultItemAnimator());
+        rvFeed.setLayoutManager(new LinearLayoutManager(UserMainActivity.this));
         firebaseAuth.addAuthStateListener(authStateListener);
         String token = FirebaseInstanceId.getInstance().getToken();
         mDatabaseReference.child("users").child(userID).child("token").setValue(token);
         loadFeed();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     private void loadFeed() {

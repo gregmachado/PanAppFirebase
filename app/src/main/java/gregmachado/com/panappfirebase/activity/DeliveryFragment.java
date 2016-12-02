@@ -44,7 +44,7 @@ import gregmachado.com.panappfirebase.util.DateUtil;
 public class DeliveryFragment extends Fragment {
 
     private static final String TAG = DeliveryFragment.class.getSimpleName();
-    private TextView tvTime, tvNoHasDelivery, lbl01, lbl02, lbl03, tvStartTime, tvFinishTime;
+    private TextView tvTime, tvNoHasDelivery, lbl01, lbl02, lbl03, lbl04, tvStartTime, tvFinishTime;
     private RadioButton rbToday, rbTomorrow;
     private RadioGroup radioGroup;
     private String today, tomorrow, scheduleDay, scheduleHour, adress, method, creatonDate;
@@ -89,6 +89,7 @@ public class DeliveryFragment extends Fragment {
         lbl01 = (TextView) v.findViewById(R.id.lbl01);
         lbl02 = (TextView) v.findViewById(R.id.lbl02);
         lbl03 = (TextView) v.findViewById(R.id.lbl03);
+        lbl04 = (TextView) v.findViewById(R.id.lbl04);
         spinner = (Spinner) v.findViewById(R.id.sp_adress);
         loadAdress();
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -187,11 +188,15 @@ public class DeliveryFragment extends Fragment {
                     lbl01.setVisibility(View.INVISIBLE);
                     lbl02.setVisibility(View.INVISIBLE);
                     lbl03.setVisibility(View.INVISIBLE);
+                    lbl04.setVisibility(View.INVISIBLE);
                     tvTime.setVisibility(View.INVISIBLE);
                     rbToday.setVisibility(View.INVISIBLE);
                     rbTomorrow.setVisibility(View.INVISIBLE);
                     radioGroup.setVisibility(View.INVISIBLE);
                     btnFinish.setVisibility(View.INVISIBLE);
+                    spinner.setVisibility(View.INVISIBLE);
+                    tvFinishTime.setVisibility(View.INVISIBLE);
+                    tvStartTime.setVisibility(View.INVISIBLE);
                 }
             }
 
