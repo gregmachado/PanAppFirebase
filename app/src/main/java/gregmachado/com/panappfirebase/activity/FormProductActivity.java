@@ -145,7 +145,11 @@ public class FormProductActivity extends CommonActivity {
                     product.setProductName(productName);
                     product.setProductPrice(productPrice);
                     product.setType(productType);
-                    product.setItensSale(0);
+                    if (update){
+                        product.setItensSale(items);
+                    } else {
+                        product.setItensSale(0);
+                    }
                     product.setBakeryId(bakeryID);
                     if (update) {
                         openProgressDialog("Aguarde...", "Atualizando Produto");
@@ -211,6 +215,11 @@ public class FormProductActivity extends CommonActivity {
             product.setItensSale(items);
         }
         mDatabaseReference.child("bakeries").child(bakeryID).child("products").child(productID).setValue(product);
+        if (update){
+            showToast("Produto " + productName + " atualizado!");
+        } else {
+            showToast("Produto " + productName + " adicionado!");
+        }
         finish();
     }
 

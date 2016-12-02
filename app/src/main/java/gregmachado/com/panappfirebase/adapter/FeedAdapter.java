@@ -38,6 +38,11 @@ public class FeedAdapter extends FirebaseRecyclerAdapter<Feed, FeedViewHolder> {
         this.type = type;
     }
 
+    public void remove(int position) {
+        notifyItemRemoved(position);
+        this.getRef(position).removeValue();
+    }
+
     @Override
     protected void populateViewHolder(final FeedViewHolder viewHolder, final Feed model, final int position) {
 

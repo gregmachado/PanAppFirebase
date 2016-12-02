@@ -15,6 +15,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -134,9 +135,9 @@ public class UserMainActivity extends CommonActivity
                         icFeed.setVisibility(View.GONE);
                     }
                     adapter = new FeedAdapter(mDatabaseReference.child("users").child(userID).child("feed").getRef(),
-                            UserMainActivity.this, false
-                    ) {};
+                            UserMainActivity.this, false);
                     rvFeed.setAdapter(adapter);
+                    setUpItemTouchHelper();
                 } else {
                     closeProgressBar();
                     tvNoFeed.setVisibility(View.VISIBLE);
@@ -151,51 +152,74 @@ public class UserMainActivity extends CommonActivity
         });
     }
 
+    private void setUpItemTouchHelper() {
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                int swipedPosition = viewHolder.getAdapterPosition();
+                FeedAdapter adapter = (FeedAdapter) rvFeed.getAdapter();
+                adapter.remove(swipedPosition);
+
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(rvFeed);
+    }
+
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
-        int id = item.getItemId();
-        params.putString("id", userID);
-        params.putBoolean("type", false);
-        params.putString("name", userName);
+        if (checKConnection(getApplicationContext())) {
+            int id = item.getItemId();
+            params.putString("id", userID);
+            params.putBoolean("type", false);
+            params.putString("name", userName);
 
-        if (id == R.id.nav_bakerys) {
-            Intent intentBakeryList = new Intent(UserMainActivity.this, BakeryListActivity.class);
-            intentBakeryList.putExtras(params);
-            startActivity(intentBakeryList);
-        } else if (id == R.id.nav_favorites) {
-            Intent intentFavoriteBakeryList = new Intent(UserMainActivity.this, FavoriteListActivity.class);
-            intentFavoriteBakeryList.putExtras(params);
-            startActivity(intentFavoriteBakeryList);
-        } else if (id == R.id.nav_configuration) {
-            Intent intSettings = new Intent(UserMainActivity.this, SettingsActivity.class);
-            intSettings.putExtras(params);
-            startActivity(intSettings);
-        } else if (id == R.id.nav_follow_orders) {
-            Intent intentRequest = new Intent(UserMainActivity.this, RequestActivity.class);
-            intentRequest.putExtras(params);
-            startActivity(intentRequest);
-        } else if (id == R.id.nav_history) {
-            Intent intentHistoric = new Intent(UserMainActivity.this, HistoricActivity.class);
-            intentHistoric.putExtras(params);
-            startActivity(intentHistoric);
-        } else if (id == R.id.nav_my_adrees) {
-            Intent intentAdressList = new Intent(UserMainActivity.this, AdressListActivity.class);
-            intentAdressList.putExtras(params);
-            startActivity(intentAdressList);
-        } else if (id == R.id.nav_offers) {
-            Intent intentOffers = new Intent(UserMainActivity.this, OfferActivity.class);
-            intentOffers.putExtras(params);
-            startActivity(intentOffers);
-        } else if (id == R.id.nav_talk_whit_us) {
-            Intent intentTalkWithUs = new Intent(UserMainActivity.this, TalkWithUsActivity.class);
-            intentTalkWithUs.putExtras(params);
-            startActivity(intentTalkWithUs);
-        } else if (id == R.id.nav_exit) {
-            onBackPressed();
+            if (id == R.id.nav_bakerys) {
+                Intent intentBakeryList = new Intent(UserMainActivity.this, BakeryListActivity.class);
+                intentBakeryList.putExtras(params);
+                startActivity(intentBakeryList);
+            } else if (id == R.id.nav_favorites) {
+                Intent intentFavoriteBakeryList = new Intent(UserMainActivity.this, FavoriteListActivity.class);
+                intentFavoriteBakeryList.putExtras(params);
+                startActivity(intentFavoriteBakeryList);
+            } else if (id == R.id.nav_configuration) {
+                Intent intSettings = new Intent(UserMainActivity.this, SettingsActivity.class);
+                intSettings.putExtras(params);
+                startActivity(intSettings);
+            } else if (id == R.id.nav_follow_orders) {
+                Intent intentRequest = new Intent(UserMainActivity.this, RequestActivity.class);
+                intentRequest.putExtras(params);
+                startActivity(intentRequest);
+            } else if (id == R.id.nav_history) {
+                Intent intentHistoric = new Intent(UserMainActivity.this, HistoricActivity.class);
+                intentHistoric.putExtras(params);
+                startActivity(intentHistoric);
+            } else if (id == R.id.nav_my_adrees) {
+                Intent intentAdressList = new Intent(UserMainActivity.this, AdressListActivity.class);
+                intentAdressList.putExtras(params);
+                startActivity(intentAdressList);
+            } else if (id == R.id.nav_offers) {
+                Intent intentOffers = new Intent(UserMainActivity.this, OfferActivity.class);
+                intentOffers.putExtras(params);
+                startActivity(intentOffers);
+            } else if (id == R.id.nav_talk_whit_us) {
+                Intent intentTalkWithUs = new Intent(UserMainActivity.this, TalkWithUsActivity.class);
+                intentTalkWithUs.putExtras(params);
+                startActivity(intentTalkWithUs);
+            } else if (id == R.id.nav_exit) {
+                onBackPressed();
+            }
+        } else {
+            showToast("Verifique sua conexão com a internet!");
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

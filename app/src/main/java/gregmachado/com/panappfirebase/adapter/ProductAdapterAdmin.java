@@ -225,8 +225,9 @@ public class ProductAdapterAdmin extends FirebaseRecyclerAdapter<Product, Produc
                         String action = item.getTitle().toString();
                         productID = model.getId();
                         productName = model.getProductName();
+                        items = model.getItensSale();
                         String imagePath = model.getProductImage();
-                        makeAction(action, viewHolder, imagePath);
+                        makeAction(action, viewHolder, imagePath, items);
                         return true;
                     }
                 });
@@ -237,7 +238,7 @@ public class ProductAdapterAdmin extends FirebaseRecyclerAdapter<Product, Produc
         viewHolder.ivProduct.setVisibility(View.VISIBLE);
     }
 
-    private void makeAction(String action, ProductViewHolder viewHolder, String productImage) {
+    private void makeAction(String action, ProductViewHolder viewHolder, String productImage, int i) {
         switch (action){
             case "Editar":
                 String productType = viewHolder.tvProductType.getText().toString();
@@ -257,7 +258,7 @@ public class ProductAdapterAdmin extends FirebaseRecyclerAdapter<Product, Produc
                 params.putDouble("productPrice", productPrice);
                 params.putString("productID", productID);
                 params.putString("productImage", productImage);
-                params.putInt("items", items);
+                params.putInt("items", i);
                 Intent intentFormProduct = new Intent(mContext, FormProductActivity.class);
                 intentFormProduct.putExtras(params);
                 mContext.startActivity(intentFormProduct);

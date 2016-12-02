@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -24,21 +23,28 @@ import gregmachado.com.panappfirebase.util.LibraryClass;
 /**
  * Created by gregmachado on 17/06/16.
  */
-public class SplashActivity extends AppCompatActivity implements Runnable {
+public class SplashActivity extends CommonActivity implements Runnable {
     private static final String TAG = SplashActivity.class.getSimpleName();
     private DatabaseReference databaseReference;
     private FirebaseAuth firebaseAuth;
     private FirebaseAuth.AuthStateListener authStateListener;
-    private ProgressBar progressBar;
-    private Bundle params;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-        progressBar = (ProgressBar) findViewById(R.id.simpleProgressBar);
-        progressBar.setVisibility(View.VISIBLE);
+        initViews();
+        if (checKConnection(getApplicationContext())) {
+            go();
+        } else {
+            showToast("Verifique sua conexão com a internet!");
+            Intent intent = new Intent(SplashActivity.this, NoConnectionActivity.class);
+            startActivity(intent);
+            finish();
+        }
+    }
 
+    private void go() {
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -88,6 +94,12 @@ public class SplashActivity extends AppCompatActivity implements Runnable {
         handler.postDelayed(this, 2000);
     }
 
+    @Override
+    protected void initViews() {
+        progressBar = (ProgressBar) findViewById(R.id.simpleProgressBar);
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
     public void run() {
         firebaseAuth = FirebaseAuth.getInstance();
         firebaseAuth.addAuthStateListener(authStateListener);
@@ -98,7 +110,9 @@ public class SplashActivity extends AppCompatActivity implements Runnable {
     @Override
     protected void onStop() {
         super.onStop();
-        firebaseAuth.removeAuthStateListener(authStateListener);
+        if (firebaseAuth != null) {
+            firebaseAuth.removeAuthStateListener(authStateListener);
+        }
         Log.i(TAG, "onStop");
     }
 

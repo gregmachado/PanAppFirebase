@@ -154,4 +154,5 @@
     <string name="complement">Complemento</string>
     <string name="reference">Referência</string>
     <string name="msg">Ou deixe sua mensagem aqui, que logo retornaremos!</string>
+    <string name="no_connection_internet">Sem conexão com a internet!</string>
 </resources>
