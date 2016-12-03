@@ -44,7 +44,7 @@ public class SettingsActivity extends CommonActivity {
     private static final String TAG = SettingsActivity.class.getSimpleName();
     private FirebaseStorage storage = FirebaseStorage.getInstance();
     private StorageReference mStorageRef;
-    private TextView lblName, lblEmail, lblAddPhoto, tvDistance, lblVersion;
+    private TextView lblName, lblEmail, lblAddPhoto, tvDistance;
     private EditText etName;
     private ImageView ivUser, ivAddPhoto;
     private Button btnSaveChanges;
@@ -79,7 +79,6 @@ public class SettingsActivity extends CommonActivity {
                 name = user.getName();
                 lblName.setText(user.getName());
                 lblEmail.setText(user.getEmail());
-                lblVersion.setText(getResources().getString(R.string.VERSION));
                 distance = user.getDistanceForSearchBakery();
                 tvDistance.setText(String.valueOf(distance));
                 seekBar.setProgress(distance);
@@ -146,7 +145,6 @@ public class SettingsActivity extends CommonActivity {
         lblEmail = (TextView) findViewById(R.id.lbl_email);
         lblName = (TextView) findViewById(R.id.lbl_name);
         lblAddPhoto = (TextView) findViewById(R.id.lbl_add_photo);
-        lblVersion = (TextView) findViewById(R.id.lbl_version);
         tvDistance = (TextView) findViewById(R.id.tv_distance);
         btnSaveChanges = (Button) findViewById(R.id.btn_save_changes);
         etName = (EditText) findViewById(R.id.et_name);
@@ -238,6 +236,13 @@ public class SettingsActivity extends CommonActivity {
             mDatabaseReference.child("users").child(id).child("sendNotification").setValue(sendNotification);
             mDatabaseReference.child("users").child(id).child("image").setValue(user.getImage());
             showToast("Usuário atualizado!");
+            Intent intentHomeUser = new Intent(SettingsActivity.this, UserMainActivity.class);
+            params = new Bundle();
+            params.putString("name", name);
+            params.putString("email", email);
+            intentHomeUser.putExtras(params);
+            startActivity(intentHomeUser);
+            finish();
         } else {
             showToast("Erro ao enviar dados!");
         }

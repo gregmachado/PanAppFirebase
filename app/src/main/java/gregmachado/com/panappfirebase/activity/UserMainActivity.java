@@ -58,6 +58,7 @@ public class UserMainActivity extends CommonActivity
     private String bakeryName, userName, userID, userEmail;
     private FirebaseStorage storage = FirebaseStorage.getInstance();
     private StorageReference mStorageRef;
+    private boolean firstOpen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +69,7 @@ public class UserMainActivity extends CommonActivity
         if (params != null) {
             userName = params.getString("name");
             userEmail = params.getString("email");
+            firstOpen = params.getBoolean("firstOpen");
         }
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -97,11 +99,26 @@ public class UserMainActivity extends CommonActivity
         String token = FirebaseInstanceId.getInstance().getToken();
         mDatabaseReference.child("users").child(userID).child("token").setValue(token);
         loadFeed();
+        if (firstOpen){
+            checkFirstOpen();
+        }
+    }
+
+    private void checkFirstOpen() {
+        if (firstOpen){
+            params.putString("userID", userID);
+            params.putBoolean("update", false);
+            params.putBoolean("isRegister", true);
+            Intent intentFormEditBakery = new Intent(UserMainActivity.this, FormAdressActivity.class);
+            intentFormEditBakery.putExtras(params);
+            startActivityForResult(intentFormEditBakery, 5);
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        checkFirstOpen();
     }
 
     private void loadFeed() {
@@ -165,7 +182,10 @@ public class UserMainActivity extends CommonActivity
                 int swipedPosition = viewHolder.getAdapterPosition();
                 FeedAdapter adapter = (FeedAdapter) rvFeed.getAdapter();
                 adapter.remove(swipedPosition);
-
+                if (adapter.getItemCount() == 0){
+                    tvNoFeed.setVisibility(View.VISIBLE);
+                    icFeed.setVisibility(View.VISIBLE);
+                }
             }
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
@@ -277,5 +297,19 @@ public class UserMainActivity extends CommonActivity
         });
         AlertDialog alertDialog = builder.create();
         alertDialog.show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 5)
+        {
+            if (resultCode == 5){
+                firstOpen = data.getBooleanExtra("firstOpen", false);
+                Log.i(TAG, String.valueOf(firstOpen));
+                loadFeed();
+            }
+        }
     }
 }

@@ -115,7 +115,7 @@
             tools:ignore="HardcodedText" />
 
         <TextView
-            android:id="@+id/tv_old_price"
+            android:id="@+id/tv_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_product"
@@ -129,24 +129,10 @@
             tools:ignore="HardcodedText" />
 
         <TextView
-            android:id="@+id/tv_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_price_tag"
-            android:layout_toEndOf="@+id/tv_price_tag"
-            android:layout_toRightOf="@+id/tv_price_tag"
-            android:layout_marginTop="4dp"
-            android:text="Preço"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            tools:ignore="HardcodedText" />
-
-        <TextView
             android:id="@+id/tv_unit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_price_tag"
+            android:layout_below="@+id/tv_product"
             android:layout_toLeftOf="@+id/tv_unit_tag"
             android:layout_toStartOf="@+id/tv_unit_tag"
             android:layout_marginTop="5dp"
@@ -162,7 +148,7 @@
             android:id="@+id/tv_unit_tag"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/tv_price_tag"
+            android:layout_below="@+id/tv_product"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
             android:layout_marginTop="5dp"

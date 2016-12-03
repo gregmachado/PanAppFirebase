@@ -15,6 +15,7 @@ import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -99,6 +100,10 @@ public class AdminMainActivity extends CommonActivity
         String token = FirebaseInstanceId.getInstance().getToken();
         mDatabaseReference.child("users").child(id).child("token").setValue(token);
         loadFeed();
+        checkFirstOpen();
+    }
+
+    private void checkFirstOpen() {
         if (firstOpen){
             params.putString("bakeryID", bakeryID);
             params.putString("userID", id);
@@ -112,6 +117,7 @@ public class AdminMainActivity extends CommonActivity
     @Override
     protected void onResume() {
         super.onResume();
+        checkFirstOpen();
     }
 
     private void loadFeed() {
@@ -146,9 +152,9 @@ public class AdminMainActivity extends CommonActivity
                     }
                     adapter = new FeedAdapter(mDatabaseReference.child("bakeries").child(bakeryID).child("feed").getRef(),
                             AdminMainActivity.this, true
-                    ) {
-                    };
+                    );
                     rvFeed.setAdapter(adapter);
+                    setUpItemTouchHelper();
                 } else {
                     closeProgressBar();
                     tvNoFeed.setVisibility(View.VISIBLE);
@@ -161,6 +167,29 @@ public class AdminMainActivity extends CommonActivity
                 Log.w(TAG, "getUser:onCancelled", databaseError.toException());
             }
         });
+    }
+
+    private void setUpItemTouchHelper() {
+        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT|ItemTouchHelper.RIGHT) {
+
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                int swipedPosition = viewHolder.getAdapterPosition();
+                FeedAdapter adapter = (FeedAdapter) rvFeed.getAdapter();
+                adapter.remove(swipedPosition);
+                if (adapter.getItemCount() == 0){
+                    tvNoFeed.setVisibility(View.VISIBLE);
+                    icFeed.setVisibility(View.VISIBLE);
+                }
+            }
+        };
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
+        itemTouchHelper.attachToRecyclerView(rvFeed);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -266,6 +295,7 @@ public class AdminMainActivity extends CommonActivity
             if (resultCode == 5){
                 firstOpen = data.getBooleanExtra("firstOpen", false);
                 Log.i(TAG, String.valueOf(firstOpen));
+                loadFeed();
             }
         }
     }

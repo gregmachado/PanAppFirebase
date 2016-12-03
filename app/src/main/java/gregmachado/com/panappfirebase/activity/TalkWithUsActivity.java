@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,7 @@ public class TalkWithUsActivity extends CommonActivity{
     private RecyclerView.LayoutManager layoutManager;
     private List<SocialMedia> talkList = new ArrayList();
     private EditText inputMessage;
+    private TextView lblVersion;
     private String id;
 
     @Override
@@ -57,6 +59,8 @@ public class TalkWithUsActivity extends CommonActivity{
         adapter = new TalkAdapter(TalkWithUsActivity.this, talkList);
         rvTalk.setAdapter(adapter);
         inputMessage = (EditText) findViewById(R.id.input_msg);
+        lblVersion = (TextView) findViewById(R.id.lbl_version);
+        lblVersion.setText(getResources().getString(R.string.VERSION));
     }
 
     public List<SocialMedia> loadList(){
@@ -83,6 +87,8 @@ public class TalkWithUsActivity extends CommonActivity{
             mDatabaseReference.child("message").child(id).child(msgID).setValue(msg);
             inputMessage.setText("");
             showToast("Obrigado! Sua mensagem foi enviada!");
+        } else {
+            showToast("Mensagem vazia ou pequena demais!");
         }
     }
 }

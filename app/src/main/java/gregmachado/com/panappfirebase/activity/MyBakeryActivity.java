@@ -1,8 +1,12 @@
 package gregmachado.com.panappfirebase.activity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
@@ -11,9 +15,13 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.text.MessageFormat;
 
@@ -25,9 +33,12 @@ import gregmachado.com.panappfirebase.domain.Bakery;
  */
 public class MyBakeryActivity extends CommonActivity{
     private static final String TAG = MyBakeryActivity.class.getSimpleName();
-    private TextView tvName, tvAdress, tvPhone, tvCnpj, tvCity, tvState, tvEmail, tvHasDelivery, tvStartTime, tvFinishTime;
+    private TextView tvName, tvAdress, tvPhone, tvCnpj, tvCity, tvState, tvEmail, tvHasDelivery, tvStartTime, tvFinishTime, tvNoPhoto;
     private ImageView ivBakery;
     private String bakeryId;
+    private CardView cardBakery;
+    private FirebaseStorage storage = FirebaseStorage.getInstance();
+    private StorageReference mStorageRef;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,7 +53,6 @@ public class MyBakeryActivity extends CommonActivity{
         mDatabaseReference.child("bakeries").child(bakeryId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                closeProgressBar();
                 Bakery bakery = dataSnapshot.getValue(Bakery.class);
                 tvName.setText(bakery.getFantasyName());
                 tvPhone.setText(bakery.getFone());
@@ -61,6 +71,28 @@ public class MyBakeryActivity extends CommonActivity{
                 tvCity.setText(bakery.getAdress().getCity());
                 tvCnpj.setText(bakery.getCnpj());
                 tvState.setText(bakery.getAdress().getState());
+                if (bakery.getBakeryImage() == null) {
+                    tvNoPhoto.setVisibility(View.VISIBLE);
+                } else {
+                    StorageReference mStorage = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com");
+                    StorageReference imageRef = mStorage.child(bakeryId);
+                    final long ONE_MEGABYTE = 1024 * 1024;
+                    imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                        @Override
+                        public void onSuccess(byte[] bytes) {
+                            Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                            ivBakery.setImageBitmap(bitmap);
+                            tvNoPhoto.setVisibility(View.INVISIBLE);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            showToast("Erro ao carregar imagem!");
+                        }
+                    });
+                }
+                closeProgressBar();
+                cardBakery.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -92,7 +124,10 @@ public class MyBakeryActivity extends CommonActivity{
         tvState = (TextView) findViewById(R.id.tv_bakery_state);
         tvHasDelivery = (TextView) findViewById(R.id.tv_has_delivery);
         tvPhone = (TextView) findViewById(R.id.tv_bakery_fone);
+        tvNoPhoto = (TextView) findViewById(R.id.tv_no_photo);
         ivBakery = (ImageView) findViewById(R.id.iv_my_bakery);
+        cardBakery = (CardView) findViewById(R.id.cv_my_bakery);
+        cardBakery.setVisibility(View.INVISIBLE);
         progressBar = (ProgressBar) findViewById(R.id.simpleProgressBar);
     }
 

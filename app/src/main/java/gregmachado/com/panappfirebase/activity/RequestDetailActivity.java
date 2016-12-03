@@ -45,6 +45,7 @@ public class RequestDetailActivity extends CommonActivity {
     private boolean type;
     private Request request;
     private View dialoglayout;
+    private int situation;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,6 +60,7 @@ public class RequestDetailActivity extends CommonActivity {
             requestID = params.getString("requestID");
             type = params.getBoolean("type");
             code = params.getString("code");
+            situation = params.getInt("situation");
         }
         initViews();
         rvItems.setHasFixedSize(true);
@@ -117,7 +119,7 @@ public class RequestDetailActivity extends CommonActivity {
         tvStatus = (TextView) findViewById(R.id.tv_status);
         rvItems = (RecyclerView) findViewById(R.id.rv_items);
         Button btnChangeStatus = (Button) findViewById(R.id.btn_update_status);
-        if(!type){
+        if(!type || situation == 3 || situation == 4){
             btnChangeStatus.setVisibility(View.INVISIBLE);
         }
     }

@@ -68,7 +68,6 @@ public class OfferAdapter extends FirebaseRecyclerAdapter<Offer, OfferViewHolder
     protected void populateViewHolder(final OfferViewHolder viewHolder, final Offer model, final int position) {
         viewHolder.tvProductName.setText(model.getProductName());
         viewHolder.tvPrice.setText(precision.format(model.getPriceInOffer()));
-        viewHolder.tvOldPrice.setText(precision.format(model.getProductPrice()));
         viewHolder.tvDiscount.setText(String.valueOf(model.getDiscount()));
         viewHolder.tvItensSale.setText(String.valueOf(model.getItensSale()));
         if (!type){
@@ -244,7 +243,6 @@ public class OfferAdapter extends FirebaseRecyclerAdapter<Offer, OfferViewHolder
         switch (action) {
             case "Editar":
                 Double productPrice = Double.parseDouble(viewHolder.tvPrice.getText().toString());
-                Double oldPrice = Double.parseDouble(viewHolder.tvOldPrice.getText().toString());
                 int percent = Integer.parseInt(viewHolder.tvDiscount.getText().toString());
                 int itemSale = Integer.parseInt(viewHolder.tvItensSale.getText().toString());
                 Bundle params = new Bundle();
@@ -252,7 +250,6 @@ public class OfferAdapter extends FirebaseRecyclerAdapter<Offer, OfferViewHolder
                 params.putBoolean("update", true);
                 params.putString("productName", productName);
                 params.putDouble("productPrice", productPrice);
-                params.putDouble("oldPrice", oldPrice);
                 params.putString("productID", productID);
                 params.putString("productImage", productImage);
                 params.putString("offerID", offerID);

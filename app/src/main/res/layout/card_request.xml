@@ -137,7 +137,7 @@
             android:text="Método"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/black_50_opacity"
             android:textSize="14sp"
             android:textStyle="bold"
             tools:ignore="HardcodedText" />
@@ -152,6 +152,38 @@
             android:textColor="@color/black_50_opacity"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/lbl_request_method"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_request_bakery_name"
+            android:paddingTop="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginEnd="4dp"
+            android:text="Método: "
+            android:layout_toLeftOf="@id/tv_request_method"
+            android:layout_toStartOf="@id/tv_request_method"
+            android:textColor="@color/black_50_opacity"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/lbl_request_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_request_date_tag"
+            android:paddingTop="4dp"
+            android:layout_marginRight="4dp"
+            android:layout_marginEnd="4dp"
+            android:text="Status: "
+            android:layout_toLeftOf="@id/tv_request_status"
+            android:layout_toStartOf="@id/tv_request_status"
+            android:textColor="@color/black_50_opacity"
             android:textSize="14sp"
             android:textStyle="bold"
             tools:ignore="HardcodedText" />

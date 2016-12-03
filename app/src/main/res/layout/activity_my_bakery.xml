@@ -1,4 +1,5 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -21,212 +22,247 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v7.widget.CardView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/cv_my_bakery"
+    <LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:elevation="4dp"
-        app:cardCornerRadius="2dp">
+        android:layout_marginBottom="20dp"
+        android:layout_height="match_parent">
 
-        <RelativeLayout
+        <android.support.v7.widget.CardView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:id="@+id/cv_my_bakery"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            tools:background="#ffffff">
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            android:elevation="4dp"
+            app:cardCornerRadius="2dp">
 
-            <ProgressBar
-                android:id="@+id/simpleProgressBar"
-                android:layout_width="60sp"
-                android:layout_height="60sp"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:visibility="invisible" />
-
-            <ImageButton
-                android:id="@+id/btn_edit_bakery"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_below="@+id/iv_my_bakery"
-                android:background="@android:color/transparent"
-                android:onClick="editBakery"
-                android:paddingRight="8dp"
-                android:paddingTop="24dp"
-                android:src="@drawable/ic_mode_edit_black_24dp" />
-
-            <ImageView
-                android:id="@+id/iv_my_bakery"
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="140dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:src="@drawable/padaria" />
+                android:layout_height="match_parent"
+                tools:background="#ffffff">
 
-            <TextView
-                android:id="@+id/tv_bakery_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/iv_my_bakery"
-                android:paddingLeft="16dp"
-                android:paddingTop="24dp"
-                android:text="Padaria"
-                android:textSize="24sp" />
+                <ProgressBar
+                    android:id="@+id/simpleProgressBar"
+                    android:layout_width="60sp"
+                    android:layout_height="60sp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
+                    android:visibility="invisible" />
 
-            <TextView
-                android:id="@+id/tv_bakery_cnpj"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_bakery_name"
-                android:paddingLeft="16dp"
-                android:paddingTop="16dp"
-                android:text="CNPJ"
-                android:textColor="#363636"
-                android:textSize="14sp" />
+                <ImageButton
+                    android:id="@+id/btn_edit_bakery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@+id/iv_my_bakery"
+                    android:background="@android:color/transparent"
+                    android:onClick="editBakery"
+                    android:paddingRight="8dp"
+                    android:paddingTop="24dp"
+                    android:src="@drawable/ic_mode_edit_black_24dp" />
 
-            <TextView
-                android:id="@+id/tv_bakery_adress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_bakery_cnpj"
-                android:paddingLeft="16dp"
-                android:paddingTop="16dp"
-                android:text="Rua, número, Bairro"
-                android:textColor="#363636"
-                android:textSize="14sp" />
+                <ImageView
+                    android:id="@+id/iv_my_bakery"
+                    android:layout_width="200dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_height="140dp"
+                    android:layout_marginTop="20dp"
+                    android:layout_alignParentTop="true" />
 
-            <TextView
-                android:id="@+id/tv_bakery_city"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_bakery_adress"
-                android:paddingLeft="16dp"
-                android:paddingTop="16dp"
-                android:text="Cidade"
-                android:textColor="#363636"
-                android:textSize="14sp" />
+                <com.devspark.robototextview.widget.RobotoTextView
+                    android:id="@+id/tv_no_photo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="60dp"
+                    android:text="@string/no_photo"
+                    android:textColor="@color/black_50_opacity"
+                    android:textSize="18sp"
+                    android:visibility="invisible"
+                    app:typeface="roboto_light_italic" />
 
-            <TextView
-                android:id="@+id/tv_hyphen"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_bakery_adress"
-                android:layout_toRightOf="@+id/tv_bakery_city"
-                android:paddingLeft="16dp"
-                android:paddingTop="16dp"
-                android:text=" - "
-                android:textColor="#363636"
-                android:textSize="14sp" />
+                <TextView
+                    android:id="@+id/tv_bakery_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/iv_my_bakery"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="24dp"
+                    android:text="Padaria"
+                    android:textSize="24sp" />
 
-            <TextView
-                android:id="@+id/tv_bakery_state"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_bakery_adress"
-                android:layout_toRightOf="@+id/tv_hyphen"
-                android:paddingLeft="16dp"
-                android:paddingTop="16dp"
-                android:text="Estado"
-                android:textColor="#363636"
-                android:textSize="14sp" />
+                <LinearLayout
+                    android:id="@+id/ll"
+                    android:layout_below="@id/tv_bakery_name"
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/tv_bakery_fone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_bakery_city"
-                android:paddingLeft="16dp"
-                android:paddingTop="16dp"
-                android:text="Telefone"
-                android:textColor="#363636"
-                android:textSize="14sp" />
+                    <TextView
+                        android:id="@+id/lbl_cnpj"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="16dp"
+                        android:paddingTop="16dp"
+                        android:text="CNPJ:"
+                        android:textColor="#363636"
+                        android:textSize="14sp" />
 
-            <TextView
-                android:id="@+id/tv_bakery_email"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_bakery_fone"
-                android:paddingLeft="16dp"
-                android:paddingTop="16dp"
-                android:text="Email"
-                android:textColor="#363636"
-                android:textSize="14sp" />
+                    <TextView
+                        android:id="@+id/tv_bakery_cnpj"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingLeft="8dp"
+                        android:paddingTop="16dp"
+                        android:text="@string/cnpj"
+                        android:textColor="#363636"
+                        android:textSize="14sp" />
+                </LinearLayout>
 
-            <TextView
-                android:id="@+id/lbl_has_delivery"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_bakery_email"
-                android:paddingLeft="16dp"
-                android:paddingTop="16dp"
-                android:text="Possui delivery?"
-                android:textColor="#363636"
-                android:textSize="14sp" />
+                <TextView
+                    android:id="@+id/tv_bakery_adress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/ll"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="16dp"
+                    android:text="Rua, número, Bairro"
+                    android:textColor="#363636"
+                    android:textSize="14sp" />
 
-            <TextView
-                android:id="@+id/tv_has_delivery"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_bakery_email"
-                android:layout_toRightOf="@+id/lbl_has_delivery"
-                android:paddingLeft="16dp"
-                android:paddingTop="16dp"
-                android:text="-"
-                android:textColor="#363636"
-                android:textSize="14sp" />
+                <TextView
+                    android:id="@+id/tv_bakery_city"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_bakery_adress"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="16dp"
+                    android:text="Cidade"
+                    android:textColor="#363636"
+                    android:textSize="14sp" />
 
-            <TextView
-                android:id="@+id/lbl_work_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_has_delivery"
-                android:paddingLeft="16dp"
-                android:paddingTop="16dp"
-                android:text="Horário de funcionamento: "
-                android:textColor="#363636"
-                android:textSize="14sp" />
+                <TextView
+                    android:id="@+id/tv_hyphen"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_bakery_adress"
+                    android:layout_toRightOf="@+id/tv_bakery_city"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="16dp"
+                    android:text=" - "
+                    android:textColor="#363636"
+                    android:textSize="14sp" />
 
-            <TextView
-                android:id="@+id/tv_start_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_has_delivery"
-                android:layout_toRightOf="@+id/lbl_work_time"
-                android:paddingLeft="4dp"
-                android:paddingTop="16dp"
-                android:text="@string/zero_hour"
-                android:textColor="#363636"
-                android:textSize="14sp" />
+                <TextView
+                    android:id="@+id/tv_bakery_state"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_bakery_adress"
+                    android:layout_toRightOf="@+id/tv_hyphen"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="16dp"
+                    android:text="Estado"
+                    android:textColor="#363636"
+                    android:textSize="14sp" />
 
-            <TextView
-                android:id="@+id/lbl_hyphen"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_has_delivery"
-                android:layout_toRightOf="@+id/tv_start_time"
-                android:paddingTop="16dp"
-                android:text=" - "
-                android:textColor="#363636"
-                android:textSize="14sp" />
+                <TextView
+                    android:id="@+id/tv_bakery_fone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_bakery_city"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="16dp"
+                    android:text="Telefone"
+                    android:textColor="#363636"
+                    android:textSize="14sp" />
 
-            <TextView
-                android:id="@+id/tv_finish_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tv_has_delivery"
-                android:layout_toRightOf="@+id/lbl_hyphen"
-                android:paddingLeft="4dp"
-                android:paddingTop="16dp"
-                android:text="@string/zero_hour"
-                android:textColor="#363636"
-                android:textSize="14sp" />
-        </RelativeLayout>
+                <TextView
+                    android:id="@+id/tv_bakery_email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_bakery_fone"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="16dp"
+                    android:text="Email"
+                    android:textColor="#363636"
+                    android:textSize="14sp" />
 
-    </android.support.v7.widget.CardView>
+                <TextView
+                    android:id="@+id/lbl_has_delivery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_bakery_email"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="16dp"
+                    android:text="Possui delivery?"
+                    android:textColor="#363636"
+                    android:textSize="14sp" />
 
+                <TextView
+                    android:id="@+id/tv_has_delivery"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_bakery_email"
+                    android:layout_toRightOf="@+id/lbl_has_delivery"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="16dp"
+                    android:text="-"
+                    android:textColor="#363636"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/lbl_work_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_has_delivery"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="16dp"
+                    android:text="Horário de funcionamento: "
+                    android:textColor="#363636"
+                    android:layout_marginBottom="8dp"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tv_start_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_has_delivery"
+                    android:layout_toRightOf="@+id/lbl_work_time"
+                    android:paddingLeft="4dp"
+                    android:paddingTop="16dp"
+                    android:text="@string/zero_hour"
+                    android:textColor="#363636"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/lbl_hyphen"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_has_delivery"
+                    android:layout_toRightOf="@+id/tv_start_time"
+                    android:paddingTop="16dp"
+                    android:text=" - "
+                    android:textColor="#363636"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/tv_finish_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_has_delivery"
+                    android:layout_toRightOf="@+id/lbl_hyphen"
+                    android:paddingLeft="4dp"
+                    android:paddingTop="16dp"
+                    android:text="@string/zero_hour"
+                    android:textColor="#363636"
+                    android:textSize="14sp" />
+            </RelativeLayout>
+
+        </android.support.v7.widget.CardView>
+
+    </LinearLayout>
 </LinearLayout>

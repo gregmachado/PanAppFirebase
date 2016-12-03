@@ -52,7 +52,7 @@ public class FormAdressActivity extends CommonActivity {
     private Resources resources;
     private String userId, adressID;
     private Integer number;
-    private Boolean update = false;
+    private Boolean update = false, isRegister;
     private Spinner spState;
     private DatabaseReference mDatabaseReference;
     private Double latitude, longitude;
@@ -83,11 +83,15 @@ public class FormAdressActivity extends CommonActivity {
             adressID = params.getString("adressID");
             userId = params.getString("userID");
             update = params.getBoolean("update");
+            isRegister = params.getBoolean("isRegister");
         }
         initViews();
         if (update) {
             setTitle("Editar Endereço");
             fillLabels();
+        }
+        if (isRegister){
+            showToast("Por favor, cadastre seu primeiro endereço!");
         }
     }
 
@@ -239,6 +243,7 @@ public class FormAdressActivity extends CommonActivity {
                 adress.setId(adressID);
             }
             mDatabaseReference.child("users").child(userId).child("adress").child(adressID).setValue(adress);
+            mDatabaseReference.child("users").child(userId).child("firstOpen").setValue(false);
             showToast("Endereço cadastrado");
             finish();
         }

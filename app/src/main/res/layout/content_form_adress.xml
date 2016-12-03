@@ -227,8 +227,9 @@
 
         <Button
             android:id="@+id/btn_get_my_location"
-            android:layout_width="match_parent"
+            android:layout_width="180sp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="40dp"
             android:layout_marginEnd="12dp"
             android:layout_marginStart="12dp"
@@ -240,8 +241,9 @@
 
         <Button
             android:id="@+id/btn_add_adress"
-            android:layout_width="match_parent"
+            android:layout_width="200sp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="15dp"
             android:layout_marginBottom="40dp"
             android:layout_marginEnd="12dp"

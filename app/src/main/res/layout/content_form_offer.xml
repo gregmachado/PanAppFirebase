@@ -228,8 +228,9 @@
 
     <Button
         android:id="@+id/btn_save_offer"
-        android:layout_width="match_parent"
+        android:layout_width="280sp"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:layout_marginTop="20sp"
         android:background="@drawable/btn_radius_28dp_primary_color"
         android:onClick="saveOffer"

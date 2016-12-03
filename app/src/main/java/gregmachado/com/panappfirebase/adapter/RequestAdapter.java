@@ -70,12 +70,14 @@ public class RequestAdapter extends FirebaseRecyclerAdapter<Request, RequestView
                 bakeryName = model.getBakeryName();
                 userName = model.getUserName();
                 String code = model.getRequestCode();
+                int situation = model.getSituation();
                 params.putString("code", code);
                 params.putString("bakeryID", bakeryID);
                 params.putString("requestID", requestID);
                 params.putString("userName", userName);
                 params.putString("bakeryName", bakeryName);
                 params.putBoolean("type", type);
+                params.putInt("situation", situation);
                 Intent intentProductList = new Intent(mContext, RequestDetailActivity.class);
                 intentProductList.putExtras(params);
                 mContext.startActivity(intentProductList);

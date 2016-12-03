@@ -1,5 +1,7 @@
 package gregmachado.com.panappfirebase.domain;
 
+import android.content.Context;
+
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ public class User {
     private double lastLatitude;
     private double lastLongitude;
     private int distanceForSearchBakery;
+    public static String PROVIDER = "gregmachado.com.panappfirebase.domain.User.PROVIDER";
 
     public User() {
     }
@@ -151,6 +154,18 @@ public class User {
 
     public void setFirstOpen(boolean firstOpen) {
         this.firstOpen = firstOpen;
+    }
+
+    public boolean isSocialNetworkLogged( Context context ){
+        String token = getProviderSP( context );
+        return( token.contains("facebook") || token.contains("google") );
+    }
+
+    public void saveProviderSP(Context context, String token ){
+        LibraryClass.saveSP( context, PROVIDER, token );
+    }
+    public String getProviderSP(Context context ){
+        return( LibraryClass.getSP( context, PROVIDER) );
     }
 
     public void saveDB(DatabaseReference.CompletionListener... completionListener) {

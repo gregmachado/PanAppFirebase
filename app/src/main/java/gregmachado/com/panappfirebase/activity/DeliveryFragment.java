@@ -2,6 +2,7 @@ package gregmachado.com.panappfirebase.activity;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,7 +45,7 @@ import gregmachado.com.panappfirebase.util.DateUtil;
 public class DeliveryFragment extends Fragment {
 
     private static final String TAG = DeliveryFragment.class.getSimpleName();
-    private TextView tvTime, tvNoHasDelivery, lbl01, lbl02, lbl03, lbl04, tvStartTime, tvFinishTime;
+    private TextView tvTime, tvNoHasDelivery, tvStartTime, tvFinishTime;
     private RadioButton rbToday, rbTomorrow;
     private RadioGroup radioGroup;
     private String today, tomorrow, scheduleDay, scheduleHour, adress, method, creatonDate;
@@ -57,6 +58,7 @@ public class DeliveryFragment extends Fragment {
     private Button btnFinish;
     private Spinner spinner;
     private boolean isToday = true;
+    private CardView cardAdress, cardDate, cardHour;
     private ScheduleActivity activity;
 
     public DeliveryFragment() {
@@ -86,10 +88,9 @@ public class DeliveryFragment extends Fragment {
         radioGroup = (RadioGroup) v.findViewById(R.id.rg_date_delivery);
         simpleProgressBar = (ProgressBar) v.findViewById(R.id.simpleProgressBar);
         tvNoHasDelivery = (TextView) v.findViewById(R.id.tv_no_has_delivery);
-        lbl01 = (TextView) v.findViewById(R.id.lbl01);
-        lbl02 = (TextView) v.findViewById(R.id.lbl02);
-        lbl03 = (TextView) v.findViewById(R.id.lbl03);
-        lbl04 = (TextView) v.findViewById(R.id.lbl04);
+        cardAdress = (CardView) v.findViewById(R.id.card_adress);
+        cardDate = (CardView) v.findViewById(R.id.card_date);
+        cardHour = (CardView) v.findViewById(R.id.card_hour);
         spinner = (Spinner) v.findViewById(R.id.sp_adress);
         loadAdress();
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -185,18 +186,10 @@ public class DeliveryFragment extends Fragment {
                     });
                 } else {
                     tvNoHasDelivery.setVisibility(View.VISIBLE);
-                    lbl01.setVisibility(View.INVISIBLE);
-                    lbl02.setVisibility(View.INVISIBLE);
-                    lbl03.setVisibility(View.INVISIBLE);
-                    lbl04.setVisibility(View.INVISIBLE);
-                    tvTime.setVisibility(View.INVISIBLE);
-                    rbToday.setVisibility(View.INVISIBLE);
-                    rbTomorrow.setVisibility(View.INVISIBLE);
-                    radioGroup.setVisibility(View.INVISIBLE);
+                    cardAdress.setVisibility(View.INVISIBLE);
+                    cardHour.setVisibility(View.INVISIBLE);
+                    cardDate.setVisibility(View.INVISIBLE);
                     btnFinish.setVisibility(View.INVISIBLE);
-                    spinner.setVisibility(View.INVISIBLE);
-                    tvFinishTime.setVisibility(View.INVISIBLE);
-                    tvStartTime.setVisibility(View.INVISIBLE);
                 }
             }
 

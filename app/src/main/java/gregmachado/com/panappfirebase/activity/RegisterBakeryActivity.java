@@ -8,10 +8,12 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -380,6 +382,11 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
 
     @Override
     protected void initViews() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_register_bakery);
+        setSupportActionBar(toolbar);
+        setTitle("Cadastro de padaria");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         resources = getResources();
         TextWatcher textWatcher = new TextWatcher() {
             @Override
@@ -408,9 +415,9 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
     }
 
     protected void initUser() {
-        email = "pan.app.info@gmail.com";
+        //email = "pan.app.info@gmail.com";
         //email = "testepadaria09@gmail.com";
-        //email = "soprostorrent@gmail.com";
+        email = "soprostorrent@gmail.com";
         user = new User();
         user.setName(fantasyName);
         user.setEmail(email);
@@ -455,5 +462,15 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
                 showToast("Este email já está cadastrado no sistema!");
             }
         });
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
