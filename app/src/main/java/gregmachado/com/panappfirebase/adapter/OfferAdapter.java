@@ -1,6 +1,7 @@
 package gregmachado.com.panappfirebase.adapter;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,14 +9,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.PopupMenu;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -32,7 +27,7 @@ import java.util.ArrayList;
 
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.activity.FormOfferActivity;
-import gregmachado.com.panappfirebase.activity.ProductListActivity;
+import gregmachado.com.panappfirebase.activity.ProductCartActivity;
 import gregmachado.com.panappfirebase.domain.Offer;
 import gregmachado.com.panappfirebase.domain.Product;
 import gregmachado.com.panappfirebase.util.AppUtil;
@@ -96,9 +91,8 @@ public class OfferAdapter extends FirebaseRecyclerAdapter<Offer, OfferViewHolder
         viewHolder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.w(TAG, "You clicked on " + model.getBakeryId() + " / " + model.getId());
                 if (type) {
-                    PopupMenu popup = new PopupMenu(mContext, viewHolder.mView);
+                    /*PopupMenu popup = new PopupMenu(mContext, viewHolder.mView);
                     popup.getMenuInflater().inflate(R.menu.popup_menu_offer, popup.getMenu());
 
                     popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -114,98 +108,14 @@ public class OfferAdapter extends FirebaseRecyclerAdapter<Offer, OfferViewHolder
                             return true;
                         }
                     });
-                    popup.show();
-
+                    popup.show();*/
                 } else {
-                    View dialoglayout = LayoutInflater.from(mContext).inflate(R.layout.dialog_units, null);
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                    final AlertDialog dialog = builder.create();
-                    dialog.setView(dialoglayout);
-
-                    tvUnits = (TextView) dialoglayout.findViewById(R.id.tv_unit_sale);
-                    ImageButton btnPlus = (ImageButton) dialoglayout.findViewById(R.id.btn_plus);
-                    btnPlus.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            increase(viewHolder, Integer.valueOf(viewHolder.tvItensSale.getText().toString()));
-                        }
-                    });
-                    btnPlus.setOnTouchListener(new View.OnTouchListener() {
-                        @Override
-                        public boolean onTouch(View v, MotionEvent event) {
-                            switch (event.getAction()) {
-
-                                case MotionEvent.ACTION_DOWN:
-                                    if (handler != null) return true;
-                                    handler = new Handler();
-                                    handler.postDelayed(actionPlus, 100);
-                                    break;
-
-                                case MotionEvent.ACTION_UP:
-                                    if (handler == null) return true;
-                                    handler.removeCallbacks(actionPlus);
-                                    handler = null;
-                                    break;
-                            }
-                            return false;
-                        }
-
-                        Runnable actionPlus = new Runnable() {
-
-                            @Override
-                            public void run() {
-                                increase(viewHolder, Integer.valueOf(viewHolder.tvItensSale.getText().toString()));
-                                handler.postDelayed(this, 100);
-                            }
-                        };
-                    });
-                    ImageButton btnLess = (ImageButton) dialoglayout.findViewById(R.id.btn_less);
-                    btnLess.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            decrease(viewHolder);
-                        }
-                    });
-                    btnLess.setOnTouchListener(new View.OnTouchListener() {
-                        @Override
-                        public boolean onTouch(View v, MotionEvent event) {
-                            switch (event.getAction()) {
-
-                                case MotionEvent.ACTION_DOWN:
-                                    if (handler != null) return true;
-                                    handler = new Handler();
-                                    handler.postDelayed(actionLess, 100);
-                                    break;
-
-                                case MotionEvent.ACTION_UP:
-                                    if (handler == null) return true;
-                                    handler.removeCallbacks(actionLess);
-                                    handler = null;
-                                    break;
-                            }
-                            return false;
-                        }
-
-                        Runnable actionLess = new Runnable() {
-
-                            @Override
-                            public void run() {
-                                decrease(viewHolder);
-                                handler.postDelayed(this, 100);
-                            }
-                        };
-                    });
-                    Button btnCancel = (Button) dialoglayout.findViewById(R.id.btn_cancel);
-                    btnCancel.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            dialog.dismiss();
-                        }
-                    });
-                    Button btnAddToCart = (Button) dialoglayout.findViewById(R.id.btn_add_cart);
-                    btnAddToCart.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
+                    Log.w(TAG, "You clicked on " + model.getBakeryId() + " / " + model.getId());
+                    AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                    builder.setTitle("Comprar?");
+                    builder.setMessage("Deseja comprar esta oferta?");
+                    builder.setPositiveButton("SIM", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface arg0, int arg1) {
                             Product product = new Product();
                             product.setProductName(model.getProductName());
                             product.setProductPrice(model.getPriceInOffer());
@@ -213,25 +123,32 @@ public class OfferAdapter extends FirebaseRecyclerAdapter<Offer, OfferViewHolder
                             product.setBakeryId(model.getBakeryId());
                             product.setProductImage(model.getProductImage());
                             product.setId(model.getProductID());
-                            items = getValue(viewHolder);
-                            product.setUnit(items);
-                            if (items > 0) {
-                                products.add(product);
-                                String name = model.getBakeryName();
-                                Bundle params = new Bundle();
-                                params.putString("bakeryID", bakeryID);
-                                params.putString("name", name);
-                                params.putString("userName", userName);
-                                params.putString("bakeryName", bakeryName);
-                                Intent intentProductList = new Intent(mContext, ProductListActivity.class);
-                                intentProductList.putExtra("list", products);
-                                intentProductList.putExtras(params);
-                                mContext.startActivity(intentProductList);
-                                dialog.dismiss();
-                            }
+                            product.setUnit(model.getItensSale());
+                            bakeryID = model.getBakeryId();
+                            products = new ArrayList<Product>();
+                            products.add(product);
+                            double total = model.getPriceInOffer() * Double.parseDouble(String.valueOf(model.getItensSale()));
+                            String offerID = model.getId();
+                            String name = model.getBakeryName();
+                            Bundle params = new Bundle();
+                            params.putDouble("total", total);
+                            params.putString("bakeryID", bakeryID);
+                            params.putString("offerID", offerID);
+                            params.putString("userName", userName);
+                            params.putString("bakeryName", bakeryName);
+                            params.putBoolean("isOffer", true);
+                            Intent intentProductList = new Intent(mContext, ProductCartActivity.class);
+                            intentProductList.putExtra("cart", products);
+                            intentProductList.putExtras(params);
+                            mContext.startActivity(intentProductList);
                         }
                     });
-                    dialog.show();
+                    builder.setNegativeButton("NÃO", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface arg0, int arg1) {
+                        }
+                    });
+                    AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
                 }
             }
         });

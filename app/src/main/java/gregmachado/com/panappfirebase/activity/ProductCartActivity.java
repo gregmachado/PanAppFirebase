@@ -38,12 +38,13 @@ public class ProductCartActivity extends CommonActivity implements ItemClickList
     private TextView tvItens, tvPrice, tvEmptyCart;
     private Double priceTotal, price;
     private Bundle params;
-    private String bakeryId, productID, userName, bakeryName;
+    private String bakeryId, productID, userName, bakeryName, offerID;
     private int items, itemsSale;
     private ImageView icCart;
     private CardView cardView;
     private Button btnFinish;
     private DecimalFormat precision = new DecimalFormat("#0.00");
+    private boolean isOffer;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -60,7 +61,9 @@ public class ProductCartActivity extends CommonActivity implements ItemClickList
             bakeryId = params.getString("bakeryID");
             userName = params.getString("userName");
             bakeryName = params.getString("bakeryName");
+            offerID = params.getString("offerID");
             priceTotal = params.getDouble("total");
+            isOffer = params.getBoolean("isOffer");
             _list = (ArrayList<Product>)
                     getIntent().getSerializableExtra("cart");
         }
@@ -115,6 +118,8 @@ public class ProductCartActivity extends CommonActivity implements ItemClickList
         params.putString("bakeryName", bakeryName);
         params.putString("bakeryID", bakeryId);
         params.putDouble("total", priceTotal);
+        params.putString("offerID", offerID);
+        params.putBoolean("isOffer", isOffer);
         intentSchedule.putExtras(params);
         intentSchedule.putExtra("items", requestItems);
         startActivity(intentSchedule);
@@ -156,8 +161,10 @@ public class ProductCartActivity extends CommonActivity implements ItemClickList
                         items = productAux.getUnit();
                         itemsSale = productAux.getItensSale();
                         items = itemsSale - items;
-                        mDatabaseReference.child("bakeries").child(bakeryId).child("products").child(productID).
-                                child("itensSale").setValue(items);
+                        if (!isOffer){
+                            mDatabaseReference.child("bakeries").child(bakeryId).child("products").child(productID).
+                                    child("itensSale").setValue(items);
+                        }
                     }
                     callScheduleActivity();
                 }

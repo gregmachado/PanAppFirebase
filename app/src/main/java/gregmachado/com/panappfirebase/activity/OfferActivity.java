@@ -38,7 +38,7 @@ public class OfferActivity extends CommonActivity {
     private TextView tvUnits;
     private OfferAdapter adapter;
     private boolean type;
-    private DecimalFormat precision = new DecimalFormat("#0.00");
+    private DecimalFormat precision = new DecimalFormat("#0.000");
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,12 +57,11 @@ public class OfferActivity extends CommonActivity {
             rvOffer.setHasFixedSize(true);
         }
         rvOffer.setItemAnimator(new DefaultItemAnimator());
-        rvOffer.setLayoutManager(new GridLayoutManager(OfferActivity.this, 2));
+        rvOffer.setLayoutManager(new GridLayoutManager(OfferActivity.this, 1));
+        loadOffers();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+    private void loadOffers() {
         openProgressBar();
         mDatabaseReference.child("offers").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -92,6 +91,12 @@ public class OfferActivity extends CommonActivity {
             }
         });
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

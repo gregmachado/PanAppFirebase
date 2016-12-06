@@ -142,6 +142,10 @@ public class RequestDetailActivity extends CommonActivity {
         String method = request.getMethod();
         if (method.equals("Retirada")){
             dialoglayout = LayoutInflater.from(this).inflate(R.layout.dialog_update_status_withdraw, null);
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            final AlertDialog dialog = builder.create();
+            dialog.setView(dialoglayout);
+
             final CheckBox cbReceived = (CheckBox) dialoglayout.findViewById(R.id.cb_received);
             final CheckBox cbReady = (CheckBox) dialoglayout.findViewById(R.id.cb_ready);
             final CheckBox cbRetired = (CheckBox) dialoglayout.findViewById(R.id.cb_retired);
@@ -197,10 +201,15 @@ public class RequestDetailActivity extends CommonActivity {
                         default:
                             break;
                     }
+                    dialog.dismiss();
                 }
             });
+            dialog.show();
         } else {
             dialoglayout = LayoutInflater.from(this).inflate(R.layout.dialog_update_status_delivery, null);
+            final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            final AlertDialog dialog = builder.create();
+            dialog.setView(dialoglayout);
             final CheckBox cbReceived = (CheckBox) dialoglayout.findViewById(R.id.cb_received);
             final CheckBox cbReady = (CheckBox) dialoglayout.findViewById(R.id.cb_ready);
             final CheckBox cbInTransit = (CheckBox) dialoglayout.findViewById(R.id.cb_in_transit);
@@ -303,20 +312,19 @@ public class RequestDetailActivity extends CommonActivity {
                         default:
                             break;
                     }
+                    dialog.dismiss();
                 }
             });
+            dialog.show();
         }
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        final AlertDialog dialog = builder.create();
-        dialog.setView(dialoglayout);
         Button btnCancel = (Button) dialoglayout.findViewById(R.id.btn_cancel);
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dialog.dismiss();
+                //dialog.dismiss();
             }
         });
-        dialog.show();
+        //dialog.show();
     }
 
     private void setRequest(String status, int situation, boolean delivered, String msg){
@@ -351,5 +359,11 @@ public class RequestDetailActivity extends CommonActivity {
         Feed feedUser = new Feed(feedID, bakeryID, userID, date, userName, bakeryName, msgUser, 1, null);
         //save user feed
         mDatabaseReference.child("users").child(userID).child("feed").child(feedID).setValue(feedUser);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadItems();
     }
 }

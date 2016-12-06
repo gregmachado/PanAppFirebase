@@ -1,5 +1,6 @@
 package gregmachado.com.panappfirebase.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -228,24 +229,28 @@ public class SettingsActivity extends CommonActivity {
                     if (downloadUrl != null) {
                         user.setImage(downloadUrl.toString());
                     }
+                    saveUser();
                 }
             });
-
-            mDatabaseReference.child("users").child(id).child("name").setValue(name);
-            mDatabaseReference.child("users").child(id).child("distanceForSearchBakery").setValue(distance);
-            mDatabaseReference.child("users").child(id).child("sendNotification").setValue(sendNotification);
-            mDatabaseReference.child("users").child(id).child("image").setValue(user.getImage());
-            showToast("Usuário atualizado!");
-            Intent intentHomeUser = new Intent(SettingsActivity.this, UserMainActivity.class);
-            params = new Bundle();
-            params.putString("name", name);
-            params.putString("email", email);
-            intentHomeUser.putExtras(params);
-            startActivity(intentHomeUser);
-            finish();
         } else {
             showToast("Erro ao enviar dados!");
         }
+    }
+
+    private void saveUser() {
+        mDatabaseReference.child("users").child(id).child("name").setValue(name);
+        mDatabaseReference.child("users").child(id).child("distanceForSearchBakery").setValue(distance);
+        mDatabaseReference.child("users").child(id).child("sendNotification").setValue(sendNotification);
+        mDatabaseReference.child("users").child(id).child("image").setValue(user.getImage());
+        showToast("Usuário atualizado!");
+        Intent intentHomeUser = new Intent(SettingsActivity.this, UserMainActivity.class);
+        params = new Bundle();
+        params.putString("name", name);
+        params.putString("email", email);
+        params.putInt("distanceRef", distance);
+        intentHomeUser.putExtras(params);
+        startActivity(intentHomeUser);
+        finish();
     }
 
     private boolean validateFields() {
@@ -296,13 +301,18 @@ public class SettingsActivity extends CommonActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         switch (requestCode) {
+
             case PICK_IMAGE_ID:
-                Bitmap bitmap = ImagePicker.getImageFromResult(this, resultCode, data);
-                Bitmap reducedImagePhoto = Bitmap.createScaledBitmap(bitmap, 200, 200, true);
-                ivUser.setImageBitmap(reducedImagePhoto);
-                lblAddPhoto.setVisibility(View.INVISIBLE);
-                ivAddPhoto.setVisibility(View.INVISIBLE);
-                break;
+                if (resultCode == Activity.RESULT_CANCELED) {
+                    return;
+                } else {
+                    Bitmap bitmap = ImagePicker.getImageFromResult(this, resultCode, data);
+                    Bitmap reducedImagePhoto = Bitmap.createScaledBitmap(bitmap, 200, 200, true);
+                    ivUser.setImageBitmap(reducedImagePhoto);
+                    lblAddPhoto.setVisibility(View.INVISIBLE);
+                    ivAddPhoto.setVisibility(View.INVISIBLE);
+                    break;
+                }
             default:
                 super.onActivityResult(requestCode, resultCode, data);
                 break;

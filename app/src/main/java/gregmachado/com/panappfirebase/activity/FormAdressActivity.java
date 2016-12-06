@@ -245,6 +245,9 @@ public class FormAdressActivity extends CommonActivity {
             mDatabaseReference.child("users").child(userId).child("adress").child(adressID).setValue(adress);
             mDatabaseReference.child("users").child(userId).child("firstOpen").setValue(false);
             showToast("Endereço cadastrado");
+            Intent intent = new Intent();
+            intent.putExtra("firstOpen", false);
+            setResult(5, intent);
             finish();
         }
     }

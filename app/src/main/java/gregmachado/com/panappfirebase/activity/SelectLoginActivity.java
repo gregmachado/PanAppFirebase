@@ -80,9 +80,7 @@ public class SelectLoginActivity extends CommonActivity implements GoogleApiClie
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken("457659997751-49rg9hs7a7hmqmsqk2c5t05r2dgkscbg.apps.googleusercontent.com")
                 .requestEmail()
-                .requestProfile()
                 .build();
-
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
@@ -272,11 +270,15 @@ public class SelectLoginActivity extends CommonActivity implements GoogleApiClie
                 String bakeryID = user.getBakeryID();
                 boolean type = user.isType();
                 boolean firstOpen = user.isFirstOpen();
+                int distance = user.getDistanceForSearchBakery();
+                String image = user.getImage();
                 params = new Bundle();
                 params.putString("name", name);
                 params.putString("email", email);
                 params.putString("bakeryID", bakeryID);
+                params.putString("image", image);
                 params.putBoolean("type", type);
+                params.putInt("distanceRef", distance);
                 params.putBoolean("firstOpen", firstOpen);
                 if (!user.isType()) {
                     Intent intentHomeUser = new Intent(SelectLoginActivity.this, UserMainActivity.class);

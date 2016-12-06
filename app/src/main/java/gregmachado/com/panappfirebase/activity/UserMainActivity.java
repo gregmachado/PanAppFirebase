@@ -59,6 +59,8 @@ public class UserMainActivity extends CommonActivity
     private FirebaseStorage storage = FirebaseStorage.getInstance();
     private StorageReference mStorageRef;
     private boolean firstOpen;
+    private int distance;
+    private String image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +72,8 @@ public class UserMainActivity extends CommonActivity
             userName = params.getString("name");
             userEmail = params.getString("email");
             firstOpen = params.getBoolean("firstOpen");
+            distance = params.getInt("distanceRef");
+            image = params.getString("image");
         }
         authStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -92,6 +96,7 @@ public class UserMainActivity extends CommonActivity
             userEmail = firebaseUser.getEmail();
             Log.i(TAG, "email: " + userEmail);
         }
+        mDatabaseReference.child("users").child(userID).child("image").setValue(image);
         initViews();
         rvFeed.setItemAnimator(new DefaultItemAnimator());
         rvFeed.setLayoutManager(new LinearLayoutManager(UserMainActivity.this));
@@ -99,9 +104,7 @@ public class UserMainActivity extends CommonActivity
         String token = FirebaseInstanceId.getInstance().getToken();
         mDatabaseReference.child("users").child(userID).child("token").setValue(token);
         loadFeed();
-        if (firstOpen){
-            checkFirstOpen();
-        }
+            //checkFirstOpen();
     }
 
     private void checkFirstOpen() {
@@ -118,7 +121,7 @@ public class UserMainActivity extends CommonActivity
     @Override
     protected void onResume() {
         super.onResume();
-        checkFirstOpen();
+        //checkFirstOpen();
     }
 
     private void loadFeed() {
@@ -203,10 +206,12 @@ public class UserMainActivity extends CommonActivity
             params.putString("name", userName);
 
             if (id == R.id.nav_bakerys) {
+                params.putInt("distanceRef", distance);
                 Intent intentBakeryList = new Intent(UserMainActivity.this, BakeryListActivity.class);
                 intentBakeryList.putExtras(params);
                 startActivity(intentBakeryList);
             } else if (id == R.id.nav_favorites) {
+                params.putInt("distanceRef", distance);
                 Intent intentFavoriteBakeryList = new Intent(UserMainActivity.this, FavoriteListActivity.class);
                 intentFavoriteBakeryList.putExtras(params);
                 startActivity(intentFavoriteBakeryList);

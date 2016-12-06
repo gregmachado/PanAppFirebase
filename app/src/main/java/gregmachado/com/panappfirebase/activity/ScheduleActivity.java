@@ -34,12 +34,12 @@ import gregmachado.com.panappfirebase.util.DateUtil;
 public class ScheduleActivity extends CommonActivity {
 
     private static final String TAG = ScheduleActivity.class.getSimpleName();
-    private String bakeryId, userId, productID, userName, bakeryName, code, returnCode;
+    private String bakeryId, userId, productID, userName, bakeryName, code, returnCode, offerID;
     private ArrayList<Product> itemsCart;
     private WithdrawFragment withdrawFragment;
     private DeliveryFragment deliveryFragment;
     private int items;
-    private boolean isDelivery;
+    private boolean isDelivery, isOffer;
     private Request request;
     private double total;
     private ProductCartActivity productCartActivity;
@@ -56,6 +56,8 @@ public class ScheduleActivity extends CommonActivity {
             bakeryName = params.getString("bakeryName");
             bakeryId = params.getString("bakeryID");
             total = params.getDouble("total");
+            isOffer = params.getBoolean("isOffer");
+            offerID = params.getString("offerID");
             itemsCart = (ArrayList<Product>)
                     getIntent().getSerializableExtra("items");
         }
@@ -195,6 +197,9 @@ public class ScheduleActivity extends CommonActivity {
         newHistoric();
         sendNotification();
         showToast("Pedido realizado com sucesso!");
+        if (isOffer){
+            mDatabaseReference.child("offers").child(offerID).removeValue();
+        }
         Intent intentHome = new Intent(ScheduleActivity.this, UserMainActivity.class);
         params.putString("id", userId);
         params.putString("name", userName);

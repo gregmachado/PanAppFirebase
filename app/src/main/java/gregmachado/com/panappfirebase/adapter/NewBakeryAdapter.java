@@ -6,17 +6,18 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -26,17 +27,18 @@ import java.util.ArrayList;
 import gregmachado.com.panappfirebase.R;
 import gregmachado.com.panappfirebase.activity.ProductListActivity;
 import gregmachado.com.panappfirebase.domain.Bakery;
-import gregmachado.com.panappfirebase.util.GeoLocation;
-import gregmachado.com.panappfirebase.viewHolder.BakeryViewHolder;
+import gregmachado.com.panappfirebase.interfaces.ItemClickListener;
+import gregmachado.com.panappfirebase.viewHolder.NewBakeryViewHolder;
 
 /**
- * Created by gregmachado on 11/11/16.
+ * Created by gregmachado on 03/12/16.
  */
-public class BakeryAdapter extends FirebaseRecyclerAdapter<Bakery, BakeryViewHolder> {
+public class NewBakeryAdapter extends RecyclerView.Adapter<NewBakeryViewHolder> {
 
     FirebaseStorage storage = FirebaseStorage.getInstance();
-    private static final String TAG = BakeryAdapter.class.getSimpleName();
+    private static final String TAG = NewBakeryAdapter.class.getSimpleName();
     private Context mContext;
+    private ItemClickListener clickListener;
     private Double userLatitude, userLongitude, lastLatitude, lastLongitude;
     private String bakeryID, userID, userName;
     private Bundle params;
@@ -44,27 +46,33 @@ public class BakeryAdapter extends FirebaseRecyclerAdapter<Bakery, BakeryViewHol
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference mDatabaseReference = database.getReference();
     private boolean isFavoriteList;
+    private final ArrayList<Bakery> bakeries;
 
-    public BakeryAdapter(Query ref, Context context, Double latitude, Double longitude, ArrayList<String> favorites,
-                         String userID, boolean isFavoriteList, String userName){
-        super(Bakery.class, R.layout.card_bakery, BakeryViewHolder.class, ref);
+    public NewBakeryAdapter(Context context, ArrayList<Bakery> bakeries,String userID, String userName,
+                       ItemClickListener listener, ArrayList<String> favorites) {
         this.mContext = context;
-        this.userLatitude = latitude;
-        this.userLongitude = longitude;
+        this.bakeries = bakeries;
         this.favorites = favorites;
         this.userID = userID;
-        this.isFavoriteList = isFavoriteList;
+        this.clickListener = listener;
         this.userName = userName;
     }
 
     @Override
-    protected void populateViewHolder(final BakeryViewHolder viewHolder, final Bakery model, final int position) {
-        viewHolder.tvBakeryName.setText(model.getFantasyName());
-        if(model.getBakeryImage() == null){
+    public NewBakeryViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+        final LayoutInflater layoutInflater = LayoutInflater.from(viewGroup.getContext());
+        final View v = layoutInflater.inflate(R.layout.card_bakery, viewGroup, false);
+        return new NewBakeryViewHolder(v, clickListener);
+    }
+
+    @Override
+    public void onBindViewHolder(final NewBakeryViewHolder viewHolder, final int i) {
+        viewHolder.tvBakeryName.setText(bakeries.get(i).getFantasyName());
+        if(bakeries.get(i).getBakeryImage() == null){
             viewHolder.ivBakery.setImageResource(R.drawable.padaria);
         } else {
             StorageReference mStorage = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com");
-            StorageReference imageRef = mStorage.child(model.getId());
+            StorageReference imageRef = mStorage.child(bakeries.get(i).getId());
             final long ONE_MEGABYTE = 1024 * 1024;
             imageRef.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                 @Override
@@ -82,9 +90,9 @@ public class BakeryAdapter extends FirebaseRecyclerAdapter<Bakery, BakeryViewHol
         viewHolder.ivBakery.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.w(TAG, "You clicked on " + model.getId());
-                bakeryID = model.getId();
-                String name = model.getFantasyName();
+                Log.w(TAG, "You clicked on " + bakeries.get(i).getId());
+                bakeryID = bakeries.get(i).getId();
+                String name = bakeries.get(i).getFantasyName();
                 params = new Bundle();
                 params.putString("bakeryID", bakeryID);
                 params.putString("name", name);
@@ -94,45 +102,14 @@ public class BakeryAdapter extends FirebaseRecyclerAdapter<Bakery, BakeryViewHol
                 mContext.startActivity(intentProductList);
             }
         });
-        Log.w(TAG, "latitude: " + model.getAdress().getLatitude());
-        Log.w(TAG, "longitude: " + model.getAdress().getLongitude());
-        Log.w(TAG, "user latitude: " + String.valueOf(userLatitude));
-        Log.w(TAG, "user longitude: " + userLongitude);
-        if (userLatitude == null) {
-            mDatabaseReference.child("users").child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    lastLatitude = dataSnapshot.child("lastLatitude").getValue(Double.class);
-                    lastLongitude = dataSnapshot.child("lastLongitude").getValue(Double.class);
-                    Log.i(TAG, "lastLatitude: " + lastLatitude);
-                    Log.i(TAG, "lastLongitude: " + lastLongitude);
-                    userLatitude = lastLatitude;
-                    userLongitude = lastLongitude;
-                    double distance = GeoLocation.distanceCalculate(userLatitude, userLongitude,
-                            model.getAdress().getLatitude(), model.getAdress().getLongitude());
-                    viewHolder.tvDistance.setText(String.valueOf(distance));
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    Log.w(TAG, "getUser:onCancelled", databaseError.toException());
-                }
-            });
-        } else {
-            double distance = GeoLocation.distanceCalculate(userLatitude, userLongitude,
-                    model.getAdress().getLatitude(), model.getAdress().getLongitude());
-            viewHolder.tvDistance.setText(String.valueOf(distance));
-        }
+        viewHolder.tvDistance.setText(String.valueOf(bakeries.get(i).getDistance()));
         if(favorites!=null){
-            if(favorites.contains(model.getId())){
+            if(favorites.contains(bakeries.get(i).getId())){
                 viewHolder.ibtnFavoriteOn.setVisibility(View.VISIBLE);
                 viewHolder.ibtnFavoriteOff.setClickable(false);
             } else {
                 viewHolder.ibtnFavoriteOff.setVisibility(View.VISIBLE);
                 viewHolder.ibtnFavoriteOn.setClickable(false);
-                if(isFavoriteList){
-                    
-                }
             }
         } else {
             viewHolder.ibtnFavoriteOff.setVisibility(View.VISIBLE);
@@ -141,7 +118,7 @@ public class BakeryAdapter extends FirebaseRecyclerAdapter<Bakery, BakeryViewHol
         viewHolder.ibtnFavoriteOn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                bakeryID = model.getId();
+                bakeryID = bakeries.get(i).getId();
                 setFavorite(true);
                 viewHolder.ibtnFavoriteOn.setVisibility(View.INVISIBLE);
                 viewHolder.ibtnFavoriteOff.setVisibility(View.VISIBLE);
@@ -151,7 +128,7 @@ public class BakeryAdapter extends FirebaseRecyclerAdapter<Bakery, BakeryViewHol
         viewHolder.ibtnFavoriteOff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                bakeryID = model.getId();
+                bakeryID = bakeries.get(i).getId();
                 setFavorite(false);
                 viewHolder.ibtnFavoriteOff.setVisibility(View.INVISIBLE);
                 viewHolder.ibtnFavoriteOn.setVisibility(View.VISIBLE);
@@ -160,6 +137,11 @@ public class BakeryAdapter extends FirebaseRecyclerAdapter<Bakery, BakeryViewHol
         });
         viewHolder.progressBar.setVisibility(View.INVISIBLE);
         viewHolder.ivBakery.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public int getItemCount() {
+        return bakeries.size();
     }
 
     private void setFavorite(final boolean isFavorite){

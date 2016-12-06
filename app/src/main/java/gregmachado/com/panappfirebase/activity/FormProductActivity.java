@@ -1,5 +1,6 @@
 package gregmachado.com.panappfirebase.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -315,12 +316,16 @@ public class FormProductActivity extends CommonActivity {
 
         switch (requestCode) {
             case PICK_IMAGE_ID:
-                Bitmap bitmap = ImagePicker.getImageFromResult(this, resultCode, data);
-                Bitmap reducedImagePhoto = Bitmap.createScaledBitmap(bitmap, 200, 150, true);
-                imageProduct.setImageBitmap(reducedImagePhoto);
-                tvAddPhoto.setVisibility(View.INVISIBLE);
-                imageAddPhoto.setVisibility(View.INVISIBLE);
-                break;
+                if (resultCode == Activity.RESULT_CANCELED){
+                    return;
+                } else {
+                    Bitmap bitmap = ImagePicker.getImageFromResult(this, resultCode, data);
+                    Bitmap reducedImagePhoto = Bitmap.createScaledBitmap(bitmap, 200, 150, true);
+                    imageProduct.setImageBitmap(reducedImagePhoto);
+                    tvAddPhoto.setVisibility(View.INVISIBLE);
+                    imageAddPhoto.setVisibility(View.INVISIBLE);
+                    break;
+                }
             default:
                 super.onActivityResult(requestCode, resultCode, data);
                 break;

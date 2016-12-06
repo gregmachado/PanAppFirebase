@@ -416,8 +416,8 @@ public class RegisterBakeryActivity extends CommonActivity implements GoogleApiC
 
     protected void initUser() {
         //email = "pan.app.info@gmail.com";
-        //email = "testepadaria09@gmail.com";
-        email = "soprostorrent@gmail.com";
+        email = "testepadaria09@gmail.com";
+        //email = "soprostorrent@gmail.com";
         user = new User();
         user.setName(fantasyName);
         user.setEmail(email);

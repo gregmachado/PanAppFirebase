@@ -20,6 +20,7 @@ public class Bakery {
     private String cnpj;
     private String bakeryImage;
     private Adress adress;
+    private double distance;
     private boolean hasDelivery;
     private String startTime, finishTime;
     private List<Product> productList;
@@ -146,6 +147,14 @@ public class Bakery {
 
     public void setFinishTime(String finishTime) {
         this.finishTime = finishTime;
+    }
+
+    public double getDistance() {
+        return distance;
+    }
+
+    public void setDistance(double distance) {
+        this.distance = distance;
     }
 
     public void saveDB(DatabaseReference.CompletionListener... completionListener) {

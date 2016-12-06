@@ -185,10 +185,10 @@ public class PaymentActivity extends CommonActivity {
 
             // Crie uma instância de Sale informando o ID do pagamento
             Sale sale = new Sale("id");
-            Log.i(TAG, idPayment);
+            //Log.i(TAG, idPayment);
             // Crie uma instância de Customer informando o nome do cliente
             Customer customer = sale.customer("Comprador Teste");
-            Log.i(TAG, customerName);
+            //Log.i(TAG, customerName);
             // Crie uma instância de Payment informando o valor do pagamento
             Payment payment = sale.payment(1000);
             Log.i(TAG, String .valueOf(amount));
@@ -197,8 +197,8 @@ public class PaymentActivity extends CommonActivity {
             payment.creditCard("123", "Visa").setExpirationDate("12/2018")
                     .setCardNumber(cardNumber)
                     .setHolder("Fulano de Tal");
-            Log.i(TAG, securityCode + flag + expirationDate
-                    + cardNumber + name);
+            //Log.i(TAG, securityCode + flag + expirationDate
+                    //+ cardNumber + name);
             // Crie o pagamento na Cielo
             try {
                 // Configure o SDK com seu merchant e o ambiente apropriado para criar a venda

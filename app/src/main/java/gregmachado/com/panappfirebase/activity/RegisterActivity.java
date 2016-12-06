@@ -57,6 +57,9 @@ public class RegisterActivity extends CommonActivity implements DatabaseReferenc
                     return;
                 }
                 user.setId(firebaseUser.getUid());
+                user.setFirstOpen(true);
+                user.setDistanceForSearchBakery(20);
+                user.setSendNotification(true);
                 user.saveDB(RegisterActivity.this);
                 firebaseUser.sendEmailVerification();
             }

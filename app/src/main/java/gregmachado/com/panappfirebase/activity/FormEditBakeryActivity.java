@@ -1,5 +1,6 @@
 package gregmachado.com.panappfirebase.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -375,11 +376,15 @@ public class FormEditBakeryActivity extends CommonActivity {
 
         switch (requestCode) {
             case PICK_IMAGE_ID:
-                Bitmap bitmap = ImagePicker.getImageFromResult(this, resultCode, data);
-                ivBakery.setImageBitmap(bitmap);
-                tvAddPhoto.setVisibility(View.INVISIBLE);
-                ivAddPhoto.setVisibility(View.INVISIBLE);
-                break;
+                if (resultCode == Activity.RESULT_CANCELED) {
+                    return;
+                } else {
+                    Bitmap bitmap = ImagePicker.getImageFromResult(this, resultCode, data);
+                    ivBakery.setImageBitmap(bitmap);
+                    tvAddPhoto.setVisibility(View.INVISIBLE);
+                    ivAddPhoto.setVisibility(View.INVISIBLE);
+                    break;
+                }
             default:
                 super.onActivityResult(requestCode, resultCode, data);
                 break;

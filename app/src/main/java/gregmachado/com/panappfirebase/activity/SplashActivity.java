@@ -64,11 +64,13 @@ public class SplashActivity extends CommonActivity implements Runnable {
                             String email = user.getEmail();
                             String bakeryID = user.getBakeryID();
                             boolean firstOpen = user.isFirstOpen();
+                            int distance = user.getDistanceForSearchBakery();
                             params = new Bundle();
                             params.putString("name", name);
                             params.putString("email", email);
                             params.putString("bakeryID", bakeryID);
                             params.putBoolean("firstOpen", firstOpen);
+                            params.putInt("distanceRef", distance);
                             if (!user.isType()) {
                                 Intent intentHomeUser = new Intent(SplashActivity.this, UserMainActivity.class);
                                 intentHomeUser.putExtras(params);

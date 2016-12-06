@@ -35,15 +35,20 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import gregmachado.com.panappfirebase.R;
-import gregmachado.com.panappfirebase.adapter.BakeryAdapter;
+import gregmachado.com.panappfirebase.adapter.NewBakeryAdapter;
+import gregmachado.com.panappfirebase.domain.Bakery;
+import gregmachado.com.panappfirebase.interfaces.ItemClickListener;
+import gregmachado.com.panappfirebase.util.GeoLocation;
 
 /**
  * Created by gregmachado on 12/11/16.
  */
 public class FavoriteListActivity extends CommonActivity implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.OnConnectionFailedListener, ItemClickListener {
 
     private static final String TAG = FavoriteListActivity.class.getSimpleName();
     private static final int PERMISSION_REQUEST_CODE = 555;
@@ -53,29 +58,19 @@ public class FavoriteListActivity extends CommonActivity implements GoogleApiCli
     private GoogleApiClient googleApiClient;
     private Location l;
     private Context context;
-    private Double userLatitude, userLongitude;
+    private Double userLatitude, userLongitude, lastLatitude, lastLongitude;
     private FirebaseAuth firebaseAuth;
     private ImageView icFavorite;
-    private BakeryAdapter adapter;
+    private NewBakeryAdapter adapter;
     private ArrayList<String> favorites;
+    private int distReference;
+    private double distance;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = getApplicationContext();
         setContentView(R.layout.activity_favorite_bakery_list);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        initViews();
-        openProgressBar();
-        firebaseAuth = FirebaseAuth.getInstance();
-        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-        assert firebaseUser != null;
-        userID = firebaseUser.getUid();
-        userName = firebaseUser.getDisplayName();
         LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
         boolean enabled = service
                 .isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -87,36 +82,95 @@ public class FavoriteListActivity extends CommonActivity implements GoogleApiCli
             startActivity(intent);
         }
         callConnection();
+        Intent it = getIntent();
+        params = it.getExtras();
+        if (params != null) {
+            userName = params.getString("name");
+            distReference = params.getInt("distanceRef");
+        }
+        initViews();
+        firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        assert firebaseUser != null;
+        userID = firebaseUser.getUid();
+        userName = firebaseUser.getDisplayName();
+        loadBakery();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    private void loadBakery() {
+        openProgressBar();
         mDatabaseReference.child("users").child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChild("favorites")) {
                     favorites = (ArrayList<String>) dataSnapshot.child("favorites").getValue();
-                    mDatabaseReference.child("bakeries").addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            closeProgressBar();
-                            if (dataSnapshot.getChildrenCount() > 0) {
-                                adapter = new BakeryAdapter(mDatabaseReference.child("bakeries").getRef(),
-                                        FavoriteListActivity.this, userLatitude, userLongitude, favorites, userID, true, userName
-                                ) {
-                                };
-                                rvBakery.setAdapter(adapter);
-                            } else {
-                                tvNoBakeries.setVisibility(View.VISIBLE);
-                                icFavorite.setVisibility(View.VISIBLE);
+                    distReference = dataSnapshot.child("distanceForSearchBakery").getValue(Integer.class);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "getUser:onCancelled", databaseError.toException());
+            }
+        });
+        final ArrayList<Bakery> bakeryList = new ArrayList<>();
+        if (userLatitude == null) {
+            mDatabaseReference.child("users").child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    lastLatitude = dataSnapshot.child("lastLatitude").getValue(Double.class);
+                    lastLongitude = dataSnapshot.child("lastLongitude").getValue(Double.class);
+                    Log.i(TAG, "lastLatitude: " + lastLatitude);
+                    Log.i(TAG, "lastLongitude: " + lastLongitude);
+                    userLatitude = lastLatitude;
+                    userLongitude = lastLongitude;
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.w(TAG, "getUser:onCancelled", databaseError.toException());
+                }
+            });
+        }
+        mDatabaseReference.child("bakeries").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                closeProgressBar();
+                if (dataSnapshot.getChildrenCount() > 0) {
+                    if (favorites != null){
+                        for (DataSnapshot data : dataSnapshot.getChildren()) {
+                            Bakery bakery = new Bakery();
+                            bakery = data.getValue(Bakery.class);
+                            Log.i(TAG, bakery.getFantasyName());
+                            //Log.i(TAG, String.valueOf(userLatitude + userLongitude));
+                            distance = GeoLocation.distanceCalculate(userLatitude, userLongitude,
+                                    bakery.getAdress().getLatitude(), bakery.getAdress().getLongitude());
+                            bakery.setDistance(distance);
+
+                            if (distance <= distReference && favorites.contains(bakery.getId())) {
+                                bakeryList.add(bakery);
                             }
                         }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                            Log.w(TAG, "getUser:onCancelled", databaseError.toException());
-                        }
-                    });
+                        Comparator crescente = new ComparatorBakery();
+                        //Comparator decrescente = Collections.reverseOrder(crescente);
+                        Collections.sort(bakeryList, crescente);
+                        adapter = new NewBakeryAdapter(FavoriteListActivity.this, bakeryList, userID, userName,
+                                FavoriteListActivity.this, favorites);
+                        Log.i(TAG, String.valueOf(bakeryList.size()));
+                        Log.i(TAG, "dist: " + distance + "/ " + distReference);
+                        rvBakery.setAdapter(adapter);
+                    } else {
+                        tvNoBakeries.setVisibility(View.VISIBLE);
+                        icFavorite.setVisibility(View.VISIBLE);
+                    }
                 } else {
                     tvNoBakeries.setVisibility(View.VISIBLE);
                     icFavorite.setVisibility(View.VISIBLE);
-                    closeProgressBar();
                 }
             }
 
@@ -226,5 +280,16 @@ public class FavoriteListActivity extends CommonActivity implements GoogleApiCli
         rvBakery.setItemAnimator(new DefaultItemAnimator());
         //registerForContextMenu(rvBakery);
         rvBakery.setLayoutManager(new LinearLayoutManager(FavoriteListActivity.this));
+    }
+
+    @Override
+    public void onClick(View view, int position) {
+
+    }
+
+    class ComparatorBakery implements Comparator<Bakery> {
+        public int compare(Bakery p1, Bakery p2) {
+            return p1.getDistance() < p2.getDistance() ? -1 : (p1.getDistance() > p2.getDistance() ? +1 : 0);
+        }
     }
 }

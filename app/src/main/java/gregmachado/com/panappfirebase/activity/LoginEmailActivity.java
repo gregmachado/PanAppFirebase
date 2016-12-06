@@ -235,9 +235,11 @@ public class LoginEmailActivity extends CommonActivity {
                 String name = user.getName();
                 String email = user.getEmail();
                 String bakeryID = user.getBakeryID();
+                int distance = user.getDistanceForSearchBakery();
                 boolean type = user.isType();
                 boolean firstOpen = user.isFirstOpen();
                 params = new Bundle();
+                params.putInt("distanceRef", distance);
                 params.putString("name", name);
                 params.putString("email", email);
                 params.putString("bakeryID", bakeryID);

@@ -142,7 +142,6 @@ public class FormOfferActivity extends CommonActivity {
                                         productPrice = productSnap.child("productPrice").getValue(double.class);
                                         productID = productSnap.child("id").getValue(String.class);
                                         productType = productSnap.child("type").getValue(String.class);
-                                        items = productSnap.child("itensSale").getValue(Integer.class);
                                         percent = 5;
                                         productPriceInOffer = productPrice * 0.95;
                                     }
@@ -216,7 +215,6 @@ public class FormOfferActivity extends CommonActivity {
 
         tvPrice.setText(precision.format(productPrice));
         tvProductName.setText(productName);
-        inputUnits.setText(String.valueOf(items));
         tvPriceInOffer.setText(precision.format(productPriceInOffer));
         tvDiscount.setText(String.valueOf(percent));
         StorageReference mStorage = storage.getReferenceFromUrl("gs://panappfirebase.appspot.com");
@@ -298,9 +296,6 @@ public class FormOfferActivity extends CommonActivity {
         }
         offer.setId(offerID);
         mDatabaseReference.child("offers").child(offerID).setValue(offer);
-        Product product = setProduct();
-        mDatabaseReference.child("bakeries").child(bakeryID).child("products").child(productID).
-                setValue(product);
         finish();
     }
 

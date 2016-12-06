@@ -98,7 +98,7 @@
             android:text="Padaria"
             android:textColor="@color/colorPrimary"
             android:visibility="invisible"
-            android:textSize="16sp"
+            android:textSize="12sp"
             android:textStyle="bold"
             tools:ignore="HardcodedText" />
 

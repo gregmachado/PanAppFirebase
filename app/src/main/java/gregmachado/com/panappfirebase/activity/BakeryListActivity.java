@@ -35,16 +35,21 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import gregmachado.com.panappfirebase.R;
-import gregmachado.com.panappfirebase.adapter.BakeryAdapter;
+import gregmachado.com.panappfirebase.adapter.NewBakeryAdapter;
+import gregmachado.com.panappfirebase.domain.Bakery;
+import gregmachado.com.panappfirebase.interfaces.ItemClickListener;
+import gregmachado.com.panappfirebase.util.GeoLocation;
 
 /**
  * Created by gregmachado on 29/10/16.
  */
 
 public class BakeryListActivity extends CommonActivity implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.OnConnectionFailedListener, ItemClickListener {
 
     private static final String TAG = BakeryListActivity.class.getSimpleName();
     private static final int PERMISSION_REQUEST_CODE = 555;
@@ -54,26 +59,19 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
     private GoogleApiClient googleApiClient;
     private Location l;
     private Context context;
-    private Double userLatitude, userLongitude;
+    private Double userLatitude, userLongitude, lastLatitude, lastLongitude;
     private FirebaseAuth firebaseAuth;
     private ImageView icBakery;
-    private BakeryAdapter adapter;
+    private NewBakeryAdapter adapter;
     private ArrayList<String> favorites;
+    private int distReference;
+    private double distance;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = getApplicationContext();
         setContentView(R.layout.activity_bakery_list);
-        Intent it = getIntent();
-        params = it.getExtras();
-        if (params != null) {
-            userName = params.getString("name");
-        }
-        firebaseAuth = FirebaseAuth.getInstance();
-        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-        assert firebaseUser != null;
-        userID = firebaseUser.getUid();
         LocationManager service = (LocationManager) getSystemService(LOCATION_SERVICE);
         boolean enabled = service
                 .isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -85,18 +83,28 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
             startActivity(intent);
         }
         callConnection();
+        Intent it = getIntent();
+        params = it.getExtras();
+        if (params != null) {
+            userName = params.getString("name");
+            distReference = params.getInt("distanceRef");
+        }
+        firebaseAuth = FirebaseAuth.getInstance();
+        FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+        assert firebaseUser != null;
+        userID = firebaseUser.getUid();
         initViews();
+        loadBakery();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+    private void loadBakery() {
         openProgressBar();
         mDatabaseReference.child("users").child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.hasChild("favorites")) {
                     favorites = (ArrayList<String>) dataSnapshot.child("favorites").getValue();
+                    distReference = dataSnapshot.child("distanceForSearchBakery").getValue(Integer.class);
                 }
             }
 
@@ -105,7 +113,67 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
                 Log.w(TAG, "getUser:onCancelled", databaseError.toException());
             }
         });
+        final ArrayList<Bakery> bakeryList = new ArrayList<>();
+        if (userLatitude == null) {
+            mDatabaseReference.child("users").child(userID).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    lastLatitude = dataSnapshot.child("lastLatitude").getValue(Double.class);
+                    lastLongitude = dataSnapshot.child("lastLongitude").getValue(Double.class);
+                    Log.i(TAG, "lastLatitude: " + lastLatitude);
+                    Log.i(TAG, "lastLongitude: " + lastLongitude);
+                    userLatitude = lastLatitude;
+                    userLongitude = lastLongitude;
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    Log.w(TAG, "getUser:onCancelled", databaseError.toException());
+                }
+            });
+        }
         mDatabaseReference.child("bakeries").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                closeProgressBar();
+                if (dataSnapshot.getChildrenCount() > 0) {
+                    for (DataSnapshot data : dataSnapshot.getChildren()) {
+                        Bakery bakery = new Bakery();
+                        bakery = data.getValue(Bakery.class);
+                        Log.i(TAG, bakery.getFantasyName());
+                        //Log.i(TAG, String.valueOf(userLatitude + userLongitude));
+                        distance = GeoLocation.distanceCalculate(userLatitude, userLongitude,
+                                bakery.getAdress().getLatitude(), bakery.getAdress().getLongitude());
+                        bakery.setDistance(distance);
+                        if (distance <= distReference) {
+                            bakeryList.add(bakery);
+                        }
+                    }
+                    Comparator crescente = new ComparatorBakery();
+                    //Comparator decrescente = Collections.reverseOrder(crescente);
+                    Collections.sort(bakeryList, crescente);
+                    adapter = new NewBakeryAdapter(BakeryListActivity.this, bakeryList, userID, userName,
+                            BakeryListActivity.this, favorites);
+                    Log.i(TAG, String.valueOf(bakeryList.size()));
+                    Log.i(TAG, "dist: " + distance + "/ " + distReference);
+                    rvBakery.setAdapter(adapter);
+                } else {
+                    tvNoBakeries.setVisibility(View.VISIBLE);
+                    icBakery.setVisibility(View.VISIBLE);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "getUser:onCancelled", databaseError.toException());
+            }
+        });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+       /* mDatabaseReference.child("bakeries").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 closeProgressBar();
@@ -131,7 +199,7 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
             public void onCancelled(DatabaseError databaseError) {
                 Log.w(TAG, "getUser:onCancelled", databaseError.toException());
             }
-        });
+        });*/
     }
 
     private synchronized void callConnection() {
@@ -257,5 +325,16 @@ public class BakeryListActivity extends CommonActivity implements GoogleApiClien
         rvBakery.setItemAnimator(new DefaultItemAnimator());
         //registerForContextMenu(rvBakery);
         rvBakery.setLayoutManager(new LinearLayoutManager(BakeryListActivity.this));
+    }
+
+    @Override
+    public void onClick(View view, int position) {
+
+    }
+
+    class ComparatorBakery implements Comparator<Bakery> {
+        public int compare(Bakery p1, Bakery p2) {
+            return p1.getDistance() < p2.getDistance() ? -1 : (p1.getDistance() > p2.getDistance() ? +1 : 0);
+        }
     }
 }
